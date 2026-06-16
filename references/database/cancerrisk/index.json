@@ -1,0 +1,95 @@
+{
+  "module": "cancerrisk",
+  "version": "v2.0",
+  "json_files": {
+    "cancer_age_sex_priors.json": {
+      "records": 15,
+      "description": "年龄性别基线发病率"
+    },
+    "cancers.json": {
+      "records": 15,
+      "description": "15 种癌定义"
+    },
+    "detection_performance.json": {
+      "records": 38,
+      "description": "检测灵敏度/特异度"
+    },
+    "detection_performance_derived.json": {
+      "records": null,
+      "description": "派生缓存"
+    },
+    "evidence_version.json": {
+      "records": null,
+      "description": "证据版本元数据"
+    },
+    "factor_observables.json": {
+      "records": null,
+      "description": "因子→体检指标映射"
+    },
+    "factor_synonyms.json": {
+      "records": null,
+      "description": "因子同义词"
+    },
+    "imaging_findings.json": {
+      "records": 26,
+      "description": "影像 PPV（双路径）"
+    },
+    "interaction_question_templates.json": {
+      "records": 5,
+      "description": "交互问卷模板"
+    },
+    "risk_assertions.json": {
+      "records": 213,
+      "description": "OR/RR 断言"
+    },
+    "risk_assertions_derived.json": {
+      "records": null,
+      "description": "派生 log-odds 缓存"
+    },
+    "risk_factors.json": {
+      "records": 146,
+      "description": "风险因子定义（135+）"
+    },
+    "screening_methods.json": {
+      "records": null,
+      "description": "筛查方法+cost_levels"
+    },
+    "screening_recommendations.json": {
+      "records": 15,
+      "description": "section4 标准筛查"
+    },
+    "voi_parameters.json": {
+      "records": null,
+      "description": "VoI 数学参数"
+    }
+  },
+  "md_files": {
+    "00-总览.md": {
+      "topic": "00-总览",
+      "size_tokens": "~1028"
+    },
+    "01-中国恶性肿瘤流行概况.md": {
+      "topic": "01-中国恶性肿瘤流行概况",
+      "size_tokens": "~763"
+    },
+    "09-遗传性高危基因证据.md": {
+      "topic": "09-遗传性高危基因证据",
+      "size_tokens": "~1667"
+    },
+    "china_pancreas_thyroid_age_sex_incidence_research.md": {
+      "topic": "china_pancreas_thyroid_age_sex_incidence_research",
+      "size_tokens": "~3208"
+    },
+    "clinical_oncology_detection_evidence.md": {
+      "topic": "clinical_oncology_detection_evidence",
+      "size_tokens": "~4810"
+    }
+  },
+  "loaded_by": [
+    "snapshot_risk.py",
+    "voi_calculator.py",
+    "build_assertion_fill_template.py",
+    "interactive_completion.py"
+  ],
+  "description": "癌症风险因子——癌种/因子/OR断言/先验/影像PPV/检测性能（脚本确定性计算）"
+}

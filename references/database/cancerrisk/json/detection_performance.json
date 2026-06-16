@@ -1,0 +1,388 @@
+{
+  "version": "v2.0",
+  "tests": [
+    {
+      "test_id": "jizaoan_multi_cancer_screening",
+      "test_name": "吉早安多癌早筛",
+      "cancer_id": "lung_cancer",
+      "sensitivity": 0.729,
+      "specificity": 0.991,
+      "population": "general adult population",
+      "source_id": "jizaoan_white_paper_v2026",
+      "notes": "Vendor-published performance for the Jizaoan multi-cancer panel."
+    },
+    {
+      "test_id": "jizaoan_multi_cancer_screening",
+      "test_name": "吉早安多癌早筛",
+      "cancer_id": "liver_cancer",
+      "sensitivity": 1.0,
+      "specificity": 0.991,
+      "population": "general adult population",
+      "source_id": "jizaoan_white_paper_v2026",
+      "notes": "Vendor-published performance for the Jizaoan multi-cancer panel."
+    },
+    {
+      "test_id": "jizaoan_multi_cancer_screening",
+      "test_name": "吉早安多癌早筛",
+      "cancer_id": "gastric_cancer",
+      "sensitivity": 0.761,
+      "specificity": 0.991,
+      "population": "general adult population",
+      "source_id": "jizaoan_white_paper_v2026",
+      "notes": "Vendor-published performance for the Jizaoan multi-cancer panel."
+    },
+    {
+      "test_id": "jizaoan_multi_cancer_screening",
+      "test_name": "吉早安多癌早筛",
+      "cancer_id": "esophageal_cancer",
+      "sensitivity": 0.792,
+      "specificity": 0.991,
+      "population": "general adult population",
+      "source_id": "jizaoan_white_paper_v2026",
+      "notes": "Vendor-published performance for the Jizaoan multi-cancer panel."
+    },
+    {
+      "test_id": "jizaoan_multi_cancer_screening",
+      "test_name": "吉早安多癌早筛",
+      "cancer_id": "colorectal_cancer",
+      "sensitivity": 0.862,
+      "specificity": 0.991,
+      "population": "general adult population",
+      "source_id": "jizaoan_white_paper_v2026",
+      "notes": "Vendor-published performance for the Jizaoan multi-cancer panel."
+    },
+    {
+      "test_id": "jizaoan_multi_cancer_screening",
+      "test_name": "吉早安多癌早筛",
+      "cancer_id": "breast_cancer",
+      "sensitivity": 0.889,
+      "specificity": 0.991,
+      "population": "general adult population",
+      "source_id": "jizaoan_white_paper_v2026",
+      "notes": "Vendor-published performance for the Jizaoan multi-cancer panel."
+    },
+    {
+      "test_id": "jizaoan_multi_cancer_screening",
+      "test_name": "吉早安多癌早筛",
+      "cancer_id": "ovarian_cancer",
+      "sensitivity": 0.879,
+      "specificity": 0.991,
+      "population": "general adult population",
+      "source_id": "jizaoan_white_paper_v2026",
+      "notes": "Vendor-published performance for the Jizaoan multi-cancer panel."
+    },
+    {
+      "test_id": "jizaoan_multi_cancer_screening",
+      "test_name": "吉早安多癌早筛",
+      "cancer_id": "pancreatic_cancer",
+      "sensitivity": 0.667,
+      "specificity": 0.991,
+      "population": "general adult population",
+      "source_id": "jizaoan_white_paper_v2026",
+      "notes": "中山大学肿瘤防治中心独立验证队列(2025-11)胰腺癌灵敏度 66.7%，特异性 99.0%。来源：research_findings.md §5.3；与其他7癌种同一研究。"
+    },
+    {
+      "test_id": "afp_serum",
+      "test_name": "甲胎蛋白 AFP (≥20 ng/mL)",
+      "cancer_id": "liver_cancer",
+      "sensitivity": 0.65,
+      "specificity": 0.85,
+      "population": "general adult",
+      "source_id": "He XX, 2015 (PLoS One)",
+      "threshold": "≥20 ng/mL"
+    },
+    {
+      "test_id": "cea_serum",
+      "test_name": "癌胚抗原 CEA (≥5 ng/mL)",
+      "cancer_id": "colorectal_cancer",
+      "sensitivity": 0.35,
+      "specificity": 0.9,
+      "population": "general adult",
+      "source_id": "Duffy MJ, 2001 (Clin Chem)",
+      "threshold": "≥5 ng/mL"
+    },
+    {
+      "test_id": "cea_serum",
+      "test_name": "癌胚抗原 CEA (≥5 ng/mL)",
+      "cancer_id": "gastric_cancer",
+      "sensitivity": 0.25,
+      "specificity": 0.85,
+      "population": "general adult",
+      "source_id": "Hatakeyama K, 2013",
+      "threshold": "≥5 ng/mL"
+    },
+    {
+      "test_id": "cea_serum",
+      "test_name": "癌胚抗原 CEA (≥5 ng/mL)",
+      "cancer_id": "breast_cancer",
+      "sensitivity": 0.25,
+      "specificity": 0.85,
+      "population": "general adult",
+      "source_id": "补充调研文档.md (辅助指标)",
+      "threshold": "≥5 ng/mL",
+      "notes": "补充调研文档列为'辅助指标'，未列具体文献"
+    },
+    {
+      "test_id": "cea_serum",
+      "test_name": "癌胚抗原 CEA (≥5 ng/mL)",
+      "cancer_id": "lung_cancer",
+      "sensitivity": 0.27,
+      "specificity": 0.85,
+      "population": "general adult",
+      "source_id": "补充调研文档.md (辅助指标)",
+      "threshold": "≥5 ng/mL",
+      "notes": "补充调研文档列为'辅助指标'，未列具体文献"
+    },
+    {
+      "test_id": "ca199_serum",
+      "test_name": "CA19-9 (≥37 U/mL)",
+      "cancer_id": "biliary_tract_cancer",
+      "sensitivity": 0.6,
+      "specificity": 0.78,
+      "population": "general adult",
+      "source_id": "Chen CY, 2017",
+      "threshold": "≥37 U/mL"
+    },
+    {
+      "test_id": "ca199_serum",
+      "test_name": "CA19-9 (≥37 U/mL)",
+      "cancer_id": "gastric_cancer",
+      "sensitivity": 0.25,
+      "specificity": 0.78,
+      "population": "general adult",
+      "source_id": "补充调研文档.md (辅助指标)",
+      "threshold": "≥37 U/mL"
+    },
+    {
+      "test_id": "ca199_serum",
+      "test_name": "CA19-9 (≥37 U/mL)",
+      "cancer_id": "colorectal_cancer",
+      "sensitivity": 0.18,
+      "specificity": 0.78,
+      "population": "general adult",
+      "source_id": "补充调研文档.md (辅助指标)",
+      "threshold": "≥37 U/mL"
+    },
+    {
+      "test_id": "ca199_serum",
+      "test_name": "CA19-9 (≥37 U/mL)",
+      "cancer_id": "ovarian_cancer",
+      "sensitivity": 0.25,
+      "specificity": 0.78,
+      "population": "general adult",
+      "source_id": "补充调研文档.md (辅助指标)",
+      "threshold": "≥37 U/mL"
+    },
+    {
+      "test_id": "ca199_serum",
+      "test_name": "CA19-9 (≥37 U/mL)",
+      "cancer_id": "pancreatic_cancer",
+      "sensitivity": 0.75,
+      "specificity": 0.85,
+      "population": "general adult",
+      "source_id": "补充调研文档.md (胰腺癌CA19-9)",
+      "threshold": "≥37 U/mL"
+    },
+    {
+      "test_id": "ca125_serum",
+      "test_name": "CA125 (≥35 U/mL)",
+      "cancer_id": "ovarian_cancer",
+      "sensitivity": 0.65,
+      "specificity": 0.85,
+      "population": "general adult",
+      "source_id": "Bast RC, 2011 (Int J Gynecol Cancer)",
+      "threshold": "≥35 U/mL"
+    },
+    {
+      "test_id": "ca125_serum",
+      "test_name": "CA125 (≥35 U/mL)",
+      "cancer_id": "lung_cancer",
+      "sensitivity": 0.18,
+      "specificity": 0.75,
+      "population": "general adult",
+      "source_id": "补充调研文档.md (辅助指标)",
+      "threshold": "≥35 U/mL"
+    },
+    {
+      "test_id": "psa_total_serum",
+      "test_name": "t-PSA 总前列腺特异性抗原 (≥4 ng/mL)",
+      "cancer_id": "prostate_cancer",
+      "sensitivity": 0.75,
+      "specificity": 0.65,
+      "population": "male adult",
+      "source_id": "Catalona WJ, 1991 (JAMA)",
+      "threshold": "≥4 ng/mL"
+    },
+    {
+      "test_id": "psa_free_ratio",
+      "test_name": "f-PSA/t-PSA 比值 (<0.15)",
+      "cancer_id": "prostate_cancer",
+      "sensitivity": 0.9,
+      "specificity": 0.9,
+      "population": "male adult, t-PSA elevated",
+      "source_id": "Catalona WJ, 1995",
+      "threshold": "f/t <0.15"
+    },
+    {
+      "test_id": "cyfra211_serum",
+      "test_name": "CYFRA21-1 (≥3.3 ng/mL)",
+      "cancer_id": "lung_cancer",
+      "sensitivity": 0.55,
+      "specificity": 0.85,
+      "population": "general adult",
+      "source_id": "Wieskopf B, 1995",
+      "threshold": "≥3.3 ng/mL",
+      "notes": "肺鳞癌 50-60%、肺腺癌 30-40%；取上界 55%"
+    },
+    {
+      "test_id": "cyfra211_serum",
+      "test_name": "CYFRA21-1 (≥3.3 ng/mL)",
+      "cancer_id": "bladder_cancer",
+      "sensitivity": 0.55,
+      "specificity": 0.75,
+      "population": "general adult",
+      "source_id": "补充调研文档.md (辅助指标)",
+      "threshold": "≥3.3 ng/mL"
+    },
+    {
+      "test_id": "cyfra211_serum",
+      "test_name": "CYFRA21-1 (≥3.3 ng/mL)",
+      "cancer_id": "head_neck_cancer",
+      "sensitivity": 0.45,
+      "specificity": 0.75,
+      "population": "general adult",
+      "source_id": "补充调研文档.md (辅助指标)",
+      "threshold": "≥3.3 ng/mL"
+    },
+    {
+      "test_id": "scc_serum",
+      "test_name": "SCC 鳞状细胞癌抗原 (≥1.5 ng/mL)",
+      "cancer_id": "cervical_cancer",
+      "sensitivity": 0.55,
+      "specificity": 0.85,
+      "population": "female adult",
+      "source_id": "Gadducci A, 2011",
+      "threshold": "≥1.5 ng/mL"
+    },
+    {
+      "test_id": "scc_serum",
+      "test_name": "SCC 鳞状细胞癌抗原 (≥1.5 ng/mL)",
+      "cancer_id": "esophageal_cancer",
+      "sensitivity": 0.45,
+      "specificity": 0.85,
+      "population": "general adult",
+      "source_id": "Kosugi S, 2015",
+      "threshold": "≥1.5 ng/mL"
+    },
+    {
+      "test_id": "scc_serum",
+      "test_name": "SCC 鳞状细胞癌抗原 (≥1.5 ng/mL)",
+      "cancer_id": "lung_cancer",
+      "sensitivity": 0.45,
+      "specificity": 0.85,
+      "population": "general adult",
+      "source_id": "补充调研文档.md (辅助指标)",
+      "threshold": "≥1.5 ng/mL"
+    },
+    {
+      "test_id": "scc_serum",
+      "test_name": "SCC 鳞状细胞癌抗原 (≥1.5 ng/mL)",
+      "cancer_id": "head_neck_cancer",
+      "sensitivity": 0.35,
+      "specificity": 0.85,
+      "population": "general adult",
+      "source_id": "补充调研文档.md (辅助指标)",
+      "threshold": "≥1.5 ng/mL"
+    },
+    {
+      "test_id": "nmp22_urine",
+      "test_name": "NMP22 核基质蛋白22 (≥10 U/mL)",
+      "cancer_id": "bladder_cancer",
+      "sensitivity": 0.6,
+      "specificity": 0.78,
+      "population": "general adult",
+      "source_id": "Stampfer DS, 2015 (Rev Urol)",
+      "threshold": "≥10 U/mL"
+    },
+    {
+      "test_id": "ca724_serum",
+      "test_name": "CA72-4 (≥6.9 U/mL)",
+      "cancer_id": "gastric_cancer",
+      "sensitivity": 0.35,
+      "specificity": 0.85,
+      "population": "general adult",
+      "source_id": "He CZ, 2013",
+      "threshold": "≥6.9 U/mL"
+    },
+    {
+      "test_id": "ca153_serum",
+      "test_name": "CA15-3 (≥30 U/mL)",
+      "cancer_id": "breast_cancer",
+      "sensitivity": 0.35,
+      "specificity": 0.85,
+      "population": "female adult",
+      "source_id": "Duffy MJ, 2006",
+      "threshold": "≥30 U/mL"
+    },
+    {
+      "test_id": "ca199_pancreatic_37UpermL",
+      "test_name": "CA19-9 (阈值37 U/mL)",
+      "cancer_id": "pancreatic_cancer",
+      "sensitivity": 0.8,
+      "specificity": 0.73,
+      "population": "有症状的疑似胰腺癌患者",
+      "source_id": "pancreatic_cancer_evidence_v2",
+      "notes": "Lewis抗原阴性人群(约5-10%)不表达CA19-9; 不推荐作为无症状人群筛查指标"
+    },
+    {
+      "test_id": "ca199_pancreatic_100UpermL",
+      "test_name": "CA19-9 (阈值100 U/mL)",
+      "cancer_id": "pancreatic_cancer",
+      "sensitivity": 0.41,
+      "specificity": 0.96,
+      "population": "有症状的疑似胰腺癌患者",
+      "source_id": "pancreatic_cancer_evidence_v2",
+      "notes": "高阈值提高特异度，适合辅助诊断"
+    },
+    {
+      "test_id": "pancreatic_eus超声内镜",
+      "test_name": "EUS超声内镜",
+      "cancer_id": "pancreatic_cancer",
+      "sensitivity": 0.95,
+      "specificity": 0.9,
+      "population": "疑似胰腺癌/高危筛查",
+      "source_id": "pancreatic_cancer_evidence_v2",
+      "notes": "对<3cm小胰腺癌检出优于CT; EUS-FNA可同时获取组织学确诊"
+    },
+    {
+      "test_id": "pancreatic_mri_mrcp",
+      "test_name": "MRI/MRCP",
+      "cancer_id": "pancreatic_cancer",
+      "sensitivity": 0.9,
+      "specificity": 0.85,
+      "population": "疑似胰腺癌/高危筛查",
+      "source_id": "pancreatic_cancer_evidence_v2",
+      "notes": "对囊性病变评估优于CT; 无电离辐射; 适合高危筛查"
+    },
+    {
+      "test_id": "pancreatic_增强ct",
+      "test_name": "增强CT（胰腺专用方案）",
+      "cancer_id": "pancreatic_cancer",
+      "sensitivity": 0.89,
+      "specificity": 0.88,
+      "population": "疑似胰腺癌/高危筛查",
+      "source_id": "pancreatic_cancer_evidence_v2",
+      "notes": "NCCN推荐胰腺专用方案; 对<2cm病灶敏感度降至约60-70%"
+    },
+    {
+      "test_id": "pancreatic_eus+mri联合",
+      "test_name": "EUS+MRI联合（高危筛查）",
+      "cancer_id": "pancreatic_cancer",
+      "sensitivity": 0.98,
+      "specificity": 0.85,
+      "population": "疑似胰腺癌/高危筛查",
+      "source_id": "pancreatic_cancer_evidence_v2",
+      "notes": "CAPS联盟推荐EUS和MRI交替进行"
+    }
+  ]
+}

@@ -1,0 +1,300 @@
+input:
+  default_recursive: false
+  max_depth: 1
+
+mineru:
+  api_base: https://mineru.net/api/v4
+  token_register_url: https://mineru.net/apiManage/token
+  docs_url: https://mineru.net/apiManage/docs
+  default_model_version: vlm
+  html_model_version: MinerU-HTML
+  use_demo_token_by_default: true
+  token_source: demo
+  demo_token: ""  # 不在仓库硬编码 token。真实 MinerU token 请配置 config/local.yaml::mineru.user_token（gitignored）。
+  max_file_size_mb: 200
+  max_pages_per_file: 200
+  max_batch_files: 200
+  poll_interval_seconds: 5
+  poll_timeout_seconds: 1800
+  network_max_attempts: 6
+  network_retry_delay_seconds: 3
+  language: ch
+  enable_table: true
+  enable_formula: false
+  is_ocr: true
+
+evidence_store:
+  root: references/database/cancerrisk/json
+  ontology_dir: ontology
+  assertions_dir: assertions
+  screening_dir: screening
+  versions_dir: versions
+  unstructured_notes: unstructured_evidence_notes.json
+  current_version_file: references/database/cancerrisk/json/evidence_version.json
+  bootstrap_from_oncorag: false
+  oncorag_source_path: ""
+
+llm_extraction:
+  candidate_output: risk_factor_extraction.candidate.json
+  assertion_template_output: risk_factor_assertion_template.json
+  assertion_status_output: risk_factor_assertion_status.json
+  structured_output: structured_risk_factors.json
+  needs_confirmation_output: needs_confirmation_factors.json
+  refined_content_bundle: refined_content_bundle.md
+  extraction_model: qwen2.5-7b-instruct
+  acceptance_confidence: 0.85
+  needs_confirmation_min_confidence: 0.60
+
+interactive:
+  max_total_questions: 10
+  max_questions: 10  # legacy alias for backwards compatibility
+  default_answer_when_skipped: unknown
+  jizaoan_question_required: true
+  jizaoan_factor_id: jizaoan_multi_cancer_screening
+  question_templates: references/database/cancerrisk/json/interaction_question_templates.json
+  questionnaire_output: interactive_questionnaire.json
+  supplemental_updates_output: supplemental_risk_factor_updates.json
+  supplemental_md: supplemental_risk_factors.md
+  supplemental_json: supplemental_risk_factors.json
+  merged_risk_factors_output: merged_risk_factors.json
+  interactive_answers_md: interactive_answers.md
+  user_reported_timeline: structured_risk_factors_timeline.user_reported.json
+  # Fixed must-ask question list. The orchestrator builds the questionnaire
+  # from common + the sex-specific branch. Each entry maps to a single
+  # (factor_id, factor_level) row that will be written into the timeline
+  # with source="user_reported", confidence=1.0, exam_date="now".
+  # target=demographics → answer drives demographics.json only, no timeline row.
+  # target=timeline (default) → answer is a timeline record per selected option.
+  required_questions:
+    common:
+      - question_id: q_demographics_sex
+        prompt: "您的性别？"
+        target: demographics
+        type: single_choice
+        options:
+          - {value: male, label: "男"}
+          - {value: female, label: "女"}
+      - question_id: q_demographics_age
+        prompt: "您的年龄？（岁）"
+        target: demographics
+        type: integer
+      - question_id: q_family_history_cancer
+        prompt: "一级亲属（父母 / 兄弟姐妹 / 子女）中是否有癌症患者？"
+        factor_id: family_history_cancer
+        factor_level: present
+        target: timeline
+        type: single_choice
+        options:
+          - {value: "yes", label: "有", exists: true}
+          - {value: "no",  label: "无", exists: false}
+          - {value: unknown, label: "不清楚"}
+      - question_id: q_smoking_status
+        prompt: "您的吸烟情况？"
+        factor_id: smoking_current
+        factor_level: current
+        target: timeline
+        type: single_choice
+        options:
+          - {value: never,   label: "从未吸烟", exists: false}
+          - {value: former,  label: "已戒烟",   exists: false}
+          - {value: current, label: "目前吸烟", exists: true}
+          - {value: unknown, label: "不愿透露"}
+      - question_id: q_alcohol_status
+        prompt: "您的饮酒情况？（每周≥3次为大量饮酒）"
+        factor_id: alcohol_heavy
+        factor_level: heavy
+        target: timeline
+        type: single_choice
+        options:
+          - {value: never,      label: "从不饮酒",   exists: false}
+          - {value: occasional, label: "偶尔饮酒",   exists: false}
+          - {value: heavy,      label: "经常大量饮酒", exists: true}
+          - {value: unknown,    label: "不愿透露"}
+      - question_id: q_genetic_testing_done
+        prompt: "您是否做过基因检测（如 BRCA 突变、Lynch 综合征相关检测等）？"
+        type: single_choice
+        target: gate
+        options:
+          - {value: "yes",   label: "做过基因检测"}
+          - {value: "no",    label: "未做过"}
+          - {value: unknown, label: "不清楚"}
+      - question_id: q_genetic_mutations_brca
+        prompt: "BRCA 基因检测结果（可多选；均无则选「均无BRCA突变」）？"
+        type: multi_select
+        conditional_on: {question_id: q_genetic_testing_done, value: "yes"}
+        options:
+          - {value: brca1, label: "BRCA1 突变", factor_id: brca1_mutation_carrier, factor_level: present, exists: true}
+          - {value: brca2, label: "BRCA2 突变", factor_id: brca2_mutation_carrier, factor_level: present, exists: true}
+          - {value: none,  label: "均无BRCA突变"}
+      - question_id: q_genetic_mutations_lynch
+        prompt: "Lynch 综合征相关基因突变（可多选；均无则不选直接继续）？"
+        type: multi_select
+        conditional_on: {question_id: q_genetic_testing_done, value: "yes"}
+        options:
+          - {value: mlh1, label: "Lynch MLH1 突变", factor_id: lynch_syndrome_mlh1, factor_level: present, exists: true}
+          - {value: msh2, label: "Lynch MSH2 突变", factor_id: lynch_syndrome_msh2, factor_level: present, exists: true}
+          - {value: msh6, label: "Lynch MSH6 突变", factor_id: lynch_syndrome_msh6, factor_level: present, exists: true}
+          - {value: pms2, label: "Lynch PMS2 突变", factor_id: lynch_syndrome_pms2, factor_level: present, exists: true}
+      # text_fill: shown only when q_family_history_cancer=yes; placement=last
+      # ensures it follows all single-choice questions regardless of yaml order.
+      - question_id: q_family_history_detail
+        prompt: "请补充具体家族史（仅限癌症）：哪种癌症、单名（1 人）还是多名（≥2 人）亲属？\n（例如：父亲肺癌 1 人、母亲乳腺癌 多人）"
+        type: text_fill
+        conditional_on: {question_id: q_family_history_cancer, value: "yes"}
+        placement: last
+    male:
+      - question_id: q_psa_screening
+        prompt: "近一年内是否做过 PSA（前列腺特异性抗原）检测？"
+        factor_id: psa_screening_recent
+        factor_level: done
+        target: timeline
+        type: single_choice
+        applicable_sex: male
+        options:
+          - {value: "yes",   label: "做过",   exists: true}
+          - {value: "no",    label: "没做过", exists: false}
+          - {value: unknown, label: "不清楚"}
+      - question_id: q_colorectal_screening
+        prompt: "近三年内是否做过结直肠癌筛查（肠镜 / 便隐血）？"
+        factor_id: colorectal_screening_recent
+        factor_level: done
+        target: timeline
+        type: single_choice
+        applicable_sex: male
+        options:
+          - {value: "yes",   label: "做过",   exists: true}
+          - {value: "no",    label: "没做过", exists: false}
+          - {value: unknown, label: "不清楚"}
+    female:
+      - question_id: q_cervical_screening
+        prompt: "近三年内是否做过宫颈癌筛查（HPV / TCT）？"
+        factor_id: cervical_screening_recent
+        factor_level: done
+        target: timeline
+        type: single_choice
+        applicable_sex: female
+        options:
+          - {value: "yes",   label: "做过",   exists: true}
+          - {value: "no",    label: "没做过", exists: false}
+          - {value: unknown, label: "不清楚"}
+      - question_id: q_mammography_screening
+        prompt: "近两年内是否做过乳腺癌筛查（乳腺 X 线 / 超声）？"
+        factor_id: breast_screening_recent
+        factor_level: done
+        target: timeline
+        type: single_choice
+        applicable_sex: female
+        options:
+          - {value: "yes",   label: "做过",   exists: true}
+          - {value: "no",    label: "没做过", exists: false}
+          - {value: unknown, label: "不清楚"}
+
+health_summary:
+  provider: health-management-v1.0.0
+  mode: external_api_replay
+  template_source: ""
+  template_file: templates/health_summary_v1.html
+  input_bundle: health_summary_input_bundle.md
+  structured_summary: health_summary_structured_summary.json
+  output_html: health_summary.html
+  api:
+    base_url: https://ydai.jinbaisen.com/api/v1
+    token_url: https://jiyinjia.jinbaisen.com/!token?key=skill_jk
+    model: cyzh-cfc
+    stream: true
+    temperature: 0.7
+    max_tokens: 2048
+    timeout_seconds: 60
+
+risk_prediction:
+  standardize_rr_hr_as_approximation: true
+  snapshot_template: templates/integrated_report_v14.html
+  v42_template_source: ""
+  longitudinal_template: ""
+  priors_file: references/database/cancerrisk/json/cancer_age_sex_priors.json
+  snapshot_output_json: snapshot_risk.json
+  snapshot_output_html: snapshot_risk.html
+  longitudinal_output_json: longitudinal_risk.json
+  longitudinal_output_html: longitudinal_risk.html
+  fallback_to_snapshot_when_no_history: true
+  # Per-cancer posterior probability tier thresholds (annual basis matches
+  # the GLOBOCAN incidence-rate prior unit). Treat probability <= max as
+  # belonging to the tier.
+  risk_tiers:
+    - tier: low
+      max_probability: 0.005
+    - tier: medium
+      max_probability: 0.02
+    - tier: high
+      max_probability: 1.01
+  screening_section:
+    medium_min_probability: 0.005   # only show cancers above this in section 4
+    top_n: 3                         # always show top-3 eligible cancers by posterior
+    include_probability_above: 0.02   # additionally show any cancer above this probability
+  screening_strategies:
+    convenient: jizaoan_multi_cancer_screening
+    deep: screening_recommendations
+  jizaoan_top_k: 2
+
+person_context:
+  # Last-resort fallback only — the orchestrator emits a loud warning when
+  # these are used because they are not real demographics. Production runs
+  # MUST pass --person-sex / --person-age on the CLI (or override here).
+  sex: male
+  age: 68
+
+archive:
+  root: output
+  proposal_filename: archive_update_proposal.json
+  factor_timeline_filename: factor_timeline.json
+  screening_timeline_filename: screening_test_timeline.json
+  report_index_filename: report_index.json
+  require_user_confirmation: false  # v2.0 自动入档（仅备份，不做趋势，无需用户确认）
+  # Phase 3: archive baseline is always written, regardless of event count.
+  baseline_snapshot_dir: snapshots
+  person_index_filename: person_index.json
+  # If archives_root already contains person directories AND --person-id is not
+  # provided, the orchestrator exits with an error
+  # instead of writing into the default test-person-001 bucket.
+  strict_person_id_when_populated: true
+
+outputs:
+  output_dir: analysis_output
+  artifacts_dir: artifacts
+  module_audits_dir: module_audits
+  reports:
+    - health_summary.html
+    - snapshot_risk.html
+    - longitudinal_risk.html
+    - index.html
+  manifest_filename: manifest.json
+
+tumor_trend:
+  # Factor IDs that qualify as cancer protein tumor markers for trend analysis.
+  # Excludes organ-function markers (ALT, creatinine, etc.).
+  protein_marker_factor_ids:
+    - afp_elevated
+    - cea_elevated
+    - ca125_elevated
+    - ca199_elevated
+    - ca153_elevated
+    - psa_elevated
+    - afp_l3_elevated
+    - nse_elevated
+    - cyfra21_elevated
+    - scc_elevated
+    - progrp_elevated
+    - hcg_elevated
+    - ca724_elevated
+    - ca242_elevated
+    - ca50_elevated
+    - tpsa_elevated
+    - fpsa_elevated
+  growth_multiplier: 2.0
+  remission_multiplier: 0.5
+  change_threshold: 0.30   # >30% change triggers trend label
+
+safety:
+  disclaimer: |
+    本报告仅用于健康管理与筛查决策辅助，不构成医学诊断、治疗方案或用药建议。
+    如有具体健康问题，请及时咨询专业医生。

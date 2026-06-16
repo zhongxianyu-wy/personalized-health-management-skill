@@ -1,0 +1,47 @@
+{
+  "version": "v2.0",
+  "evidence_version": "evidence-v0004(参考)",
+  "last_updated": "2026-06-16",
+  "principle": "贝叶斯/数值计算→JSON(脚本读)；其他知识→MD(LLM读)。索引驱动按需加载。",
+  "modules": {
+    "cancerrisk": {
+      "path": "cancerrisk/",
+      "json": 15,
+      "md": 5,
+      "loaded_by": [
+        "snapshot_risk.py",
+        "voi_calculator.py",
+        "build_assertion_fill_template.py",
+        "interactive_completion.py"
+      ],
+      "desc": "癌症风险因子——癌种/因子/OR断言/先验/影像PPV/检测性能（脚本确定性计算）"
+    },
+    "screening_general": {
+      "path": "screening_general/",
+      "json": 0,
+      "md": 4,
+      "loaded_by": [
+        "gap_screening.py"
+      ],
+      "desc": "常规筛查推荐——年龄/性别驱动（LLM 参考）"
+    },
+    "screening_personalized": {
+      "path": "screening_personalized/",
+      "json": 0,
+      "md": 21,
+      "loaded_by": [
+        "LLM 按需"
+      ],
+      "desc": "异常驱动专家筛查——12癌指南/慢病/判读/复查规则/液体活检（LLM 参考）"
+    },
+    "pricing": {
+      "path": "pricing/",
+      "json": 0,
+      "md": 1,
+      "loaded_by": [
+        "package_generator.py"
+      ],
+      "desc": "体检项目价格参考（LLM 参考）"
+    }
+  }
+}

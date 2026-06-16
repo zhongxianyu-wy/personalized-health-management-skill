@@ -1,0 +1,314 @@
+{
+  "metadata": {
+    "source": "苏波data/体检筛查指南2026/ + NCCN Guidelines + 中国癌症筛查指南",
+    "version": "2.0.0",
+    "update_date": "2026-04-09",
+    "note": "各癌种筛查/复查手段推荐，含费用、侵入性、辐射等级"
+  },
+  "cancers": {
+    "肺癌": {
+      "primary_screening": [
+        {
+          "method": "LDCT",
+          "description": "低剂量螺旋CT",
+          "sensitivity": 87.5,
+          "specificity": 75,
+          "cost_level": "medium",
+          "invasiveness": "non-invasive",
+          "radiation": "low",
+          "guideline": "中国肺癌筛查指南(2021)"
+        }
+      ],
+      "followup_methods": [
+        {"method": "增强CT", "indication": "结节>8mm或LDCT可疑", "cost_level": "high", "radiation": "medium"},
+        {"method": "PET-CT", "indication": "高度可疑恶性", "cost_level": "very_high", "radiation": "high"},
+        {"method": "支气管镜+活检", "indication": "中央型病变", "cost_level": "high", "invasiveness": "invasive"}
+      ],
+      "liquid_biopsy": {"method": "吉早安", "sensitivity": 72.9, "specificity": 99.1}
+    },
+    "肝癌": {
+      "primary_screening": [
+        {
+          "method": "腹部超声+AFP",
+          "description": "肝脏超声联合甲胎蛋白",
+          "sensitivity": 80,
+          "specificity": 85,
+          "cost_level": "low",
+          "invasiveness": "non-invasive",
+          "radiation": "none",
+          "guideline": "中国肝癌筛查指南(2022)"
+        }
+      ],
+      "followup_methods": [
+        {"method": "增强CT/MRI", "indication": "超声可疑或AFP升高", "cost_level": "high", "radiation": "medium"},
+        {"method": "肝脏MRI(Gd-EOB-DTPA)", "indication": "小肝癌鉴别", "cost_level": "very_high", "radiation": "none"},
+        {"method": "肝穿刺活检", "indication": "影像学不确定", "cost_level": "high", "invasiveness": "invasive"}
+      ],
+      "liquid_biopsy": {"method": "吉早安", "sensitivity": 100.0, "specificity": 99.1}
+    },
+    "胃癌": {
+      "primary_screening": [
+        {
+          "method": "胃镜",
+          "description": "上消化道内镜检查",
+          "sensitivity": 92.5,
+          "specificity": 100,
+          "cost_level": "medium",
+          "invasiveness": "minimally-invasive",
+          "radiation": "none",
+          "guideline": "中国胃癌筛查指南(2022)"
+        }
+      ],
+      "followup_methods": [
+        {"method": "放大内镜+NBI", "indication": "可疑病变精查", "cost_level": "medium", "invasiveness": "minimally-invasive"},
+        {"method": "EUS(超声内镜)", "indication": "评估浸润深度", "cost_level": "high", "invasiveness": "minimally-invasive"},
+        {"method": "活检病理", "indication": "内镜下可疑病变", "cost_level": "medium", "invasiveness": "minimally-invasive"}
+      ],
+      "liquid_biopsy": {"method": "吉早安", "sensitivity": 76.1, "specificity": 99.1}
+    },
+    "食管癌": {
+      "primary_screening": [
+        {
+          "method": "食管内镜+碘染色",
+          "description": "食管内镜检查联合碘染色",
+          "sensitivity": 92.5,
+          "specificity": 98,
+          "cost_level": "medium",
+          "invasiveness": "minimally-invasive",
+          "radiation": "none",
+          "guideline": "中国食管癌筛查指南(2022)"
+        }
+      ],
+      "followup_methods": [
+        {"method": "放大内镜", "indication": "碘不染区精查", "cost_level": "medium", "invasiveness": "minimally-invasive"},
+        {"method": "增强CT", "indication": "分期评估", "cost_level": "high", "radiation": "medium"},
+        {"method": "活检病理", "indication": "可疑病变确诊", "cost_level": "medium", "invasiveness": "minimally-invasive"}
+      ],
+      "liquid_biopsy": {"method": "吉早安", "sensitivity": 79.2, "specificity": 99.1}
+    },
+    "结直肠癌": {
+      "primary_screening": [
+        {
+          "method": "肠镜",
+          "description": "结肠镜检查",
+          "sensitivity": 96.5,
+          "specificity": 100,
+          "cost_level": "medium",
+          "invasiveness": "minimally-invasive",
+          "radiation": "none",
+          "guideline": "中国结直肠癌筛查指南(2020)"
+        },
+        {
+          "method": "FIT(粪便免疫化学检测)",
+          "description": "粪便隐血筛查",
+          "sensitivity": 75,
+          "specificity": 95,
+          "cost_level": "very_low",
+          "invasiveness": "non-invasive",
+          "radiation": "none",
+          "guideline": "适用于一般风险人群初筛"
+        }
+      ],
+      "followup_methods": [
+        {"method": "增强CT", "indication": "分期评估", "cost_level": "high", "radiation": "medium"},
+        {"method": "息肉切除+病理", "indication": "内镜下息肉/腺瘤", "cost_level": "medium", "invasiveness": "minimally-invasive"}
+      ],
+      "liquid_biopsy": {"method": "吉早安", "sensitivity": 86.2, "specificity": 99.1}
+    },
+    "乳腺癌": {
+      "primary_screening": [
+        {
+          "method": "乳腺超声",
+          "description": "乳腺超声检查",
+          "sensitivity": 77.5,
+          "specificity": 85,
+          "cost_level": "low",
+          "invasiveness": "non-invasive",
+          "radiation": "none",
+          "guideline": "中国乳腺癌筛查指南(2022)，中国女性首选"
+        },
+        {
+          "method": "乳腺钼靶",
+          "description": "乳腺X线摄影",
+          "sensitivity": 80,
+          "specificity": 88,
+          "cost_level": "medium",
+          "invasiveness": "non-invasive",
+          "radiation": "low",
+          "guideline": "40岁以上推荐，联合超声效果更佳"
+        }
+      ],
+      "followup_methods": [
+        {"method": "乳腺MRI", "indication": "BI-RADS 4级/高危人群", "cost_level": "very_high", "radiation": "none"},
+        {"method": "穿刺活检", "indication": "BI-RADS 4c/5级", "cost_level": "high", "invasiveness": "minimally-invasive"},
+        {"method": "BRCA基因检测", "indication": "高危家族史", "cost_level": "high", "invasiveness": "minimally-invasive"}
+      ],
+      "liquid_biopsy": {"method": "吉早安", "sensitivity": 88.9, "specificity": 99.1}
+    },
+    "宫颈癌": {
+      "primary_screening": [
+        {
+          "method": "TCT+HPV联合筛查",
+          "description": "宫颈液基细胞学+HPV分型",
+          "sensitivity": 95,
+          "specificity": 85,
+          "cost_level": "medium",
+          "invasiveness": "minimally-invasive",
+          "radiation": "none",
+          "guideline": "中国宫颈癌筛查指南(2023)"
+        }
+      ],
+      "followup_methods": [
+        {"method": "阴道镜+活检", "indication": "TCT异常/HPV16/18阳性", "cost_level": "medium", "invasiveness": "minimally-invasive"},
+        {"method": "ECC(宫颈管搔刮)", "indication": "阴道镜不满意", "cost_level": "medium", "invasiveness": "minimally-invasive"},
+        {"method": "锥切术", "indication": "HSIL/CIN2+", "cost_level": "high", "invasiveness": "invasive"}
+      ]
+    },
+    "前列腺癌": {
+      "primary_screening": [
+        {
+          "method": "PSA+DRE",
+          "description": "前列腺特异性抗原+直肠指检",
+          "sensitivity": 80,
+          "specificity": 75,
+          "cost_level": "low",
+          "invasiveness": "minimally-invasive",
+          "radiation": "none",
+          "guideline": "中国前列腺癌筛查指南(2022)"
+        }
+      ],
+      "followup_methods": [
+        {"method": "f-PSA/t-PSA比值", "indication": "PSA 4-10 ng/mL灰区", "cost_level": "low", "invasiveness": "non-invasive"},
+        {"method": "前列腺MRI(PI-RADS)", "indication": "PSA升高", "cost_level": "high", "radiation": "none"},
+        {"method": "经直肠前列腺穿刺", "indication": "PI-RADS ≥4级", "cost_level": "high", "invasiveness": "invasive"}
+      ]
+    },
+    "膀胱癌": {
+      "primary_screening": [
+        {
+          "method": "尿常规+超声",
+          "description": "尿常规+泌尿系统超声",
+          "sensitivity": 65,
+          "specificity": 80,
+          "cost_level": "low",
+          "invasiveness": "non-invasive",
+          "radiation": "none",
+          "guideline": "中国膀胱癌早期诊断共识(2024)"
+        }
+      ],
+      "followup_methods": [
+        {"method": "尿细胞学", "indication": "血尿/高危人群", "cost_level": "low", "invasiveness": "non-invasive"},
+        {"method": "NMP22检测", "indication": "血尿辅助筛查", "cost_level": "medium", "invasiveness": "non-invasive"},
+        {"method": "膀胱镜+活检", "indication": "尿细胞学异常/反复血尿", "cost_level": "high", "invasiveness": "invasive"},
+        {"method": "CTU(CT尿路造影)", "indication": "上尿路评估", "cost_level": "high", "radiation": "medium"}
+      ]
+    },
+    "卵巢癌": {
+      "primary_screening": [
+        {
+          "method": "经阴道超声+CA125",
+          "description": "经阴道超声联合CA125",
+          "sensitivity": 80,
+          "specificity": 78,
+          "cost_level": "medium",
+          "invasiveness": "non-invasive",
+          "radiation": "none",
+          "guideline": "中国卵巢癌早期诊断共识(2025)"
+        }
+      ],
+      "followup_methods": [
+        {"method": "盆腔MRI", "indication": "超声可疑占位", "cost_level": "high", "radiation": "none"},
+        {"method": "HE4联合CA125(ROMA)", "indication": "辅助鉴别良恶性", "cost_level": "medium", "invasiveness": "non-invasive"},
+        {"method": "BRCA基因检测", "indication": "高危家族史", "cost_level": "high", "invasiveness": "minimally-invasive"},
+        {"method": "腹腔镜探查+活检", "indication": "高度可疑恶性", "cost_level": "very_high", "invasiveness": "invasive"}
+      ],
+      "liquid_biopsy": {"method": "吉早安", "sensitivity": 87.9, "specificity": 99.1}
+    },
+    "肾癌": {
+      "primary_screening": [
+        {
+          "method": "腹部超声",
+          "description": "肾脏超声检查",
+          "sensitivity": 70,
+          "specificity": 85,
+          "cost_level": "low",
+          "invasiveness": "non-invasive",
+          "radiation": "none",
+          "guideline": "常规体检项目"
+        }
+      ],
+      "followup_methods": [
+        {"method": "增强CT", "indication": "超声发现占位", "cost_level": "high", "radiation": "medium"},
+        {"method": "肾脏MRI", "indication": "CT不确定/肾功能不全", "cost_level": "very_high", "radiation": "none"},
+        {"method": "穿刺活检", "indication": "影像学不确定/小肾肿瘤", "cost_level": "high", "invasiveness": "invasive"}
+      ]
+    },
+    "头颈肿瘤": {
+      "primary_screening": [
+        {
+          "method": "鼻咽镜+EBV-DNA",
+          "description": "鼻咽镜检查联合EBV-DNA定量",
+          "sensitivity": 87.5,
+          "specificity": 90,
+          "cost_level": "medium",
+          "invasiveness": "minimally-invasive",
+          "radiation": "none",
+          "guideline": "华南地区鼻咽癌高发区筛查"
+        }
+      ],
+      "followup_methods": [
+        {"method": "增强MRI", "indication": "鼻咽镜异常", "cost_level": "high", "radiation": "none"},
+        {"method": "鼻咽活检", "indication": "可疑病变", "cost_level": "medium", "invasiveness": "minimally-invasive"},
+        {"method": "PET-CT", "indication": "分期/转移评估", "cost_level": "very_high", "radiation": "high"}
+      ]
+    },
+    "胆道肿瘤": {
+      "primary_screening": [
+        {
+          "method": "腹部超声+CA19-9",
+          "description": "腹部超声联合CA19-9",
+          "sensitivity": 65,
+          "specificity": 82,
+          "cost_level": "low",
+          "invasiveness": "non-invasive",
+          "radiation": "none",
+          "guideline": "高危人群定期筛查"
+        }
+      ],
+      "followup_methods": [
+        {"method": "MRCP", "indication": "胆管扩张/CA19-9升高", "cost_level": "high", "radiation": "none"},
+        {"method": "增强CT", "indication": "评估可切除性", "cost_level": "high", "radiation": "medium"},
+        {"method": "ERCP+刷检", "indication": "胆管狭窄鉴别", "cost_level": "very_high", "invasiveness": "invasive"},
+        {"method": "EUS+FNA", "indication": "胆囊/胆管占位", "cost_level": "very_high", "invasiveness": "invasive"}
+      ]
+    },
+    "胰腺癌": {
+      "primary_screening": [
+        {
+          "method": "腹部超声+CA19-9",
+          "description": "腹部超声联合CA19-9",
+          "sensitivity": 65,
+          "specificity": 82,
+          "cost_level": "low",
+          "invasiveness": "non-invasive",
+          "radiation": "none",
+          "guideline": "高危人群筛查，中国胰腺癌高危筛查共识(2021)"
+        }
+      ],
+      "followup_methods": [
+        {"method": "胰腺增强CT", "indication": "CA19-9升高/超声异常", "cost_level": "high", "radiation": "medium"},
+        {"method": "EUS(超声内镜)", "indication": "CT阴性但临床高度怀疑", "cost_level": "very_high", "invasiveness": "minimally-invasive"},
+        {"method": "EUS-FNA", "indication": "胰腺占位取材", "cost_level": "very_high", "invasiveness": "invasive"},
+        {"method": "MRCP", "indication": "胰管评估", "cost_level": "high", "radiation": "none"}
+      ],
+      "liquid_biopsy": {"method": "吉早安", "sensitivity": 66.7, "specificity": 99.1}
+    }
+  },
+  "cost_levels": {
+    "very_low": {"range": "<100元", "description": "基础检查"},
+    "low": {"range": "100-500元", "description": "常规检查"},
+    "medium": {"range": "500-2000元", "description": "专项检查"},
+    "high": {"range": "2000-5000元", "description": "高级检查"},
+    "very_high": {"range": ">5000元", "description": "特殊检查"}
+  }
+}

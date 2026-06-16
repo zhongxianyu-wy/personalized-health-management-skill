@@ -1,0 +1,14 @@
+{
+  "module": "pricing",
+  "version": "v2.0",
+  "md_files": {
+    "08-体检筛查项目价格参考.md": {
+      "topic": "08-体检筛查项目价格参考",
+      "size_tokens": "~2877"
+    }
+  },
+  "loaded_by": [
+    "package_generator.py"
+  ],
+  "description": "体检项目价格参考（LLM 参考）"
+}

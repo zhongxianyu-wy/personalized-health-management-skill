@@ -1,0 +1,177 @@
+{
+  "metadata": {
+    "source": "GLOBOCAN 2022 + survival_data.json + detection_performance.json + VoI理论框架",
+    "version": "2.0.0",
+    "update_date": "2026-04-09",
+    "note": "VoI(检测) = P(阴性)×ΔT_阴性 + P(阳性)×ΔT_阳性，选期望生存时间增益最大的检测",
+    "formula": {
+      "voi": "VoI = P_neg × delta_T_neg + P_pos × delta_T_pos",
+      "P_neg": "P(检测阴性) = 1 - prior_risk × sensitivity",
+      "P_pos": "P(检测阳性) = prior_risk × sensitivity + (1-prior_risk) × (1-specificity)",
+      "delta_T_neg": "阴性结果对行为改变的影响（降低焦虑/减少不必要复查）",
+      "delta_T_pos": "阳性结果→早期干预的生存时间增益"
+    }
+  },
+  "survival_gain": {
+    "description": "各癌种早筛发现(stage1) vs 晚期发现(stage3-4)的5年生存率差值及期望寿命增益(年)",
+    "cancers": {
+      "肺癌": {
+        "stage1_5y_os": 85.0,
+        "late_stage_5y_os": 15.5,
+        "survival_gain_5y": 69.5,
+        "expected_life_years_gained": 8.0,
+        "early_detection_rate": 0.15,
+        "treatment_coefficient": 0.8,
+        "note": "NLST研究证实LDCT筛查降低20%肺癌死亡率"
+      },
+      "肝癌": {
+        "stage1_5y_os": 65.0,
+        "late_stage_5y_os": 10.0,
+        "survival_gain_5y": 55.0,
+        "expected_life_years_gained": 6.0,
+        "early_detection_rate": 0.12,
+        "treatment_coefficient": 0.75,
+        "note": "早期肝癌可手术切除/移植，晚期预后极差"
+      },
+      "胃癌": {
+        "stage1_5y_os": 75.0,
+        "late_stage_5y_os": 14.0,
+        "survival_gain_5y": 61.0,
+        "expected_life_years_gained": 7.0,
+        "early_detection_rate": 0.20,
+        "treatment_coefficient": 0.85,
+        "note": "日韩胃镜筛查经验证实早期胃癌5年生存率>90%"
+      },
+      "食管癌": {
+        "stage1_5y_os": 65.0,
+        "late_stage_5y_os": 12.5,
+        "survival_gain_5y": 52.5,
+        "expected_life_years_gained": 6.0,
+        "early_detection_rate": 0.10,
+        "treatment_coefficient": 0.80,
+        "note": "内镜下碘染色筛查可发现早期鳞癌"
+      },
+      "结直肠癌": {
+        "stage1_5y_os": 92.0,
+        "late_stage_5y_os": 28.5,
+        "survival_gain_5y": 63.5,
+        "expected_life_years_gained": 9.0,
+        "early_detection_rate": 0.25,
+        "treatment_coefficient": 0.90,
+        "note": "肠镜筛查可同时切除癌前病变（腺瘤），一级预防"
+      },
+      "乳腺癌": {
+        "stage1_5y_os": 97.0,
+        "late_stage_5y_os": 37.5,
+        "survival_gain_5y": 59.5,
+        "expected_life_years_gained": 10.0,
+        "early_detection_rate": 0.35,
+        "treatment_coefficient": 0.90,
+        "note": "早期乳腺癌治愈率极高，筛查效益明确"
+      },
+      "宫颈癌": {
+        "stage1_5y_os": 92.0,
+        "late_stage_5y_os": 27.5,
+        "survival_gain_5y": 64.5,
+        "expected_life_years_gained": 10.0,
+        "early_detection_rate": 0.40,
+        "treatment_coefficient": 0.85,
+        "note": "HPV筛查可在癌前阶段干预，一级预防效果突出"
+      },
+      "前列腺癌": {
+        "stage1_5y_os": 97.0,
+        "late_stage_5y_os": 52.5,
+        "survival_gain_5y": 44.5,
+        "expected_life_years_gained": 7.0,
+        "early_detection_rate": 0.30,
+        "treatment_coefficient": 0.88,
+        "note": "早期前列腺癌可主动监测，需避免过度诊断"
+      },
+      "膀胱癌": {
+        "stage1_5y_os": 85.0,
+        "late_stage_5y_os": 26.0,
+        "survival_gain_5y": 59.0,
+        "expected_life_years_gained": 7.0,
+        "early_detection_rate": 0.22,
+        "treatment_coefficient": 0.85,
+        "note": "浅表性膀胱癌TURBT后5年生存率>80%"
+      },
+      "卵巢癌": {
+        "stage1_5y_os": 85.0,
+        "late_stage_5y_os": 27.5,
+        "survival_gain_5y": 57.5,
+        "expected_life_years_gained": 7.0,
+        "early_detection_rate": 0.18,
+        "treatment_coefficient": 0.82,
+        "note": "早期卵巢癌预后好，但早期发现困难"
+      },
+      "肾癌": {
+        "stage1_5y_os": 90.0,
+        "late_stage_5y_os": 30.0,
+        "survival_gain_5y": 60.0,
+        "expected_life_years_gained": 8.0,
+        "early_detection_rate": 0.20,
+        "treatment_coefficient": 0.85,
+        "note": "小肾癌可部分切除，保留肾功能"
+      },
+      "头颈肿瘤": {
+        "stage1_5y_os": 75.0,
+        "late_stage_5y_os": 35.0,
+        "survival_gain_5y": 40.0,
+        "expected_life_years_gained": 5.0,
+        "early_detection_rate": 0.15,
+        "treatment_coefficient": 0.80,
+        "note": "鼻咽癌放疗敏感，早期治愈率高"
+      },
+      "胆道肿瘤": {
+        "stage1_5y_os": 25.0,
+        "late_stage_5y_os": 5.5,
+        "survival_gain_5y": 19.5,
+        "expected_life_years_gained": 2.5,
+        "early_detection_rate": 0.08,
+        "treatment_coefficient": 0.70,
+        "note": "胆道肿瘤整体预后差，早期诊断困难"
+      },
+      "胰腺癌": {
+        "stage1_5y_os": 20.0,
+        "late_stage_5y_os": 5.0,
+        "survival_gain_5y": 15.0,
+        "expected_life_years_gained": 2.0,
+        "early_detection_rate": 0.08,
+        "treatment_coefficient": 0.65,
+        "note": "胰腺癌预后最差，但早期发现仍有手术根治机会"
+      }
+    }
+  },
+  "screening_cost_qaly": {
+    "description": "各筛查手段的成本效益参数（用于VoI优化排序）",
+    "methods": {
+      "LDCT": {"cost_rmb": 500, "qaly_weight": 0.95, "discomfort": 0.01, "radiation_risk": 0.001},
+      "腹部超声": {"cost_rmb": 200, "qaly_weight": 0.99, "discomfort": 0.005, "radiation_risk": 0},
+      "胃镜": {"cost_rmb": 800, "qaly_weight": 0.85, "discomfort": 0.10, "radiation_risk": 0},
+      "肠镜": {"cost_rmb": 1000, "qaly_weight": 0.80, "discomfort": 0.15, "radiation_risk": 0},
+      "乳腺超声": {"cost_rmb": 200, "qaly_weight": 0.99, "discomfort": 0.005, "radiation_risk": 0},
+      "乳腺钼靶": {"cost_rmb": 400, "qaly_weight": 0.95, "discomfort": 0.03, "radiation_risk": 0.0005},
+      "TCT_HPV": {"cost_rmb": 500, "qaly_weight": 0.95, "discomfort": 0.02, "radiation_risk": 0},
+      "PSA": {"cost_rmb": 100, "qaly_weight": 0.99, "discomfort": 0.005, "radiation_risk": 0},
+      "CA125_超声": {"cost_rmb": 400, "qaly_weight": 0.98, "discomfort": 0.01, "radiation_risk": 0},
+      "吉早安液体活检": {"cost_rmb": 3000, "qaly_weight": 0.99, "discomfort": 0.005, "radiation_risk": 0},
+      "增强CT": {"cost_rmb": 2000, "qaly_weight": 0.95, "discomfort": 0.02, "radiation_risk": 0.002},
+      "MRI": {"cost_rmb": 3000, "qaly_weight": 0.95, "discomfort": 0.02, "radiation_risk": 0},
+      "PET_CT": {"cost_rmb": 8000, "qaly_weight": 0.90, "discomfort": 0.03, "radiation_risk": 0.005}
+    }
+  },
+  "voi_thresholds": {
+    "description": "VoI评分阈值，用于决策推荐等级",
+    "high_benefit": {"threshold": 20, "label": "强烈推荐", "description": "期望生存增益>20 QALY-months"},
+    "medium_benefit": {"threshold": 10, "label": "推荐", "description": "期望生存增益10-20 QALY-months"},
+    "low_benefit": {"threshold": 5, "label": "可考虑", "description": "期望生存增益5-10 QALY-months"},
+    "minimal_benefit": {"threshold": 0, "label": "常规", "description": "期望生存增益<5 QALY-months"}
+  },
+  "negative_result_value": {
+    "description": "阴性结果的心理和行为价值",
+    "anxiety_reduction_qaly": 0.02,
+    "unnecessary_test_avoidance_qaly": 0.01,
+    "note": "阴性结果可降低焦虑、减少不必要的侵入性检查"
+  }
+}

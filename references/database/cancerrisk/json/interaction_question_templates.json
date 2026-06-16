@@ -1,0 +1,242 @@
+{
+  "questions": [
+    {
+      "question_group": "smoking_general",
+      "factor_id": "smoking_general",
+      "prompt": "请补充：吸烟 是否存在？",
+      "factor_type": "lifestyle",
+      "options": [
+        {
+          "value": "yes",
+          "label": "是",
+          "updates": [
+            {
+              "assertion_key": "gastric_cancer|smoking_general|present|asrt_gastric_cancer_smoking_general",
+              "exists": true
+            },
+            {
+              "assertion_key": "colorectal_cancer|smoking_general|present|asrt_colorectal_cancer_smoking_general",
+              "exists": true
+            },
+            {
+              "assertion_key": "cervical_cancer|smoking_general|present|asrt_cervical_cancer_smoking_general",
+              "exists": true
+            },
+            {
+              "assertion_key": "head_neck_cancer|smoking_general|present|asrt_head_neck_cancer_smoking_general",
+              "exists": true
+            },
+            {
+              "assertion_key": "biliary_tract_cancer|smoking_general|present|asrt_biliary_tract_cancer_smoking_general",
+              "exists": true
+            }
+          ]
+        },
+        {
+          "value": "no",
+          "label": "否",
+          "updates": [
+            {
+              "assertion_key": "gastric_cancer|smoking_general|present|asrt_gastric_cancer_smoking_general",
+              "exists": false
+            },
+            {
+              "assertion_key": "colorectal_cancer|smoking_general|present|asrt_colorectal_cancer_smoking_general",
+              "exists": false
+            },
+            {
+              "assertion_key": "cervical_cancer|smoking_general|present|asrt_cervical_cancer_smoking_general",
+              "exists": false
+            },
+            {
+              "assertion_key": "head_neck_cancer|smoking_general|present|asrt_head_neck_cancer_smoking_general",
+              "exists": false
+            },
+            {
+              "assertion_key": "biliary_tract_cancer|smoking_general|present|asrt_biliary_tract_cancer_smoking_general",
+              "exists": false
+            }
+          ]
+        },
+        {
+          "value": "unknown",
+          "label": "不清楚/暂不提供",
+          "updates": [
+            {
+              "assertion_key": "gastric_cancer|smoking_general|present|asrt_gastric_cancer_smoking_general",
+              "exists": "unknown"
+            },
+            {
+              "assertion_key": "colorectal_cancer|smoking_general|present|asrt_colorectal_cancer_smoking_general",
+              "exists": "unknown"
+            },
+            {
+              "assertion_key": "cervical_cancer|smoking_general|present|asrt_cervical_cancer_smoking_general",
+              "exists": "unknown"
+            },
+            {
+              "assertion_key": "head_neck_cancer|smoking_general|present|asrt_head_neck_cancer_smoking_general",
+              "exists": "unknown"
+            },
+            {
+              "assertion_key": "biliary_tract_cancer|smoking_general|present|asrt_biliary_tract_cancer_smoking_general",
+              "exists": "unknown"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "question_group": "smoking_continuous",
+      "factor_id": "smoking_continuous",
+      "prompt": "请补充：吸烟(持续吸烟) 是否存在？",
+      "factor_type": "lifestyle",
+      "options": [
+        {
+          "value": "yes",
+          "label": "是",
+          "updates": [
+            {
+              "assertion_key": "lung_cancer|smoking_continuous|present|asrt_lung_cancer_smoking_continuous",
+              "exists": true
+            }
+          ]
+        },
+        {
+          "value": "no",
+          "label": "否",
+          "updates": [
+            {
+              "assertion_key": "lung_cancer|smoking_continuous|present|asrt_lung_cancer_smoking_continuous",
+              "exists": false
+            }
+          ]
+        },
+        {
+          "value": "unknown",
+          "label": "不清楚/暂不提供",
+          "updates": [
+            {
+              "assertion_key": "lung_cancer|smoking_continuous|present|asrt_lung_cancer_smoking_continuous",
+              "exists": "unknown"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "question_group": "alcohol_30g_per_day",
+      "factor_id": "alcohol_30g_per_day",
+      "prompt": "请补充：饮酒≥30g/天 是否存在？",
+      "factor_type": "lifestyle",
+      "options": [
+        {
+          "value": "yes",
+          "label": "是",
+          "updates": [
+            {
+              "assertion_key": "colorectal_cancer|alcohol_30g_per_day|present|asrt_colorectal_cancer_alcohol_30g_per_day",
+              "exists": true
+            }
+          ]
+        },
+        {
+          "value": "no",
+          "label": "否",
+          "updates": [
+            {
+              "assertion_key": "colorectal_cancer|alcohol_30g_per_day|present|asrt_colorectal_cancer_alcohol_30g_per_day",
+              "exists": false
+            }
+          ]
+        },
+        {
+          "value": "unknown",
+          "label": "不清楚/暂不提供",
+          "updates": [
+            {
+              "assertion_key": "colorectal_cancer|alcohol_30g_per_day|present|asrt_colorectal_cancer_alcohol_30g_per_day",
+              "exists": "unknown"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "question_group": "h_pylori",
+      "factor_id": "h_pylori",
+      "prompt": "请补充：幽门螺杆菌(H. pylori)感染 是否存在？",
+      "factor_type": "medical_history",
+      "options": [
+        {
+          "value": "yes",
+          "label": "是",
+          "updates": [
+            {
+              "assertion_key": "gastric_cancer|h_pylori|present|asrt_gastric_cancer_h_pylori",
+              "exists": true
+            }
+          ]
+        },
+        {
+          "value": "no",
+          "label": "否",
+          "updates": [
+            {
+              "assertion_key": "gastric_cancer|h_pylori|present|asrt_gastric_cancer_h_pylori",
+              "exists": false
+            }
+          ]
+        },
+        {
+          "value": "unknown",
+          "label": "不清楚/暂不提供",
+          "updates": [
+            {
+              "assertion_key": "gastric_cancer|h_pylori|present|asrt_gastric_cancer_h_pylori",
+              "exists": "unknown"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "question_group": "family_history_first_degree",
+      "factor_id": "family_history_first_degree",
+      "prompt": "请补充：家族史(一级亲属) 是否存在？",
+      "factor_type": "family_history",
+      "options": [
+        {
+          "value": "yes",
+          "label": "是",
+          "updates": [
+            {
+              "assertion_key": "lung_cancer|family_history_first_degree|present|asrt_lung_cancer_family_history_first_degree",
+              "exists": true
+            }
+          ]
+        },
+        {
+          "value": "no",
+          "label": "否",
+          "updates": [
+            {
+              "assertion_key": "lung_cancer|family_history_first_degree|present|asrt_lung_cancer_family_history_first_degree",
+              "exists": false
+            }
+          ]
+        },
+        {
+          "value": "unknown",
+          "label": "不清楚/暂不提供",
+          "updates": [
+            {
+              "assertion_key": "lung_cancer|family_history_first_degree|present|asrt_lung_cancer_family_history_first_degree",
+              "exists": "unknown"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,219 @@
+{
+  "recommendations": [
+    {
+      "cancer_id": "lung_cancer",
+      "cancer_name": "肺癌",
+      "standard_screening": [
+        {
+          "method": "低剂量螺旋CT (LDCT)",
+          "population": "50-75岁、吸烟≥20包年或戒烟<15年",
+          "interval": "每年1次",
+          "trigger": "高危人群",
+          "source_id": "guideline_uspstf_2021"
+        }
+      ]
+    },
+    {
+      "cancer_id": "liver_cancer",
+      "cancer_name": "肝癌",
+      "standard_screening": [
+        {
+          "method": "腹部超声 + AFP",
+          "population": "HBV/HCV感染者、肝硬化、肝癌家族史",
+          "interval": "每6个月1次",
+          "trigger": "高危人群",
+          "source_id": "guideline_china_liver_2022"
+        }
+      ]
+    },
+    {
+      "cancer_id": "gastric_cancer",
+      "cancer_name": "胃癌",
+      "standard_screening": [
+        {
+          "method": "胃镜",
+          "population": "40岁以上、萎缩性胃炎/肠化、Hp感染、家族史",
+          "interval": "每2-3年1次或按医生建议",
+          "trigger": "高危人群",
+          "source_id": "guideline_china_gastric_2022"
+        }
+      ]
+    },
+    {
+      "cancer_id": "esophageal_cancer",
+      "cancer_name": "食管癌",
+      "standard_screening": [
+        {
+          "method": "胃镜",
+          "population": "40岁以上高发地区、Barrett食管、长期GERD",
+          "interval": "每3-5年1次",
+          "trigger": "高危人群",
+          "source_id": "guideline_china_esophageal_2022"
+        }
+      ]
+    },
+    {
+      "cancer_id": "colorectal_cancer",
+      "cancer_name": "结直肠癌",
+      "standard_screening": [
+        {
+          "method": "结肠镜",
+          "population": "45-75岁、家族史、腺瘤性息肉史、IBD",
+          "interval": "5-10年1次或按医生建议",
+          "trigger": "高危人群",
+          "source_id": "guideline_uspstf_2021"
+        },
+        {
+          "method": "FIT (粪便免疫化学检测)",
+          "population": "45-75岁",
+          "interval": "每年1次",
+          "trigger": "一般风险人群",
+          "source_id": "guideline_uspstf_2021"
+        }
+      ]
+    },
+    {
+      "cancer_id": "breast_cancer",
+      "cancer_name": "乳腺癌",
+      "standard_screening": [
+        {
+          "method": "乳腺钼靶 + 乳腺超声",
+          "population": "40岁以上女性",
+          "interval": "每1-2年1次",
+          "trigger": "一般风险人群",
+          "source_id": "guideline_china_breast_2022"
+        }
+      ]
+    },
+    {
+      "cancer_id": "cervical_cancer",
+      "cancer_name": "宫颈癌",
+      "standard_screening": [
+        {
+          "method": "HPV分型 + 宫颈TCT",
+          "population": "21-65岁女性",
+          "interval": "每3-5年1次",
+          "trigger": "一般风险人群",
+          "source_id": "guideline_china_cervical_2022"
+        }
+      ]
+    },
+    {
+      "cancer_id": "prostate_cancer",
+      "cancer_name": "前列腺癌",
+      "standard_screening": [
+        {
+          "method": "PSA",
+          "population": "50岁以上男性 (或45岁起若有家族史)",
+          "interval": "每1-2年1次",
+          "trigger": "一般风险人群",
+          "source_id": "guideline_china_prostate_2022"
+        }
+      ]
+    },
+    {
+      "cancer_id": "bladder_cancer",
+      "cancer_name": "膀胱癌",
+      "standard_screening": [
+        {
+          "method": "尿沉渣 + 泌尿超声",
+          "population": "职业暴露史、慢性尿路感染、吸烟",
+          "interval": "按医生建议",
+          "trigger": "高危人群",
+          "source_id": "guideline_china_urology_2022"
+        }
+      ]
+    },
+    {
+      "cancer_id": "ovarian_cancer",
+      "cancer_name": "卵巢癌",
+      "standard_screening": [
+        {
+          "method": "经阴道超声 + CA125",
+          "population": "BRCA1/2 携带者、卵巢癌家族史",
+          "interval": "每6-12个月1次",
+          "trigger": "高危人群",
+          "source_id": "guideline_china_ovarian_2022"
+        }
+      ]
+    },
+    {
+      "cancer_id": "kidney_cancer",
+      "cancer_name": "肾癌",
+      "standard_screening": [
+        {
+          "method": "不推荐对一般人群筛查",
+          "population": "一般人群",
+          "interval": "不适用",
+          "trigger": "一般人群",
+          "source_id": "PMC10160199_EAU2024_RCC_no_screening",
+          "note": "EAU 2024 指南及系统综述：不推荐对任何人群常规筛查 RCC；遗传综合征(如 VHL)高危人群可考虑靶向监测但证据有限、无标准间隔（待定）"
+        }
+      ]
+    },
+    {
+      "cancer_id": "head_neck_cancer",
+      "cancer_name": "头颈肿瘤",
+      "standard_screening": [
+        {
+          "method": "鼻咽癌(NPC)EBV 抗体血清筛查 (VCA-IgA + EBNA1-IgA)",
+          "population": "中国南方高发区居民，30–69 岁（非高发区不推荐）",
+          "interval": "高发区定期筛查（具体间隔参照当地卫生部门指引）",
+          "trigger": "高危人群（鼻咽癌高发区居民）",
+          "source_id": "PMC11249388_NPC_EBV_screening",
+          "note": "中国卫生部推荐：鼻咽癌高发区 30-69 岁使用 EBV 抗体(VCA-IgA/EBNA1-IgA)筛查；口腔癌/喉癌目前无权威人群筛查推荐（待定）"
+        }
+      ]
+    },
+    {
+      "cancer_id": "biliary_tract_cancer",
+      "cancer_name": "胆道肿瘤",
+      "standard_screening": [
+        {
+          "method": "不推荐对一般人群筛查",
+          "population": "一般人群",
+          "interval": "不适用",
+          "trigger": "一般人群",
+          "source_id": "cancer_org_gallbladder_no_screening",
+          "note": "目前无可靠且成本效益合理的胆道癌早筛工具；多来源指南明确不推荐一般人群筛查"
+        },
+        {
+          "method": "MRI/MRCP ± CA19-9",
+          "population": "原发性硬化性胆管炎(PSC)患者",
+          "interval": "每年1次",
+          "trigger": "高危人群(PSC)",
+          "source_id": "PMC3205332_AASLD_PSC_screening",
+          "note": "AASLD 指南推荐 PSC 患者年度 MRI/MRCP 监测（胆管癌终生风险 5-20%）"
+        }
+      ]
+    },
+    {
+      "cancer_id": "thyroid_cancer",
+      "cancer_name": "甲状腺癌",
+      "standard_screening": [
+        {
+          "method": "甲状腺超声（TI-RADS 系统分类）",
+          "population": "高危人群：有儿童期头颈放疗史、一级亲属甲状腺癌史、MEN2/RET 突变",
+          "interval": "高危人群定期随访（具体间隔遵医嘱）",
+          "trigger": "高危人群",
+          "source_id": "guideline_china_thyroid_2022",
+          "note": "一般人群不推荐常规筛查；超声 TI-RADS 系统用于已发现结节的恶性风险分层（非人群筛查工具）"
+        }
+      ]
+    },
+    {
+      "cancer_id": "pancreatic_cancer",
+      "cancer_name": "胰腺癌",
+      "standard_screening": [
+        {
+          "method": "不推荐对一般人群筛查；高危人群 EUS 或 MRI/MRCP",
+          "population": "高危人群：家族性胰腺癌(≥2名一级亲属)、BRCA2/PALB2/ATM 携带者、Lynch 综合征",
+          "interval": "每年1次（高危人群）",
+          "trigger": "高危人群",
+          "source_id": "guideline_china_pancreatic_2022",
+          "note": "一般人群无证据支持常规筛查；高危人群 NCCN/IAMP 推荐年度 EUS 或 MRI/MRCP"
+        }
+      ]
+    }
+  ]
+}

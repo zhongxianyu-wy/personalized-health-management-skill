@@ -1,0 +1,338 @@
+{
+  "schema_version": "imaging-findings-ontology-v1",
+  "metadata": {
+    "source_doc": "oncoRAG/raw/补充调研文档.md § 1.2 影像学指标权重",
+    "derived_from": "Fleischner Society 2017 + ACR BI-RADS + Kwak TI-RADS 2011",
+    "semantics": "Each finding_id gives a malignancy PPV range for the SPECIFIC lesion that was found (NOT a risk factor for future incidence). PPVs are NOT additive with OR-based Bayes log-odds — snapshot_risk uses max(bayes_posterior, max_ppv_midpoint) per cancer and reports the dominant source in posterior_source.narrative.",
+    "ppv_point_rule": "snapshot_risk uses the midpoint of malignancy_ppv_range as the comparison value; lesion size records should keep the maximum measured size separately.",
+    "pending_ppv_cancers": [
+      "liver_cancer",
+      "gastric_cancer",
+      "colorectal_cancer",
+      "esophageal_cancer",
+      "cervical_cancer",
+      "prostate_cancer",
+      "bladder_cancer",
+      "ovarian_cancer",
+      "kidney_cancer",
+      "head_neck_cancer",
+      "biliary_tract_cancer"
+    ],
+    "pending_ppv_note": "A2a: 这些癌种暂无影像 PPV 分级数据，待补充材料后填入。当前仅靠 OR 路径评估。"
+  },
+  "findings": [
+    {
+      "finding_id": "lung_nodule_lt5mm",
+      "finding_name_zh": "肺结节 <5mm",
+      "finding_name_en": "Lung nodule <5mm",
+      "cancer_id": "lung_cancer",
+      "malignancy_ppv_range": [
+        0.0,
+        0.01
+      ],
+      "source_id": "Fleischner Society 2017",
+      "next_step": "若低危人群可不随访；高危人群 12 月随访 LDCT"
+    },
+    {
+      "finding_id": "lung_nodule_5_8mm",
+      "finding_name_zh": "肺结节 5-8mm",
+      "finding_name_en": "Lung nodule 5-8mm",
+      "cancer_id": "lung_cancer",
+      "malignancy_ppv_range": [
+        0.01,
+        0.15
+      ],
+      "source_id": "Fleischner Society 2017",
+      "next_step": "6-12 月 LDCT 随访；可疑形态考虑 PET-CT"
+    },
+    {
+      "finding_id": "lung_nodule_gt8mm",
+      "finding_name_zh": "肺结节 >8mm",
+      "finding_name_en": "Lung nodule >8mm",
+      "cancer_id": "lung_cancer",
+      "malignancy_ppv_range": [
+        0.15,
+        0.5
+      ],
+      "source_id": "Fleischner Society 2017",
+      "next_step": "PET-CT 评估代谢活性；考虑活检或 3 月短期随访"
+    },
+    {
+      "finding_id": "lung_nodule_ggo",
+      "finding_name_zh": "肺磨玻璃密度结节",
+      "finding_name_en": "Pure ground-glass nodule (GGO)",
+      "cancer_id": "lung_cancer",
+      "malignancy_ppv_range": [
+        0.1,
+        0.3
+      ],
+      "source_id": "Henschke CI 2013 (Radiology)",
+      "next_step": "高分辨率 CT 随访 3-6 月；持续性 GGO 考虑活检"
+    },
+    {
+      "finding_id": "lung_nodule_part_solid",
+      "finding_name_zh": "肺部分实性结节",
+      "finding_name_en": "Part-solid lung nodule",
+      "cancer_id": "lung_cancer",
+      "malignancy_ppv_range": [
+        0.3,
+        0.5
+      ],
+      "source_id": "Fleischner Society 2017",
+      "next_step": "尽快胸外科会诊；多数需要活检或手术切除"
+    },
+    {
+      "finding_id": "lung_nodule_spiculated",
+      "finding_name_zh": "肺结节伴毛刺征",
+      "finding_name_en": "Lung nodule with spiculation",
+      "cancer_id": "lung_cancer",
+      "malignancy_ppv_range": [
+        0.5,
+        0.8
+      ],
+      "source_id": "MacMahon H 2017",
+      "next_step": "高度提示恶性，建议胸外科活检/手术"
+    },
+    {
+      "finding_id": "breast_birads_3",
+      "finding_name_zh": "乳腺 BI-RADS 3 (可能良性)",
+      "finding_name_en": "Breast BI-RADS 3",
+      "cancer_id": "breast_cancer",
+      "malignancy_ppv_range": [
+        0.0,
+        0.02
+      ],
+      "source_id": "ACR BI-RADS",
+      "next_step": "6 个月短期随访乳腺 X 线 / 超声"
+    },
+    {
+      "finding_id": "breast_birads_4a",
+      "finding_name_zh": "乳腺 BI-RADS 4A (低度可疑)",
+      "finding_name_en": "Breast BI-RADS 4A",
+      "cancer_id": "breast_cancer",
+      "malignancy_ppv_range": [
+        0.02,
+        0.1
+      ],
+      "source_id": "ACR BI-RADS",
+      "next_step": "建议活检（粗针穿刺或细针穿刺）"
+    },
+    {
+      "finding_id": "breast_birads_4b",
+      "finding_name_zh": "乳腺 BI-RADS 4B (中度可疑)",
+      "finding_name_en": "Breast BI-RADS 4B",
+      "cancer_id": "breast_cancer",
+      "malignancy_ppv_range": [
+        0.1,
+        0.5
+      ],
+      "source_id": "ACR BI-RADS",
+      "next_step": "强烈建议活检"
+    },
+    {
+      "finding_id": "breast_birads_4c",
+      "finding_name_zh": "乳腺 BI-RADS 4C (高度可疑)",
+      "finding_name_en": "Breast BI-RADS 4C",
+      "cancer_id": "breast_cancer",
+      "malignancy_ppv_range": [
+        0.5,
+        0.95
+      ],
+      "source_id": "ACR BI-RADS",
+      "next_step": "活检 + 乳腺外科会诊"
+    },
+    {
+      "finding_id": "breast_birads_5",
+      "finding_name_zh": "乳腺 BI-RADS 5 (高度提示恶性)",
+      "finding_name_en": "Breast BI-RADS 5",
+      "cancer_id": "breast_cancer",
+      "malignancy_ppv_range": [
+        0.95,
+        1.0
+      ],
+      "source_id": "ACR BI-RADS",
+      "next_step": "活检确诊；乳腺外科紧急会诊安排手术"
+    },
+    {
+      "finding_id": "thyroid_tirads_3",
+      "finding_name_zh": "甲状腺 TI-RADS 3 (可能良性)",
+      "finding_name_en": "Thyroid TI-RADS 3",
+      "cancer_id": "thyroid_cancer",
+      "malignancy_ppv_range": [
+        0.0,
+        0.05
+      ],
+      "source_id": "Kwak TI-RADS 2011",
+      "next_step": "12 月超声随访"
+    },
+    {
+      "finding_id": "thyroid_tirads_4a",
+      "finding_name_zh": "甲状腺 TI-RADS 4A (低度可疑)",
+      "finding_name_en": "Thyroid TI-RADS 4A",
+      "cancer_id": "thyroid_cancer",
+      "malignancy_ppv_range": [
+        0.05,
+        0.1
+      ],
+      "source_id": "Kwak TI-RADS 2011",
+      "next_step": "考虑细针穿刺活检 (FNA)"
+    },
+    {
+      "finding_id": "thyroid_tirads_4b_4c",
+      "finding_name_zh": "甲状腺 TI-RADS 4B/4C (中高度可疑)",
+      "finding_name_en": "Thyroid TI-RADS 4B/4C",
+      "cancer_id": "thyroid_cancer",
+      "malignancy_ppv_range": [
+        0.1,
+        0.5
+      ],
+      "source_id": "Kwak TI-RADS 2011",
+      "next_step": "强烈建议细针穿刺活检 (FNA)"
+    },
+    {
+      "finding_id": "thyroid_tirads_5",
+      "finding_name_zh": "甲状腺 TI-RADS 5 (高度提示恶性)",
+      "finding_name_en": "Thyroid TI-RADS 5",
+      "cancer_id": "thyroid_cancer",
+      "malignancy_ppv_range": [
+        0.9,
+        1.0
+      ],
+      "source_id": "Kwak TI-RADS 2011",
+      "next_step": "FNA 确诊；甲状腺外科会诊"
+    },
+    {
+      "finding_id": "thyroid_nodule_with_calcification",
+      "finding_name_zh": "甲状腺结节伴钙化（未明分级）",
+      "finding_name_en": "Thyroid nodule with calcification (grade unspecified)",
+      "cancer_id": "thyroid_cancer",
+      "malignancy_ppv_range": [
+        0.1,
+        0.5
+      ],
+      "source_id": "Kwak TI-RADS 2011 (按 4B/4C 估计)",
+      "next_step": "建议甲状腺专科行超声细分级 + FNA 评估",
+      "notes": "中国体检报告常只写'结节伴钙化'未给 TI-RADS 分级；伴钙化属高风险征象，按 4B/4C 处置"
+    },
+    {
+      "finding_id": "pancreatic_duct_dilation_5_10mm",
+      "finding_name_zh": "主胰管扩张5-10mm（无明确病因）",
+      "finding_name_en": "pancreatic_duct_dilation_5_10mm",
+      "cancer_id": "pancreatic_cancer",
+      "malignancy_ppv_range": [
+        0.05,
+        0.3
+      ],
+      "source_id": "Del Chiaro M, et al. Gut 2019; Tanaka M, et al. J Gastroenterol 2018 (Fukuoka Guidelines)",
+      "next_step": "EUS/MRI进一步评估; 排除慢性胰腺炎"
+    },
+    {
+      "finding_id": "pancreatic_duct_dilation_gt10mm",
+      "finding_name_zh": "主胰管扩张>10mm（无明确病因）",
+      "finding_name_en": "pancreatic_duct_dilation_gt10mm",
+      "cancer_id": "pancreatic_cancer",
+      "malignancy_ppv_range": [
+        0.2,
+        0.5
+      ],
+      "source_id": "Tanaka M, et al. J Gastroenterol 2018; International Consensus Guidelines 2017/2018",
+      "next_step": "高度怀疑恶性; 需EUS+FNA确认"
+    },
+    {
+      "finding_id": "pancreatic_md_ipmn_5_10mm",
+      "finding_name_zh": "主胰管型IPMN，主胰管扩张5-10mm",
+      "finding_name_en": "pancreatic_md_ipmn_5_10mm",
+      "cancer_id": "pancreatic_cancer",
+      "malignancy_ppv_range": [
+        0.15,
+        0.4
+      ],
+      "source_id": "Tanaka M, et al. Pancreatology 2024; Yamada S, et al. Surgery 2022",
+      "next_step": "建议手术评估"
+    },
+    {
+      "finding_id": "pancreatic_md_ipmn_gt10mm",
+      "finding_name_zh": "主胰管型IPMN，主胰管扩张>10mm",
+      "finding_name_en": "pancreatic_md_ipmn_gt10mm",
+      "cancer_id": "pancreatic_cancer",
+      "malignancy_ppv_range": [
+        0.3,
+        0.6
+      ],
+      "source_id": "Tanaka M, et al. Pancreatology 2024; International Consensus Guidelines",
+      "next_step": "强烈推荐手术切除"
+    },
+    {
+      "finding_id": "pancreatic_bd_ipmn_lt3cm",
+      "finding_name_zh": "分支型IPMN，<3cm，无高危特征",
+      "finding_name_en": "pancreatic_bd_ipmn_lt3cm",
+      "cancer_id": "pancreatic_cancer",
+      "malignancy_ppv_range": [
+        0.02,
+        0.1
+      ],
+      "source_id": "Tanaka M, et al. Pancreatology 2024; European Evidence-Based Guidelines",
+      "next_step": "定期影像随访即可"
+    },
+    {
+      "finding_id": "pancreatic_bd_ipmn_high_risk",
+      "finding_name_zh": "分支型IPMN伴高危特征（壁结节/主胰管扩张≥10mm/≥3cm）",
+      "finding_name_en": "pancreatic_bd_ipmn_high_risk",
+      "cancer_id": "pancreatic_cancer",
+      "malignancy_ppv_range": [
+        0.1,
+        0.35
+      ],
+      "source_id": "Tanaka M, et al. Pancreatology 2024; Roch AM, et al. Ann Surg 2022",
+      "next_step": "建议手术评估"
+    },
+    {
+      "finding_id": "pancreatic_mcn",
+      "finding_name_zh": "胰腺黏液性囊性肿瘤（MCN）",
+      "finding_name_en": "pancreatic_mcn",
+      "cancer_id": "pancreatic_cancer",
+      "malignancy_ppv_range": [
+        0.05,
+        0.2
+      ],
+      "source_id": "European Evidence-Based Guidelines; Crippa S, et al. Ann Surg 2019",
+      "next_step": "几乎仅见于女性; >4cm或有壁结节时建议手术"
+    },
+    {
+      "finding_id": "pancreatic scn",
+      "finding_name_zh": "胰腺浆液性囊腺瘤（SCN）",
+      "finding_name_en": "pancreatic scn",
+      "cancer_id": "pancreatic_cancer",
+      "malignancy_ppv_range": [
+        0.0,
+        0.005
+      ],
+      "source_id": "European Evidence-Based Guidelines; Khashab MA, et al. Clin Gastroenterol Hepatol 2016",
+      "next_step": "几乎均为良性; 无症状小病变可随访"
+    },
+    {
+      "finding_id": "pancreatic_solid_mass",
+      "finding_name_zh": "胰腺实性占位（CT/MRI发现）",
+      "finding_name_en": "pancreatic_solid_mass",
+      "cancer_id": "pancreatic_cancer",
+      "malignancy_ppv_range": [
+        0.55,
+        0.85
+      ],
+      "source_id": "Del Chiaro M, et al. Gut 2019; NCCN Pancreatic Adenocarcinoma Guidelines v2.2025",
+      "next_step": "高度怀疑导管腺癌; 需EUS-FNA确认"
+    },
+    {
+      "finding_id": "pancreatic_atrophy_with_signs",
+      "finding_name_zh": "胰腺萎缩（伴其他高危征象）",
+      "finding_name_en": "pancreatic_atrophy_with_signs",
+      "cancer_id": "pancreatic_cancer",
+      "malignancy_ppv_range": [
+        0.03,
+        0.25
+      ],
+      "source_id": "Del Chiaro M, et al. Gut 2019",
+      "next_step": "单独不特异; 结合主胰管扩张或糖尿病提高预测价值"
+    }
+  ]
+}

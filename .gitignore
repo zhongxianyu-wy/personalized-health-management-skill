@@ -1,0 +1,20 @@
+# 用户档案与分析结果（隐私，不提交）
+output/
+
+# 本地配置（含真实 MinerU/金百森 token，不提交）
+config/local.yaml
+
+# Python 缓存
+__pycache__/
+*.pyc
+*.pyo
+.pytest_cache/
+
+# 系统
+.DS_Store
+
+# IDE / 编辑器
+.vscode/
+.idea/
+*.swp
+*.swo

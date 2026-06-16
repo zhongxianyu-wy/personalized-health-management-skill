@@ -1,0 +1,15 @@
+{
+  "version": "evidence-v0002",
+  "built_at": "2026-05-13T18:54:26Z",
+  "source": {
+    "v2_evidence_store": "cancerrisk-skill/evidence_store",
+    "oncorag_source_path": "/Volumes/exp/geneplu_work/1.skill_tijian/28.project_tijian/oncoRAG"
+  },
+  "counts": {
+    "cancers": 13,
+    "risk_factors": 101,
+    "assertions": 111,
+    "detection_tests": 7,
+    "screening_cancers": 13
+  }
+}

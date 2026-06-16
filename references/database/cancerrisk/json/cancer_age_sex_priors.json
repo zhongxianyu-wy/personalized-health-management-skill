@@ -1,0 +1,1948 @@
+{
+    "schema_version": "cancer-prior-v1",
+    "metadata": {
+        "source": "GLOBOCAN 2013-2017, China (IARC)",
+        "unit": "1/100,000",
+        "derived_from": "cancerrisk-skill/evidence_store/ontology/incidence_rates_raw.json",
+        "default_source_id": "globocan_2022",
+        "estimation_notes": {
+            "pancreatic_cancer": "Model-estimated age-specific incidence for pancreatic cancer in China. Based on NCCR 2011 ASIRW (male 4.95, female 3.55 per 100,000) and age-distribution curves from Chinese cancer registry literature (peak ~75-80 years, negligible before age 40). Source ID for these priors: 'model_estimated_nccr2011'."
+        },
+        "source_notes": {
+            "thyroid_cancer": "Age-sex specific incidence for thyroid cancer in China from IARC Global Cancer Observatory, Cancer Today, GLOBOCAN 2022 v1.1 / 2022ps API. Country code 156, cancer code 32 (C73). Source ID for these priors: 'globocan_2022_gco_api'."
+        }
+    },
+    "lookup_rule": {
+        "between_anchors": "nearest_lower_anchor",
+        "above_max_age": "use_max_age_value",
+        "below_min_age": "use_min_age_value"
+    },
+    "cancers": [
+        {
+            "cancer_id": "biliary_tract_cancer",
+            "cancer_name_zh": "胆道肿瘤",
+            "applicable_sex": "all",
+            "priors": [
+                {
+                    "sex": "male",
+                    "age": 30,
+                    "annual_incidence_per_100000": 0.27,
+                    "annual_probability": 2.7e-06,
+                    "source_id": "globocan_2022"
+                },
+                {
+                    "sex": "male",
+                    "age": 35,
+                    "annual_incidence_per_100000": 0.67,
+                    "annual_probability": 6.7e-06,
+                    "source_id": "globocan_2022"
+                },
+                {
+                    "sex": "male",
+                    "age": 40,
+                    "annual_incidence_per_100000": 0.64,
+                    "annual_probability": 6.4e-06,
+                    "source_id": "globocan_2022"
+                },
+                {
+                    "sex": "male",
+                    "age": 45,
+                    "annual_incidence_per_100000": 2.5,
+                    "annual_probability": 2.5e-05,
+                    "source_id": "globocan_2022"
+                },
+                {
+                    "sex": "male",
+                    "age": 50,
+                    "annual_incidence_per_100000": 4.19,
+                    "annual_probability": 4.19e-05,
+                    "source_id": "globocan_2022"
+                },
+                {
+                    "sex": "male",
+                    "age": 55,
+                    "annual_incidence_per_100000": 6.88,
+                    "annual_probability": 6.88e-05,
+                    "source_id": "globocan_2022"
+                },
+                {
+                    "sex": "male",
+                    "age": 60,
+                    "annual_incidence_per_100000": 11.69,
+                    "annual_probability": 0.0001169,
+                    "source_id": "globocan_2022"
+                },
+                {
+                    "sex": "male",
+                    "age": 65,
+                    "annual_incidence_per_100000": 16.93,
+                    "annual_probability": 0.0001693,
+                    "source_id": "globocan_2022"
+                },
+                {
+                    "sex": "male",
+                    "age": 70,
+                    "annual_incidence_per_100000": 22.44,
+                    "annual_probability": 0.0002244,
+                    "source_id": "globocan_2022"
+                },
+                {
+                    "sex": "male",
+                    "age": 75,
+                    "annual_incidence_per_100000": 36.1,
+                    "annual_probability": 0.000361,
+                    "source_id": "globocan_2022"
+                },
+                {
+                    "sex": "female",
+                    "age": 30,
+                    "annual_incidence_per_100000": 0.31,
+                    "annual_probability": 3.1e-06,
+                    "source_id": "globocan_2022"
+                },
+                {
+                    "sex": "female",
+                    "age": 35,
+                    "annual_incidence_per_100000": 0.62,
+                    "annual_probability": 6.2e-06,
+                    "source_id": "globocan_2022"
+                },
+                {
+                    "sex": "female",
+                    "age": 40,
+                    "annual_incidence_per_100000": 0.93,
+                    "annual_probability": 9.3e-06,
+                    "source_id": "globocan_2022"
+                },
+                {
+                    "sex": "female",
+                    "age": 45,
+                    "annual_incidence_per_100000": 2.8,
+                    "annual_probability": 2.8e-05,
+                    "source_id": "globocan_2022"
+                },
+                {
+                    "sex": "female",
+                    "age": 50,
+                    "annual_incidence_per_100000": 3.77,
+                    "annual_probability": 3.77e-05,
+                    "source_id": "globocan_2022"
+                },
+                {
+                    "sex": "female",
+                    "age": 55,
+                    "annual_incidence_per_100000": 7.04,
+                    "annual_probability": 7.04e-05,
+                    "source_id": "globocan_2022"
+                },
+                {
+                    "sex": "female",
+                    "age": 60,
+                    "annual_incidence_per_100000": 9.49,
+                    "annual_probability": 9.49e-05,
+                    "source_id": "globocan_2022"
+                },
+                {
+                    "sex": "female",
+                    "age": 65,
+                    "annual_incidence_per_100000": 17.61,
+                    "annual_probability": 0.0001761,
+                    "source_id": "globocan_2022"
+                },
+                {
+                    "sex": "female",
+                    "age": 70,
+                    "annual_incidence_per_100000": 26.12,
+                    "annual_probability": 0.0002612,
+                    "source_id": "globocan_2022"
+                },
+                {
+                    "sex": "female",
+                    "age": 75,
+                    "annual_incidence_per_100000": 42.16,
+                    "annual_probability": 0.00042159999999999995,
+                    "source_id": "globocan_2022"
+                }
+            ]
+        },
+        {
+            "cancer_id": "bladder_cancer",
+            "cancer_name_zh": "膀胱癌",
+            "applicable_sex": "all",
+            "priors": [
+                {
+                    "sex": "male",
+                    "age": 30,
+                    "annual_incidence_per_100000": 1.03,
+                    "annual_probability": 1.03e-05,
+                    "source_id": "globocan_2022"
+                },
+                {
+                    "sex": "male",
+                    "age": 35,
+                    "annual_incidence_per_100000": 2.27,
+                    "annual_probability": 2.27e-05,
+                    "source_id": "globocan_2022"
+                },
+                {
+                    "sex": "male",
+                    "age": 40,
+                    "annual_incidence_per_100000": 2.92,
+                    "annual_probability": 2.9199999999999998e-05,
+                    "source_id": "globocan_2022"
+                },
+                {
+                    "sex": "male",
+                    "age": 45,
+                    "annual_incidence_per_100000": 5.56,
+                    "annual_probability": 5.5599999999999996e-05,
+                    "source_id": "globocan_2022"
+                },
+                {
+                    "sex": "male",
+                    "age": 50,
+                    "annual_incidence_per_100000": 10.36,
+                    "annual_probability": 0.0001036,
+                    "source_id": "globocan_2022"
+                },
+                {
+                    "sex": "male",
+                    "age": 55,
+                    "annual_incidence_per_100000": 18.87,
+                    "annual_probability": 0.0001887,
+                    "source_id": "globocan_2022"
+                },
+                {
+                    "sex": "male",
+                    "age": 60,
+                    "annual_incidence_per_100000": 28.38,
+                    "annual_probability": 0.0002838,
+                    "source_id": "globocan_2022"
+                },
+                {
+                    "sex": "male",
+                    "age": 65,
+                    "annual_incidence_per_100000": 37.15,
+                    "annual_probability": 0.0003715,
+                    "source_id": "globocan_2022"
+                },
+                {
+                    "sex": "male",
+                    "age": 70,
+                    "annual_incidence_per_100000": 58.92,
+                    "annual_probability": 0.0005892,
+                    "source_id": "globocan_2022"
+                },
+                {
+                    "sex": "male",
+                    "age": 75,
+                    "annual_incidence_per_100000": 83.52,
+                    "annual_probability": 0.0008351999999999999,
+                    "source_id": "globocan_2022"
+                },
+                {
+                    "sex": "female",
+                    "age": 30,
+                    "annual_incidence_per_100000": 0.26,
+                    "annual_probability": 2.6e-06,
+                    "source_id": "globocan_2022"
+                },
+                {
+                    "sex": "female",
+                    "age": 35,
+                    "annual_incidence_per_100000": 0.44,
+                    "annual_probability": 4.4e-06,
+                    "source_id": "globocan_2022"
+                },
+                {
+                    "sex": "female",
+                    "age": 40,
+                    "annual_incidence_per_100000": 0.66,
+                    "annual_probability": 6.6e-06,
+                    "source_id": "globocan_2022"
+                },
+                {
+                    "sex": "female",
+                    "age": 45,
+                    "annual_incidence_per_100000": 0.89,
+                    "annual_probability": 8.9e-06,
+                    "source_id": "globocan_2022"
+                },
+                {
+                    "sex": "female",
+                    "age": 50,
+                    "annual_incidence_per_100000": 2.83,
+                    "annual_probability": 2.83e-05,
+                    "source_id": "globocan_2022"
+                },
+                {
+                    "sex": "female",
+                    "age": 55,
+                    "annual_incidence_per_100000": 5.07,
+                    "annual_probability": 5.0700000000000006e-05,
+                    "source_id": "globocan_2022"
+                },
+                {
+                    "sex": "female",
+                    "age": 60,
+                    "annual_incidence_per_100000": 6.1,
+                    "annual_probability": 6.1e-05,
+                    "source_id": "globocan_2022"
+                },
+                {
+                    "sex": "female",
+                    "age": 65,
+                    "annual_incidence_per_100000": 9.38,
+                    "annual_probability": 9.38e-05,
+                    "source_id": "globocan_2022"
+                },
+                {
+                    "sex": "female",
+                    "age": 70,
+                    "annual_incidence_per_100000": 17.29,
+                    "annual_probability": 0.0001729,
+                    "source_id": "globocan_2022"
+                },
+                {
+                    "sex": "female",
+                    "age": 75,
+                    "annual_incidence_per_100000": 22.48,
+                    "annual_probability": 0.00022480000000000002,
+                    "source_id": "globocan_2022"
+                }
+            ]
+        },
+        {
+            "cancer_id": "breast_cancer",
+            "cancer_name_zh": "乳腺癌",
+            "applicable_sex": "female",
+            "priors": [
+                {
+                    "sex": "female",
+                    "age": 30,
+                    "annual_incidence_per_100000": 23.16,
+                    "annual_probability": 0.0002316,
+                    "source_id": "globocan_2022"
+                },
+                {
+                    "sex": "female",
+                    "age": 35,
+                    "annual_incidence_per_100000": 43.68,
+                    "annual_probability": 0.0004368,
+                    "source_id": "globocan_2022"
+                },
+                {
+                    "sex": "female",
+                    "age": 40,
+                    "annual_incidence_per_100000": 76.73,
+                    "annual_probability": 0.0007673000000000001,
+                    "source_id": "globocan_2022"
+                },
+                {
+                    "sex": "female",
+                    "age": 45,
+                    "annual_incidence_per_100000": 117.06,
+                    "annual_probability": 0.0011706,
+                    "source_id": "globocan_2022"
+                },
+                {
+                    "sex": "female",
+                    "age": 50,
+                    "annual_incidence_per_100000": 133.92,
+                    "annual_probability": 0.0013391999999999998,
+                    "source_id": "globocan_2022"
+                },
+                {
+                    "sex": "female",
+                    "age": 55,
+                    "annual_incidence_per_100000": 142.0,
+                    "annual_probability": 0.00142,
+                    "source_id": "globocan_2022"
+                },
+                {
+                    "sex": "female",
+                    "age": 60,
+                    "annual_incidence_per_100000": 144.64,
+                    "annual_probability": 0.0014463999999999998,
+                    "source_id": "globocan_2022"
+                },
+                {
+                    "sex": "female",
+                    "age": 65,
+                    "annual_incidence_per_100000": 143.71,
+                    "annual_probability": 0.0014371000000000002,
+                    "source_id": "globocan_2022"
+                },
+                {
+                    "sex": "female",
+                    "age": 70,
+                    "annual_incidence_per_100000": 142.76,
+                    "annual_probability": 0.0014276,
+                    "source_id": "globocan_2022"
+                },
+                {
+                    "sex": "female",
+                    "age": 75,
+                    "annual_incidence_per_100000": 132.51,
+                    "annual_probability": 0.0013250999999999998,
+                    "source_id": "globocan_2022"
+                }
+            ]
+        },
+        {
+            "cancer_id": "cervical_cancer",
+            "cancer_name_zh": "宫颈癌",
+            "applicable_sex": "female",
+            "priors": [
+                {
+                    "sex": "female",
+                    "age": 30,
+                    "annual_incidence_per_100000": 7.44,
+                    "annual_probability": 7.44e-05,
+                    "source_id": "globocan_2022"
+                },
+                {
+                    "sex": "female",
+                    "age": 35,
+                    "annual_incidence_per_100000": 12.32,
+                    "annual_probability": 0.0001232,
+                    "source_id": "globocan_2022"
+                },
+                {
+                    "sex": "female",
+                    "age": 40,
+                    "annual_incidence_per_100000": 22.69,
+                    "annual_probability": 0.0002269,
+                    "source_id": "globocan_2022"
+                },
+                {
+                    "sex": "female",
+                    "age": 45,
+                    "annual_incidence_per_100000": 29.04,
+                    "annual_probability": 0.0002904,
+                    "source_id": "globocan_2022"
+                },
+                {
+                    "sex": "female",
+                    "age": 50,
+                    "annual_incidence_per_100000": 29.24,
+                    "annual_probability": 0.0002924,
+                    "source_id": "globocan_2022"
+                },
+                {
+                    "sex": "female",
+                    "age": 55,
+                    "annual_incidence_per_100000": 22.03,
+                    "annual_probability": 0.00022030000000000002,
+                    "source_id": "globocan_2022"
+                },
+                {
+                    "sex": "female",
+                    "age": 60,
+                    "annual_incidence_per_100000": 17.13,
+                    "annual_probability": 0.0001713,
+                    "source_id": "globocan_2022"
+                },
+                {
+                    "sex": "female",
+                    "age": 65,
+                    "annual_incidence_per_100000": 13.31,
+                    "annual_probability": 0.0001331,
+                    "source_id": "globocan_2022"
+                },
+                {
+                    "sex": "female",
+                    "age": 70,
+                    "annual_incidence_per_100000": 13.86,
+                    "annual_probability": 0.00013859999999999998,
+                    "source_id": "globocan_2022"
+                },
+                {
+                    "sex": "female",
+                    "age": 75,
+                    "annual_incidence_per_100000": 11.94,
+                    "annual_probability": 0.00011939999999999999,
+                    "source_id": "globocan_2022"
+                }
+            ]
+        },
+        {
+            "cancer_id": "colorectal_cancer",
+            "cancer_name_zh": "结直肠癌",
+            "applicable_sex": "all",
+            "priors": [
+                {
+                    "sex": "male",
+                    "age": 30,
+                    "annual_incidence_per_100000": 7.4,
+                    "annual_probability": 7.400000000000001e-05,
+                    "source_id": "globocan_2022"
+                },
+                {
+                    "sex": "male",
+                    "age": 35,
+                    "annual_incidence_per_100000": 13.78,
+                    "annual_probability": 0.0001378,
+                    "source_id": "globocan_2022"
+                },
+                {
+                    "sex": "male",
+                    "age": 40,
+                    "annual_incidence_per_100000": 31.25,
+                    "annual_probability": 0.0003125,
+                    "source_id": "globocan_2022"
+                },
+                {
+                    "sex": "male",
+                    "age": 45,
+                    "annual_incidence_per_100000": 55.2,
+                    "annual_probability": 0.0005520000000000001,
+                    "source_id": "globocan_2022"
+                },
+                {
+                    "sex": "male",
+                    "age": 50,
+                    "annual_incidence_per_100000": 103.18,
+                    "annual_probability": 0.0010318,
+                    "source_id": "globocan_2022"
+                },
+                {
+                    "sex": "male",
+                    "age": 55,
+                    "annual_incidence_per_100000": 177.86,
+                    "annual_probability": 0.0017786000000000002,
+                    "source_id": "globocan_2022"
+                },
+                {
+                    "sex": "male",
+                    "age": 60,
+                    "annual_incidence_per_100000": 259.96,
+                    "annual_probability": 0.0025995999999999997,
+                    "source_id": "globocan_2022"
+                },
+                {
+                    "sex": "male",
+                    "age": 65,
+                    "annual_incidence_per_100000": 357.19,
+                    "annual_probability": 0.0035719,
+                    "source_id": "globocan_2022"
+                },
+                {
+                    "sex": "male",
+                    "age": 70,
+                    "annual_incidence_per_100000": 475.61,
+                    "annual_probability": 0.0047561,
+                    "source_id": "globocan_2022"
+                },
+                {
+                    "sex": "male",
+                    "age": 75,
+                    "annual_incidence_per_100000": 584.16,
+                    "annual_probability": 0.0058416,
+                    "source_id": "globocan_2022"
+                },
+                {
+                    "sex": "female",
+                    "age": 30,
+                    "annual_incidence_per_100000": 6.81,
+                    "annual_probability": 6.81e-05,
+                    "source_id": "globocan_2022"
+                },
+                {
+                    "sex": "female",
+                    "age": 35,
+                    "annual_incidence_per_100000": 11.45,
+                    "annual_probability": 0.00011449999999999999,
+                    "source_id": "globocan_2022"
+                },
+                {
+                    "sex": "female",
+                    "age": 40,
+                    "annual_incidence_per_100000": 23.41,
+                    "annual_probability": 0.0002341,
+                    "source_id": "globocan_2022"
+                },
+                {
+                    "sex": "female",
+                    "age": 45,
+                    "annual_incidence_per_100000": 43.33,
+                    "annual_probability": 0.00043329999999999996,
+                    "source_id": "globocan_2022"
+                },
+                {
+                    "sex": "female",
+                    "age": 50,
+                    "annual_incidence_per_100000": 75.67,
+                    "annual_probability": 0.0007567,
+                    "source_id": "globocan_2022"
+                },
+                {
+                    "sex": "female",
+                    "age": 55,
+                    "annual_incidence_per_100000": 118.8,
+                    "annual_probability": 0.001188,
+                    "source_id": "globocan_2022"
+                },
+                {
+                    "sex": "female",
+                    "age": 60,
+                    "annual_incidence_per_100000": 158.33,
+                    "annual_probability": 0.0015833000000000002,
+                    "source_id": "globocan_2022"
+                },
+                {
+                    "sex": "female",
+                    "age": 65,
+                    "annual_incidence_per_100000": 235.75,
+                    "annual_probability": 0.0023575,
+                    "source_id": "globocan_2022"
+                },
+                {
+                    "sex": "female",
+                    "age": 70,
+                    "annual_incidence_per_100000": 328.45,
+                    "annual_probability": 0.0032845,
+                    "source_id": "globocan_2022"
+                },
+                {
+                    "sex": "female",
+                    "age": 75,
+                    "annual_incidence_per_100000": 429.43,
+                    "annual_probability": 0.0042943,
+                    "source_id": "globocan_2022"
+                }
+            ]
+        },
+        {
+            "cancer_id": "esophageal_cancer",
+            "cancer_name_zh": "食管癌",
+            "applicable_sex": "all",
+            "priors": [
+                {
+                    "sex": "male",
+                    "age": 30,
+                    "annual_incidence_per_100000": 0.11,
+                    "annual_probability": 1.1e-06,
+                    "source_id": "globocan_2022"
+                },
+                {
+                    "sex": "male",
+                    "age": 35,
+                    "annual_incidence_per_100000": 0.4,
+                    "annual_probability": 4e-06,
+                    "source_id": "globocan_2022"
+                },
+                {
+                    "sex": "male",
+                    "age": 40,
+                    "annual_incidence_per_100000": 1.78,
+                    "annual_probability": 1.78e-05,
+                    "source_id": "globocan_2022"
+                },
+                {
+                    "sex": "male",
+                    "age": 45,
+                    "annual_incidence_per_100000": 8.56,
+                    "annual_probability": 8.560000000000001e-05,
+                    "source_id": "globocan_2022"
+                },
+                {
+                    "sex": "male",
+                    "age": 50,
+                    "annual_incidence_per_100000": 18.35,
+                    "annual_probability": 0.00018350000000000002,
+                    "source_id": "globocan_2022"
+                },
+                {
+                    "sex": "male",
+                    "age": 55,
+                    "annual_incidence_per_100000": 26.05,
+                    "annual_probability": 0.0002605,
+                    "source_id": "globocan_2022"
+                },
+                {
+                    "sex": "male",
+                    "age": 60,
+                    "annual_incidence_per_100000": 30.4,
+                    "annual_probability": 0.00030399999999999996,
+                    "source_id": "globocan_2022"
+                },
+                {
+                    "sex": "male",
+                    "age": 65,
+                    "annual_incidence_per_100000": 29.87,
+                    "annual_probability": 0.0002987,
+                    "source_id": "globocan_2022"
+                },
+                {
+                    "sex": "male",
+                    "age": 70,
+                    "annual_incidence_per_100000": 35.48,
+                    "annual_probability": 0.00035479999999999995,
+                    "source_id": "globocan_2022"
+                },
+                {
+                    "sex": "male",
+                    "age": 75,
+                    "annual_incidence_per_100000": 45.12,
+                    "annual_probability": 0.00045119999999999996,
+                    "source_id": "globocan_2022"
+                },
+                {
+                    "sex": "female",
+                    "age": 30,
+                    "annual_incidence_per_100000": 0.0,
+                    "annual_probability": 0.0,
+                    "source_id": "globocan_2022"
+                },
+                {
+                    "sex": "female",
+                    "age": 35,
+                    "annual_incidence_per_100000": 0.06,
+                    "annual_probability": 6e-07,
+                    "source_id": "globocan_2022"
+                },
+                {
+                    "sex": "female",
+                    "age": 40,
+                    "annual_incidence_per_100000": 0.26,
+                    "annual_probability": 2.6e-06,
+                    "source_id": "globocan_2022"
+                },
+                {
+                    "sex": "female",
+                    "age": 45,
+                    "annual_incidence_per_100000": 0.48,
+                    "annual_probability": 4.8e-06,
+                    "source_id": "globocan_2022"
+                },
+                {
+                    "sex": "female",
+                    "age": 50,
+                    "annual_incidence_per_100000": 0.5,
+                    "annual_probability": 5e-06,
+                    "source_id": "globocan_2022"
+                },
+                {
+                    "sex": "female",
+                    "age": 55,
+                    "annual_incidence_per_100000": 1.76,
+                    "annual_probability": 1.76e-05,
+                    "source_id": "globocan_2022"
+                },
+                {
+                    "sex": "female",
+                    "age": 60,
+                    "annual_incidence_per_100000": 2.94,
+                    "annual_probability": 2.94e-05,
+                    "source_id": "globocan_2022"
+                },
+                {
+                    "sex": "female",
+                    "age": 65,
+                    "annual_incidence_per_100000": 4.65,
+                    "annual_probability": 4.6500000000000005e-05,
+                    "source_id": "globocan_2022"
+                },
+                {
+                    "sex": "female",
+                    "age": 70,
+                    "annual_incidence_per_100000": 9.08,
+                    "annual_probability": 9.08e-05,
+                    "source_id": "globocan_2022"
+                },
+                {
+                    "sex": "female",
+                    "age": 75,
+                    "annual_incidence_per_100000": 18.13,
+                    "annual_probability": 0.0001813,
+                    "source_id": "globocan_2022"
+                }
+            ]
+        },
+        {
+            "cancer_id": "gastric_cancer",
+            "cancer_name_zh": "胃癌",
+            "applicable_sex": "all",
+            "priors": [
+                {
+                    "sex": "male",
+                    "age": 30,
+                    "annual_incidence_per_100000": 1.63,
+                    "annual_probability": 1.63e-05,
+                    "source_id": "globocan_2022"
+                },
+                {
+                    "sex": "male",
+                    "age": 35,
+                    "annual_incidence_per_100000": 4.21,
+                    "annual_probability": 4.21e-05,
+                    "source_id": "globocan_2022"
+                },
+                {
+                    "sex": "male",
+                    "age": 40,
+                    "annual_incidence_per_100000": 7.06,
+                    "annual_probability": 7.06e-05,
+                    "source_id": "globocan_2022"
+                },
+                {
+                    "sex": "male",
+                    "age": 45,
+                    "annual_incidence_per_100000": 11.77,
+                    "annual_probability": 0.0001177,
+                    "source_id": "globocan_2022"
+                },
+                {
+                    "sex": "male",
+                    "age": 50,
+                    "annual_incidence_per_100000": 31.97,
+                    "annual_probability": 0.00031969999999999996,
+                    "source_id": "globocan_2022"
+                },
+                {
+                    "sex": "male",
+                    "age": 55,
+                    "annual_incidence_per_100000": 60.28,
+                    "annual_probability": 0.0006028,
+                    "source_id": "globocan_2022"
+                },
+                {
+                    "sex": "male",
+                    "age": 60,
+                    "annual_incidence_per_100000": 82.8,
+                    "annual_probability": 0.000828,
+                    "source_id": "globocan_2022"
+                },
+                {
+                    "sex": "male",
+                    "age": 65,
+                    "annual_incidence_per_100000": 105.84,
+                    "annual_probability": 0.0010584000000000001,
+                    "source_id": "globocan_2022"
+                },
+                {
+                    "sex": "male",
+                    "age": 70,
+                    "annual_incidence_per_100000": 148.42,
+                    "annual_probability": 0.0014842,
+                    "source_id": "globocan_2022"
+                },
+                {
+                    "sex": "male",
+                    "age": 75,
+                    "annual_incidence_per_100000": 192.8,
+                    "annual_probability": 0.001928,
+                    "source_id": "globocan_2022"
+                },
+                {
+                    "sex": "female",
+                    "age": 30,
+                    "annual_incidence_per_100000": 3.67,
+                    "annual_probability": 3.67e-05,
+                    "source_id": "globocan_2022"
+                },
+                {
+                    "sex": "female",
+                    "age": 35,
+                    "annual_incidence_per_100000": 4.73,
+                    "annual_probability": 4.7300000000000005e-05,
+                    "source_id": "globocan_2022"
+                },
+                {
+                    "sex": "female",
+                    "age": 40,
+                    "annual_incidence_per_100000": 6.75,
+                    "annual_probability": 6.75e-05,
+                    "source_id": "globocan_2022"
+                },
+                {
+                    "sex": "female",
+                    "age": 45,
+                    "annual_incidence_per_100000": 11.0,
+                    "annual_probability": 0.00011,
+                    "source_id": "globocan_2022"
+                },
+                {
+                    "sex": "female",
+                    "age": 50,
+                    "annual_incidence_per_100000": 17.42,
+                    "annual_probability": 0.0001742,
+                    "source_id": "globocan_2022"
+                },
+                {
+                    "sex": "female",
+                    "age": 55,
+                    "annual_incidence_per_100000": 26.76,
+                    "annual_probability": 0.0002676,
+                    "source_id": "globocan_2022"
+                },
+                {
+                    "sex": "female",
+                    "age": 60,
+                    "annual_incidence_per_100000": 30.32,
+                    "annual_probability": 0.0003032,
+                    "source_id": "globocan_2022"
+                },
+                {
+                    "sex": "female",
+                    "age": 65,
+                    "annual_incidence_per_100000": 41.65,
+                    "annual_probability": 0.0004165,
+                    "source_id": "globocan_2022"
+                },
+                {
+                    "sex": "female",
+                    "age": 70,
+                    "annual_incidence_per_100000": 59.12,
+                    "annual_probability": 0.0005912,
+                    "source_id": "globocan_2022"
+                },
+                {
+                    "sex": "female",
+                    "age": 75,
+                    "annual_incidence_per_100000": 87.26,
+                    "annual_probability": 0.0008726000000000001,
+                    "source_id": "globocan_2022"
+                }
+            ]
+        },
+        {
+            "cancer_id": "head_neck_cancer",
+            "cancer_name_zh": "头颈肿瘤",
+            "applicable_sex": "all",
+            "priors": [
+                {
+                    "sex": "male",
+                    "age": 30,
+                    "annual_incidence_per_100000": 6.7,
+                    "annual_probability": 6.7e-05,
+                    "source_id": "globocan_2022"
+                },
+                {
+                    "sex": "male",
+                    "age": 35,
+                    "annual_incidence_per_100000": 9.9,
+                    "annual_probability": 9.900000000000001e-05,
+                    "source_id": "globocan_2022"
+                },
+                {
+                    "sex": "male",
+                    "age": 40,
+                    "annual_incidence_per_100000": 16.91,
+                    "annual_probability": 0.0001691,
+                    "source_id": "globocan_2022"
+                },
+                {
+                    "sex": "male",
+                    "age": 45,
+                    "annual_incidence_per_100000": 26.1,
+                    "annual_probability": 0.000261,
+                    "source_id": "globocan_2022"
+                },
+                {
+                    "sex": "male",
+                    "age": 50,
+                    "annual_incidence_per_100000": 30.09,
+                    "annual_probability": 0.0003009,
+                    "source_id": "globocan_2022"
+                },
+                {
+                    "sex": "male",
+                    "age": 55,
+                    "annual_incidence_per_100000": 31.37,
+                    "annual_probability": 0.00031370000000000004,
+                    "source_id": "globocan_2022"
+                },
+                {
+                    "sex": "male",
+                    "age": 60,
+                    "annual_incidence_per_100000": 29.3,
+                    "annual_probability": 0.000293,
+                    "source_id": "globocan_2022"
+                },
+                {
+                    "sex": "male",
+                    "age": 65,
+                    "annual_incidence_per_100000": 31.06,
+                    "annual_probability": 0.00031059999999999996,
+                    "source_id": "globocan_2022"
+                },
+                {
+                    "sex": "male",
+                    "age": 70,
+                    "annual_incidence_per_100000": 28.58,
+                    "annual_probability": 0.0002858,
+                    "source_id": "globocan_2022"
+                },
+                {
+                    "sex": "male",
+                    "age": 75,
+                    "annual_incidence_per_100000": 29.54,
+                    "annual_probability": 0.00029539999999999997,
+                    "source_id": "globocan_2022"
+                },
+                {
+                    "sex": "female",
+                    "age": 30,
+                    "annual_incidence_per_100000": 3.04,
+                    "annual_probability": 3.04e-05,
+                    "source_id": "globocan_2022"
+                },
+                {
+                    "sex": "female",
+                    "age": 35,
+                    "annual_incidence_per_100000": 4.48,
+                    "annual_probability": 4.4800000000000005e-05,
+                    "source_id": "globocan_2022"
+                },
+                {
+                    "sex": "female",
+                    "age": 40,
+                    "annual_incidence_per_100000": 5.89,
+                    "annual_probability": 5.8899999999999995e-05,
+                    "source_id": "globocan_2022"
+                },
+                {
+                    "sex": "female",
+                    "age": 45,
+                    "annual_incidence_per_100000": 8.75,
+                    "annual_probability": 8.75e-05,
+                    "source_id": "globocan_2022"
+                },
+                {
+                    "sex": "female",
+                    "age": 50,
+                    "annual_incidence_per_100000": 8.32,
+                    "annual_probability": 8.32e-05,
+                    "source_id": "globocan_2022"
+                },
+                {
+                    "sex": "female",
+                    "age": 55,
+                    "annual_incidence_per_100000": 8.68,
+                    "annual_probability": 8.68e-05,
+                    "source_id": "globocan_2022"
+                },
+                {
+                    "sex": "female",
+                    "age": 60,
+                    "annual_incidence_per_100000": 9.85,
+                    "annual_probability": 9.85e-05,
+                    "source_id": "globocan_2022"
+                },
+                {
+                    "sex": "female",
+                    "age": 65,
+                    "annual_incidence_per_100000": 12.24,
+                    "annual_probability": 0.0001224,
+                    "source_id": "globocan_2022"
+                },
+                {
+                    "sex": "female",
+                    "age": 70,
+                    "annual_incidence_per_100000": 12.88,
+                    "annual_probability": 0.00012880000000000001,
+                    "source_id": "globocan_2022"
+                },
+                {
+                    "sex": "female",
+                    "age": 75,
+                    "annual_incidence_per_100000": 16.02,
+                    "annual_probability": 0.0001602,
+                    "source_id": "globocan_2022"
+                }
+            ]
+        },
+        {
+            "cancer_id": "kidney_cancer",
+            "cancer_name_zh": "肾癌",
+            "applicable_sex": "all",
+            "priors": [
+                {
+                    "sex": "male",
+                    "age": 30,
+                    "annual_incidence_per_100000": 2.94,
+                    "annual_probability": 2.94e-05,
+                    "source_id": "globocan_2022"
+                },
+                {
+                    "sex": "male",
+                    "age": 35,
+                    "annual_incidence_per_100000": 4.28,
+                    "annual_probability": 4.2800000000000004e-05,
+                    "source_id": "globocan_2022"
+                },
+                {
+                    "sex": "male",
+                    "age": 40,
+                    "annual_incidence_per_100000": 7.13,
+                    "annual_probability": 7.13e-05,
+                    "source_id": "globocan_2022"
+                },
+                {
+                    "sex": "male",
+                    "age": 45,
+                    "annual_incidence_per_100000": 10.98,
+                    "annual_probability": 0.0001098,
+                    "source_id": "globocan_2022"
+                },
+                {
+                    "sex": "male",
+                    "age": 50,
+                    "annual_incidence_per_100000": 19.95,
+                    "annual_probability": 0.0001995,
+                    "source_id": "globocan_2022"
+                },
+                {
+                    "sex": "male",
+                    "age": 55,
+                    "annual_incidence_per_100000": 24.06,
+                    "annual_probability": 0.0002406,
+                    "source_id": "globocan_2022"
+                },
+                {
+                    "sex": "male",
+                    "age": 60,
+                    "annual_incidence_per_100000": 26.91,
+                    "annual_probability": 0.0002691,
+                    "source_id": "globocan_2022"
+                },
+                {
+                    "sex": "male",
+                    "age": 65,
+                    "annual_incidence_per_100000": 31.2,
+                    "annual_probability": 0.000312,
+                    "source_id": "globocan_2022"
+                },
+                {
+                    "sex": "male",
+                    "age": 70,
+                    "annual_incidence_per_100000": 36.48,
+                    "annual_probability": 0.0003648,
+                    "source_id": "globocan_2022"
+                },
+                {
+                    "sex": "male",
+                    "age": 75,
+                    "annual_incidence_per_100000": 39.55,
+                    "annual_probability": 0.00039549999999999996,
+                    "source_id": "globocan_2022"
+                },
+                {
+                    "sex": "female",
+                    "age": 30,
+                    "annual_incidence_per_100000": 1.21,
+                    "annual_probability": 1.21e-05,
+                    "source_id": "globocan_2022"
+                },
+                {
+                    "sex": "female",
+                    "age": 35,
+                    "annual_incidence_per_100000": 1.87,
+                    "annual_probability": 1.87e-05,
+                    "source_id": "globocan_2022"
+                },
+                {
+                    "sex": "female",
+                    "age": 40,
+                    "annual_incidence_per_100000": 3.44,
+                    "annual_probability": 3.44e-05,
+                    "source_id": "globocan_2022"
+                },
+                {
+                    "sex": "female",
+                    "age": 45,
+                    "annual_incidence_per_100000": 4.78,
+                    "annual_probability": 4.78e-05,
+                    "source_id": "globocan_2022"
+                },
+                {
+                    "sex": "female",
+                    "age": 50,
+                    "annual_incidence_per_100000": 7.88,
+                    "annual_probability": 7.88e-05,
+                    "source_id": "globocan_2022"
+                },
+                {
+                    "sex": "female",
+                    "age": 55,
+                    "annual_incidence_per_100000": 9.84,
+                    "annual_probability": 9.839999999999999e-05,
+                    "source_id": "globocan_2022"
+                },
+                {
+                    "sex": "female",
+                    "age": 60,
+                    "annual_incidence_per_100000": 12.11,
+                    "annual_probability": 0.00012109999999999999,
+                    "source_id": "globocan_2022"
+                },
+                {
+                    "sex": "female",
+                    "age": 65,
+                    "annual_incidence_per_100000": 15.24,
+                    "annual_probability": 0.0001524,
+                    "source_id": "globocan_2022"
+                },
+                {
+                    "sex": "female",
+                    "age": 70,
+                    "annual_incidence_per_100000": 15.58,
+                    "annual_probability": 0.0001558,
+                    "source_id": "globocan_2022"
+                },
+                {
+                    "sex": "female",
+                    "age": 75,
+                    "annual_incidence_per_100000": 21.22,
+                    "annual_probability": 0.00021219999999999998,
+                    "source_id": "globocan_2022"
+                }
+            ]
+        },
+        {
+            "cancer_id": "liver_cancer",
+            "cancer_name_zh": "肝癌",
+            "applicable_sex": "all",
+            "priors": [
+                {
+                    "sex": "male",
+                    "age": 30,
+                    "annual_incidence_per_100000": 3.87,
+                    "annual_probability": 3.87e-05,
+                    "source_id": "globocan_2022"
+                },
+                {
+                    "sex": "male",
+                    "age": 35,
+                    "annual_incidence_per_100000": 9.5,
+                    "annual_probability": 9.5e-05,
+                    "source_id": "globocan_2022"
+                },
+                {
+                    "sex": "male",
+                    "age": 40,
+                    "annual_incidence_per_100000": 22.9,
+                    "annual_probability": 0.00022899999999999998,
+                    "source_id": "globocan_2022"
+                },
+                {
+                    "sex": "male",
+                    "age": 45,
+                    "annual_incidence_per_100000": 40.94,
+                    "annual_probability": 0.0004094,
+                    "source_id": "globocan_2022"
+                },
+                {
+                    "sex": "male",
+                    "age": 50,
+                    "annual_incidence_per_100000": 56.5,
+                    "annual_probability": 0.000565,
+                    "source_id": "globocan_2022"
+                },
+                {
+                    "sex": "male",
+                    "age": 55,
+                    "annual_incidence_per_100000": 69.5,
+                    "annual_probability": 0.000695,
+                    "source_id": "globocan_2022"
+                },
+                {
+                    "sex": "male",
+                    "age": 60,
+                    "annual_incidence_per_100000": 75.42,
+                    "annual_probability": 0.0007542,
+                    "source_id": "globocan_2022"
+                },
+                {
+                    "sex": "male",
+                    "age": 65,
+                    "annual_incidence_per_100000": 78.7,
+                    "annual_probability": 0.000787,
+                    "source_id": "globocan_2022"
+                },
+                {
+                    "sex": "male",
+                    "age": 70,
+                    "annual_incidence_per_100000": 93.64,
+                    "annual_probability": 0.0009364,
+                    "source_id": "globocan_2022"
+                },
+                {
+                    "sex": "male",
+                    "age": 75,
+                    "annual_incidence_per_100000": 116.83,
+                    "annual_probability": 0.0011683,
+                    "source_id": "globocan_2022"
+                },
+                {
+                    "sex": "female",
+                    "age": 30,
+                    "annual_incidence_per_100000": 0.79,
+                    "annual_probability": 7.9e-06,
+                    "source_id": "globocan_2022"
+                },
+                {
+                    "sex": "female",
+                    "age": 35,
+                    "annual_incidence_per_100000": 1.31,
+                    "annual_probability": 1.31e-05,
+                    "source_id": "globocan_2022"
+                },
+                {
+                    "sex": "female",
+                    "age": 40,
+                    "annual_incidence_per_100000": 4.17,
+                    "annual_probability": 4.17e-05,
+                    "source_id": "globocan_2022"
+                },
+                {
+                    "sex": "female",
+                    "age": 45,
+                    "annual_incidence_per_100000": 5.4,
+                    "annual_probability": 5.4000000000000005e-05,
+                    "source_id": "globocan_2022"
+                },
+                {
+                    "sex": "female",
+                    "age": 50,
+                    "annual_incidence_per_100000": 7.71,
+                    "annual_probability": 7.71e-05,
+                    "source_id": "globocan_2022"
+                },
+                {
+                    "sex": "female",
+                    "age": 55,
+                    "annual_incidence_per_100000": 14.3,
+                    "annual_probability": 0.000143,
+                    "source_id": "globocan_2022"
+                },
+                {
+                    "sex": "female",
+                    "age": 60,
+                    "annual_incidence_per_100000": 18.75,
+                    "annual_probability": 0.0001875,
+                    "source_id": "globocan_2022"
+                },
+                {
+                    "sex": "female",
+                    "age": 65,
+                    "annual_incidence_per_100000": 26.84,
+                    "annual_probability": 0.0002684,
+                    "source_id": "globocan_2022"
+                },
+                {
+                    "sex": "female",
+                    "age": 70,
+                    "annual_incidence_per_100000": 45.99,
+                    "annual_probability": 0.0004599,
+                    "source_id": "globocan_2022"
+                },
+                {
+                    "sex": "female",
+                    "age": 75,
+                    "annual_incidence_per_100000": 67.73,
+                    "annual_probability": 0.0006773,
+                    "source_id": "globocan_2022"
+                }
+            ]
+        },
+        {
+            "cancer_id": "lung_cancer",
+            "cancer_name_zh": "肺癌",
+            "applicable_sex": "all",
+            "priors": [
+                {
+                    "sex": "male",
+                    "age": 30,
+                    "annual_incidence_per_100000": 3.92,
+                    "annual_probability": 3.92e-05,
+                    "source_id": "globocan_2022"
+                },
+                {
+                    "sex": "male",
+                    "age": 35,
+                    "annual_incidence_per_100000": 6.76,
+                    "annual_probability": 6.76e-05,
+                    "source_id": "globocan_2022"
+                },
+                {
+                    "sex": "male",
+                    "age": 40,
+                    "annual_incidence_per_100000": 15.98,
+                    "annual_probability": 0.0001598,
+                    "source_id": "globocan_2022"
+                },
+                {
+                    "sex": "male",
+                    "age": 45,
+                    "annual_incidence_per_100000": 36.3,
+                    "annual_probability": 0.000363,
+                    "source_id": "globocan_2022"
+                },
+                {
+                    "sex": "male",
+                    "age": 50,
+                    "annual_incidence_per_100000": 79.59,
+                    "annual_probability": 0.0007959,
+                    "source_id": "globocan_2022"
+                },
+                {
+                    "sex": "male",
+                    "age": 55,
+                    "annual_incidence_per_100000": 149.25,
+                    "annual_probability": 0.0014925,
+                    "source_id": "globocan_2022"
+                },
+                {
+                    "sex": "male",
+                    "age": 60,
+                    "annual_incidence_per_100000": 203.85,
+                    "annual_probability": 0.0020385,
+                    "source_id": "globocan_2022"
+                },
+                {
+                    "sex": "male",
+                    "age": 65,
+                    "annual_incidence_per_100000": 256.67,
+                    "annual_probability": 0.0025667000000000003,
+                    "source_id": "globocan_2022"
+                },
+                {
+                    "sex": "male",
+                    "age": 70,
+                    "annual_incidence_per_100000": 352.01,
+                    "annual_probability": 0.0035201,
+                    "source_id": "globocan_2022"
+                },
+                {
+                    "sex": "male",
+                    "age": 75,
+                    "annual_incidence_per_100000": 451.08,
+                    "annual_probability": 0.0045108,
+                    "source_id": "globocan_2022"
+                },
+                {
+                    "sex": "female",
+                    "age": 30,
+                    "annual_incidence_per_100000": 7.23,
+                    "annual_probability": 7.230000000000001e-05,
+                    "source_id": "globocan_2022"
+                },
+                {
+                    "sex": "female",
+                    "age": 35,
+                    "annual_incidence_per_100000": 12.51,
+                    "annual_probability": 0.0001251,
+                    "source_id": "globocan_2022"
+                },
+                {
+                    "sex": "female",
+                    "age": 40,
+                    "annual_incidence_per_100000": 24.47,
+                    "annual_probability": 0.0002447,
+                    "source_id": "globocan_2022"
+                },
+                {
+                    "sex": "female",
+                    "age": 45,
+                    "annual_incidence_per_100000": 44.01,
+                    "annual_probability": 0.00044009999999999996,
+                    "source_id": "globocan_2022"
+                },
+                {
+                    "sex": "female",
+                    "age": 50,
+                    "annual_incidence_per_100000": 67.29,
+                    "annual_probability": 0.0006729,
+                    "source_id": "globocan_2022"
+                },
+                {
+                    "sex": "female",
+                    "age": 55,
+                    "annual_incidence_per_100000": 89.47,
+                    "annual_probability": 0.0008947,
+                    "source_id": "globocan_2022"
+                },
+                {
+                    "sex": "female",
+                    "age": 60,
+                    "annual_incidence_per_100000": 117.12,
+                    "annual_probability": 0.0011712,
+                    "source_id": "globocan_2022"
+                },
+                {
+                    "sex": "female",
+                    "age": 65,
+                    "annual_incidence_per_100000": 153.66,
+                    "annual_probability": 0.0015366,
+                    "source_id": "globocan_2022"
+                },
+                {
+                    "sex": "female",
+                    "age": 70,
+                    "annual_incidence_per_100000": 198.07,
+                    "annual_probability": 0.0019806999999999997,
+                    "source_id": "globocan_2022"
+                },
+                {
+                    "sex": "female",
+                    "age": 75,
+                    "annual_incidence_per_100000": 233.26,
+                    "annual_probability": 0.0023325999999999998,
+                    "source_id": "globocan_2022"
+                }
+            ]
+        },
+        {
+            "cancer_id": "ovarian_cancer",
+            "cancer_name_zh": "卵巢癌",
+            "applicable_sex": "female",
+            "priors": [
+                {
+                    "sex": "female",
+                    "age": 30,
+                    "annual_incidence_per_100000": 3.62,
+                    "annual_probability": 3.62e-05,
+                    "source_id": "globocan_2022"
+                },
+                {
+                    "sex": "female",
+                    "age": 35,
+                    "annual_incidence_per_100000": 4.23,
+                    "annual_probability": 4.2300000000000005e-05,
+                    "source_id": "globocan_2022"
+                },
+                {
+                    "sex": "female",
+                    "age": 40,
+                    "annual_incidence_per_100000": 9.0,
+                    "annual_probability": 9e-05,
+                    "source_id": "globocan_2022"
+                },
+                {
+                    "sex": "female",
+                    "age": 45,
+                    "annual_incidence_per_100000": 15.58,
+                    "annual_probability": 0.0001558,
+                    "source_id": "globocan_2022"
+                },
+                {
+                    "sex": "female",
+                    "age": 50,
+                    "annual_incidence_per_100000": 17.48,
+                    "annual_probability": 0.0001748,
+                    "source_id": "globocan_2022"
+                },
+                {
+                    "sex": "female",
+                    "age": 55,
+                    "annual_incidence_per_100000": 19.54,
+                    "annual_probability": 0.00019539999999999998,
+                    "source_id": "globocan_2022"
+                },
+                {
+                    "sex": "female",
+                    "age": 60,
+                    "annual_incidence_per_100000": 17.4,
+                    "annual_probability": 0.00017399999999999997,
+                    "source_id": "globocan_2022"
+                },
+                {
+                    "sex": "female",
+                    "age": 65,
+                    "annual_incidence_per_100000": 17.89,
+                    "annual_probability": 0.0001789,
+                    "source_id": "globocan_2022"
+                },
+                {
+                    "sex": "female",
+                    "age": 70,
+                    "annual_incidence_per_100000": 16.8,
+                    "annual_probability": 0.00016800000000000002,
+                    "source_id": "globocan_2022"
+                },
+                {
+                    "sex": "female",
+                    "age": 75,
+                    "annual_incidence_per_100000": 16.72,
+                    "annual_probability": 0.0001672,
+                    "source_id": "globocan_2022"
+                }
+            ]
+        },
+        {
+            "cancer_id": "prostate_cancer",
+            "cancer_name_zh": "前列腺癌",
+            "applicable_sex": "male",
+            "priors": [
+                {
+                    "sex": "male",
+                    "age": 30,
+                    "annual_incidence_per_100000": 0.05,
+                    "annual_probability": 5e-07,
+                    "source_id": "globocan_2022"
+                },
+                {
+                    "sex": "male",
+                    "age": 35,
+                    "annual_incidence_per_100000": 0.0,
+                    "annual_probability": 0.0,
+                    "source_id": "globocan_2022"
+                },
+                {
+                    "sex": "male",
+                    "age": 40,
+                    "annual_incidence_per_100000": 0.36,
+                    "annual_probability": 3.6e-06,
+                    "source_id": "globocan_2022"
+                },
+                {
+                    "sex": "male",
+                    "age": 45,
+                    "annual_incidence_per_100000": 1.14,
+                    "annual_probability": 1.14e-05,
+                    "source_id": "globocan_2022"
+                },
+                {
+                    "sex": "male",
+                    "age": 50,
+                    "annual_incidence_per_100000": 4.8,
+                    "annual_probability": 4.8e-05,
+                    "source_id": "globocan_2022"
+                },
+                {
+                    "sex": "male",
+                    "age": 55,
+                    "annual_incidence_per_100000": 16.27,
+                    "annual_probability": 0.0001627,
+                    "source_id": "globocan_2022"
+                },
+                {
+                    "sex": "male",
+                    "age": 60,
+                    "annual_incidence_per_100000": 41.31,
+                    "annual_probability": 0.0004131,
+                    "source_id": "globocan_2022"
+                },
+                {
+                    "sex": "male",
+                    "age": 65,
+                    "annual_incidence_per_100000": 98.5,
+                    "annual_probability": 0.000985,
+                    "source_id": "globocan_2022"
+                },
+                {
+                    "sex": "male",
+                    "age": 70,
+                    "annual_incidence_per_100000": 192.93,
+                    "annual_probability": 0.0019293000000000001,
+                    "source_id": "globocan_2022"
+                },
+                {
+                    "sex": "male",
+                    "age": 75,
+                    "annual_incidence_per_100000": 267.96,
+                    "annual_probability": 0.0026796,
+                    "source_id": "globocan_2022"
+                }
+            ]
+        },
+        {
+            "cancer_id": "pancreatic_cancer",
+            "cancer_name_zh": "胰腺癌",
+            "applicable_sex": "all",
+            "priors": [
+                {
+                    "sex": "male",
+                    "age": 30,
+                    "annual_incidence_per_100000": 0.18,
+                    "annual_probability": 1.8e-06,
+                    "source_id": "model_estimated_nccr2011"
+                },
+                {
+                    "sex": "male",
+                    "age": 35,
+                    "annual_incidence_per_100000": 0.45,
+                    "annual_probability": 4.5e-06,
+                    "source_id": "model_estimated_nccr2011"
+                },
+                {
+                    "sex": "male",
+                    "age": 40,
+                    "annual_incidence_per_100000": 1.1,
+                    "annual_probability": 1.1e-05,
+                    "source_id": "model_estimated_nccr2011"
+                },
+                {
+                    "sex": "male",
+                    "age": 45,
+                    "annual_incidence_per_100000": 2.7,
+                    "annual_probability": 2.7e-05,
+                    "source_id": "model_estimated_nccr2011"
+                },
+                {
+                    "sex": "male",
+                    "age": 50,
+                    "annual_incidence_per_100000": 6.0,
+                    "annual_probability": 6e-05,
+                    "source_id": "model_estimated_nccr2011"
+                },
+                {
+                    "sex": "male",
+                    "age": 55,
+                    "annual_incidence_per_100000": 12.0,
+                    "annual_probability": 0.00012,
+                    "source_id": "model_estimated_nccr2011"
+                },
+                {
+                    "sex": "male",
+                    "age": 60,
+                    "annual_incidence_per_100000": 20.5,
+                    "annual_probability": 0.000205,
+                    "source_id": "model_estimated_nccr2011"
+                },
+                {
+                    "sex": "male",
+                    "age": 65,
+                    "annual_incidence_per_100000": 32.0,
+                    "annual_probability": 0.00032,
+                    "source_id": "model_estimated_nccr2011"
+                },
+                {
+                    "sex": "male",
+                    "age": 70,
+                    "annual_incidence_per_100000": 46.0,
+                    "annual_probability": 0.00046,
+                    "source_id": "model_estimated_nccr2011"
+                },
+                {
+                    "sex": "male",
+                    "age": 75,
+                    "annual_incidence_per_100000": 60.0,
+                    "annual_probability": 0.0006,
+                    "source_id": "model_estimated_nccr2011"
+                },
+                {
+                    "sex": "female",
+                    "age": 30,
+                    "annual_incidence_per_100000": 0.13,
+                    "annual_probability": 1.3e-06,
+                    "source_id": "model_estimated_nccr2011"
+                },
+                {
+                    "sex": "female",
+                    "age": 35,
+                    "annual_incidence_per_100000": 0.32,
+                    "annual_probability": 3.2e-06,
+                    "source_id": "model_estimated_nccr2011"
+                },
+                {
+                    "sex": "female",
+                    "age": 40,
+                    "annual_incidence_per_100000": 0.79,
+                    "annual_probability": 7.9e-06,
+                    "source_id": "model_estimated_nccr2011"
+                },
+                {
+                    "sex": "female",
+                    "age": 45,
+                    "annual_incidence_per_100000": 1.94,
+                    "annual_probability": 1.94e-05,
+                    "source_id": "model_estimated_nccr2011"
+                },
+                {
+                    "sex": "female",
+                    "age": 50,
+                    "annual_incidence_per_100000": 4.3,
+                    "annual_probability": 4.3e-05,
+                    "source_id": "model_estimated_nccr2011"
+                },
+                {
+                    "sex": "female",
+                    "age": 55,
+                    "annual_incidence_per_100000": 8.6,
+                    "annual_probability": 8.6e-05,
+                    "source_id": "model_estimated_nccr2011"
+                },
+                {
+                    "sex": "female",
+                    "age": 60,
+                    "annual_incidence_per_100000": 14.7,
+                    "annual_probability": 0.000147,
+                    "source_id": "model_estimated_nccr2011"
+                },
+                {
+                    "sex": "female",
+                    "age": 65,
+                    "annual_incidence_per_100000": 23.0,
+                    "annual_probability": 0.00023,
+                    "source_id": "model_estimated_nccr2011"
+                },
+                {
+                    "sex": "female",
+                    "age": 70,
+                    "annual_incidence_per_100000": 33.0,
+                    "annual_probability": 0.00033,
+                    "source_id": "model_estimated_nccr2011"
+                },
+                {
+                    "sex": "female",
+                    "age": 75,
+                    "annual_incidence_per_100000": 43.0,
+                    "annual_probability": 0.00043,
+                    "source_id": "model_estimated_nccr2011"
+                }
+            ]
+        },
+        {
+            "cancer_id": "thyroid_cancer",
+            "cancer_name_zh": "甲状腺癌",
+            "applicable_sex": "all",
+            "priors": [
+                {
+                    "sex": "male",
+                    "age": 30,
+                    "annual_incidence_per_100000": 35.85,
+                    "annual_probability": 0.00035850000000000004,
+                    "source_id": "globocan_2022_gco_api"
+                },
+                {
+                    "sex": "male",
+                    "age": 35,
+                    "annual_incidence_per_100000": 41.36,
+                    "annual_probability": 0.00041359999999999997,
+                    "source_id": "globocan_2022_gco_api"
+                },
+                {
+                    "sex": "male",
+                    "age": 40,
+                    "annual_incidence_per_100000": 36.77,
+                    "annual_probability": 0.00036770000000000005,
+                    "source_id": "globocan_2022_gco_api"
+                },
+                {
+                    "sex": "male",
+                    "age": 45,
+                    "annual_incidence_per_100000": 33.37,
+                    "annual_probability": 0.0003337,
+                    "source_id": "globocan_2022_gco_api"
+                },
+                {
+                    "sex": "male",
+                    "age": 50,
+                    "annual_incidence_per_100000": 30.12,
+                    "annual_probability": 0.0003012,
+                    "source_id": "globocan_2022_gco_api"
+                },
+                {
+                    "sex": "male",
+                    "age": 55,
+                    "annual_incidence_per_100000": 31.86,
+                    "annual_probability": 0.0003186,
+                    "source_id": "globocan_2022_gco_api"
+                },
+                {
+                    "sex": "male",
+                    "age": 60,
+                    "annual_incidence_per_100000": 24.88,
+                    "annual_probability": 0.0002488,
+                    "source_id": "globocan_2022_gco_api"
+                },
+                {
+                    "sex": "male",
+                    "age": 65,
+                    "annual_incidence_per_100000": 19.02,
+                    "annual_probability": 0.0001902,
+                    "source_id": "globocan_2022_gco_api"
+                },
+                {
+                    "sex": "male",
+                    "age": 70,
+                    "annual_incidence_per_100000": 14.01,
+                    "annual_probability": 0.0001401,
+                    "source_id": "globocan_2022_gco_api"
+                },
+                {
+                    "sex": "male",
+                    "age": 75,
+                    "annual_incidence_per_100000": 11.87,
+                    "annual_probability": 0.0001187,
+                    "source_id": "globocan_2022_gco_api"
+                },
+                {
+                    "sex": "female",
+                    "age": 30,
+                    "annual_incidence_per_100000": 81.38,
+                    "annual_probability": 0.0008137999999999999,
+                    "source_id": "globocan_2022_gco_api"
+                },
+                {
+                    "sex": "female",
+                    "age": 35,
+                    "annual_incidence_per_100000": 95.4,
+                    "annual_probability": 0.0009540000000000001,
+                    "source_id": "globocan_2022_gco_api"
+                },
+                {
+                    "sex": "female",
+                    "age": 40,
+                    "annual_incidence_per_100000": 100.26,
+                    "annual_probability": 0.0010026,
+                    "source_id": "globocan_2022_gco_api"
+                },
+                {
+                    "sex": "female",
+                    "age": 45,
+                    "annual_incidence_per_100000": 106.08,
+                    "annual_probability": 0.0010608,
+                    "source_id": "globocan_2022_gco_api"
+                },
+                {
+                    "sex": "female",
+                    "age": 50,
+                    "annual_incidence_per_100000": 110.65,
+                    "annual_probability": 0.0011065,
+                    "source_id": "globocan_2022_gco_api"
+                },
+                {
+                    "sex": "female",
+                    "age": 55,
+                    "annual_incidence_per_100000": 104.76,
+                    "annual_probability": 0.0010476,
+                    "source_id": "globocan_2022_gco_api"
+                },
+                {
+                    "sex": "female",
+                    "age": 60,
+                    "annual_incidence_per_100000": 77.17,
+                    "annual_probability": 0.0007717000000000001,
+                    "source_id": "globocan_2022_gco_api"
+                },
+                {
+                    "sex": "female",
+                    "age": 65,
+                    "annual_incidence_per_100000": 53.51,
+                    "annual_probability": 0.0005350999999999999,
+                    "source_id": "globocan_2022_gco_api"
+                },
+                {
+                    "sex": "female",
+                    "age": 70,
+                    "annual_incidence_per_100000": 34.08,
+                    "annual_probability": 0.0003408,
+                    "source_id": "globocan_2022_gco_api"
+                },
+                {
+                    "sex": "female",
+                    "age": 75,
+                    "annual_incidence_per_100000": 21.33,
+                    "annual_probability": 0.00021329999999999998,
+                    "source_id": "globocan_2022_gco_api"
+                }
+            ]
+        }
+    ],
+    "missing_priors": []
+}

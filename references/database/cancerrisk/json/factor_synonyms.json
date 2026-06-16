@@ -1,0 +1,545 @@
+{
+  "synonyms": {
+    "smoking_general": [
+      "吸烟",
+      "Smoking (general)",
+      "smoking",
+      "tobacco use",
+      "抽烟",
+      "smoke"
+    ],
+    "smoking_continuous": [
+      "吸烟(持续吸烟)",
+      "Continuous smoker",
+      "持续吸烟"
+    ],
+    "smoking_current": [
+      "吸烟(当前)",
+      "Current smoker",
+      "当前吸烟",
+      "current smoker"
+    ],
+    "smoking_male": [
+      "吸烟(男性)",
+      "Smoking (male)"
+    ],
+    "smoking_female": [
+      "吸烟(女性)",
+      "Smoking (female)"
+    ],
+    "smoking_adenocarcinoma": [
+      "吸烟(腺癌)",
+      "Smoking (adenocarcinoma subtype)"
+    ],
+    "smoking_squamous": [
+      "吸烟(鳞癌)",
+      "Smoking (squamous subtype)"
+    ],
+    "smoking_quit_over_10y": [
+      "吸烟(曾吸,已戒>10年)",
+      "Former smoker, quit >10y",
+      "former smoker",
+      "戒烟>10年"
+    ],
+    "smoking_cessation_5y": [
+      "戒烟5年",
+      "Smoking cessation (5y)",
+      "quit smoking 5y"
+    ],
+    "smoking_cessation_10y": [
+      "戒烟10年",
+      "Smoking cessation (10y)",
+      "quit smoking 10y"
+    ],
+    "smoking_cessation_15y": [
+      "戒烟15年",
+      "Smoking cessation (15y)",
+      "quit smoking 15y"
+    ],
+    "secondhand_smoke": [
+      "二手烟暴露",
+      "Secondhand smoke exposure",
+      "passive smoking",
+      "二手烟"
+    ],
+    "smoking_alcohol_synergy": [
+      "吸烟+饮酒协同",
+      "Smoking + alcohol synergy"
+    ],
+    "alcohol_10g_per_day": [
+      "饮酒(10g/天)",
+      "Alcohol 10g/day",
+      "alcohol",
+      "drinking",
+      "饮酒",
+      "喝酒"
+    ],
+    "alcohol_3plus_drinks": [
+      "饮酒(≥3杯/天)",
+      "Alcohol ≥3 drinks/day"
+    ],
+    "alcohol_light": [
+      "饮酒(少量<1杯/天)",
+      "Alcohol <1 drink/day"
+    ],
+    "alcohol_non_cardia": [
+      "饮酒(非贲门癌)",
+      "Alcohol (non-cardia gastric)"
+    ],
+    "alcohol_squamous_3plus": [
+      "饮酒(鳞癌，≥3杯/天)",
+      "Alcohol (squamous, ≥3 drinks/day)"
+    ],
+    "alcohol_30g_per_day": [
+      "饮酒≥30g/天",
+      "Alcohol ≥30g/day",
+      "heavy drinking",
+      "≥30g 酒精"
+    ],
+    "processed_meat": [
+      "加工肉类",
+      "Processed meat intake"
+    ],
+    "red_meat_high": [
+      "红肉>50g/天",
+      "Red meat >50g/day"
+    ],
+    "pickled_food": [
+      "腌制食品",
+      "Pickled food intake"
+    ],
+    "hot_food": [
+      "高温饮食",
+      "Very hot food intake"
+    ],
+    "high_salt_diet": [
+      "高盐饮食",
+      "High-salt diet"
+    ],
+    "calcium_high_intake": [
+      "钙摄入>1500mg/天",
+      "Calcium >1500mg/day"
+    ],
+    "areca_chewing": [
+      "咀嚼槟榔",
+      "Areca nut chewing"
+    ],
+    "poor_oral_hygiene": [
+      "口腔卫生差",
+      "Poor oral hygiene"
+    ],
+    "obesity_bmi_ge30": [
+      "肥胖(BMI≥30)",
+      "Obesity (BMI ≥30)",
+      "BMI≥30",
+      "obesity",
+      "肥胖"
+    ],
+    "obesity_bmi_ge30_postmeno": [
+      "肥胖(BMI≥30,绝经后)",
+      "Obesity (BMI ≥30 postmenopausal)"
+    ],
+    "obesity_bmi_per_5": [
+      "肥胖(BMI每5kg/m²)",
+      "Obesity (per 5kg/m² BMI)",
+      "BMI"
+    ],
+    "metabolic_syndrome": [
+      "代谢综合征",
+      "Metabolic syndrome"
+    ],
+    "type2_diabetes": [
+      "2型糖尿病",
+      "Type 2 diabetes",
+      "T2DM",
+      "type 2 diabetes mellitus"
+    ],
+    "diabetes_general": [
+      "糖尿病",
+      "Diabetes (general)"
+    ],
+    "hypertension": [
+      "高血压",
+      "Hypertension"
+    ],
+    "hbv_hbsag_positive": [
+      "HBsAg阳性",
+      "HBsAg positive (HBV)",
+      "HBsAg+",
+      "乙肝表面抗原阳性",
+      "乙肝",
+      "HBV"
+    ],
+    "hbv_hbsag_hbeag_positive": [
+      "HBsAg+HBeAg (大三阳)",
+      "HBsAg + HBeAg positive (HBV)",
+      "大三阳"
+    ],
+    "hcv_antibody_positive": [
+      "HCV抗体阳性",
+      "HCV antibody positive",
+      "丙肝",
+      "HCV",
+      "丙型肝炎"
+    ],
+    "hpv16_18": [
+      "HPV16/18",
+      "HPV 16/18 infection",
+      "HPV 16/18",
+      "高危HPV"
+    ],
+    "hpv_persistent": [
+      "HPV持续感染",
+      "HPV persistent infection",
+      "HPV persistent"
+    ],
+    "hpv_oropharyngeal": [
+      "HPV感染(口咽癌)",
+      "HPV infection (oropharyngeal)"
+    ],
+    "ebv_nasopharyngeal": [
+      "EBV感染(鼻咽癌)",
+      "EBV infection (nasopharyngeal)"
+    ],
+    "h_pylori": [
+      "幽门螺杆菌(H. pylori)感染",
+      "Helicobacter pylori infection",
+      "HP",
+      "幽门螺杆菌",
+      "Hp感染"
+    ],
+    "liver_fluke": [
+      "肝吸虫感染(东南亚)",
+      "Liver fluke infection"
+    ],
+    "schistosomiasis": [
+      "血吸虫感染(热带地区)",
+      "Schistosomiasis"
+    ],
+    "hiv_immunosuppression": [
+      "免疫抑制(HIV)",
+      "HIV-related immunosuppression"
+    ],
+    "family_history_first_degree": [
+      "家族史(一级亲属)",
+      "Family history (first-degree)",
+      "一级亲属癌症史",
+      "first-degree relative cancer"
+    ],
+    "family_history_multiple": [
+      "家族史(多名亲属)",
+      "Family history (multiple relatives)"
+    ],
+    "family_history_crc_first": [
+      "一级亲属患CRC",
+      "Family history of CRC (first-degree)",
+      "结直肠癌家族史",
+      "CRC family history"
+    ],
+    "family_history_crc_multiple": [
+      "多个一级亲属患CRC",
+      "Multiple first-degree relatives with CRC"
+    ],
+    "family_history_multiple_same": [
+      "多个一级亲属患病",
+      "Multiple first-degree relatives with same cancer"
+    ],
+    "family_history_breast_first": [
+      "一级亲属患乳腺癌",
+      "Family history of breast cancer (first-degree)",
+      "乳腺癌家族史"
+    ],
+    "family_history_ovarian_first": [
+      "卵巢癌家族史(一级亲属)",
+      "Family history of ovarian cancer (first-degree)",
+      "卵巢癌家族史"
+    ],
+    "family_history_gastric_first": [
+      "胃癌家族史(一级亲属)",
+      "Family history of gastric cancer (first-degree)",
+      "胃癌家族史"
+    ],
+    "family_history_esophageal": [
+      "食管癌家族史",
+      "Family history of esophageal cancer"
+    ],
+    "family_history_prostate": [
+      "前列腺癌家族史(一二级亲属)",
+      "Family history of prostate cancer (1st/2nd-degree)",
+      "前列腺癌家族史"
+    ],
+    "family_history_kidney": [
+      "肾癌家族史",
+      "Family history of kidney cancer"
+    ],
+    "brca1_carrier": [
+      "BRCA1携带者",
+      "BRCA1 carrier"
+    ],
+    "brca1_mutation_carrier": [
+      "BRCA1突变携带者",
+      "BRCA1 mutation carrier",
+      "BRCA1+",
+      "BRCA1 mutation"
+    ],
+    "brca2_mutation_carrier": [
+      "BRCA2突变携带者",
+      "BRCA2 mutation carrier",
+      "BRCA2+",
+      "BRCA2 mutation"
+    ],
+    "brca12_mutation_carrier": [
+      "BRCA1/2突变携带者",
+      "BRCA1/2 mutation carrier",
+      "BRCA1/2",
+      "BRCA mutation"
+    ],
+    "menarche_before_12": [
+      "月经初潮<12岁",
+      "Menarche before age 12"
+    ],
+    "nulliparous": [
+      "未生育",
+      "Nulliparity"
+    ],
+    "nulliparous_or_infertile": [
+      "未生育/不孕症",
+      "Nulliparity or infertility"
+    ],
+    "multiparous_5plus": [
+      "多产(≥5次)",
+      "Multiparity (≥5 births)"
+    ],
+    "breastfeeding_per_12mo": [
+      "哺乳(每12月)",
+      "Breastfeeding (per 12 months)"
+    ],
+    "first_birth_after_30": [
+      "首胎>30岁",
+      "First birth after age 30"
+    ],
+    "late_menopause": [
+      "绝经晚>55岁",
+      "Late menopause (>55)"
+    ],
+    "ocp_protective_per_5y": [
+      "口服避孕药(保护因素,每5年)",
+      "Oral contraceptives (protective, per 5y)"
+    ],
+    "ocp_long_term": [
+      "长期口服避孕药>5年",
+      "Long-term oral contraceptives (>5y)"
+    ],
+    "hrt_5y": [
+      "激素替代治疗5年",
+      "Hormone replacement therapy (5y)"
+    ],
+    "postmeno_hormone_5y": [
+      "绝经后激素治疗5年",
+      "Postmenopausal hormone therapy (5y)"
+    ],
+    "multiple_sexual_partners": [
+      "多个性伴侣(≥5)",
+      "Multiple sexual partners (≥5)"
+    ],
+    "first_intercourse_before_16": [
+      "首次性生活<16岁",
+      "First intercourse before 16"
+    ],
+    "barrett_esophagus": [
+      "Barrett食管",
+      "Barrett esophagus",
+      "巴雷特食管"
+    ],
+    "gerd_reflux_esophagitis": [
+      "GERD/反流性食管炎",
+      "GERD / reflux esophagitis",
+      "反流性食管炎",
+      "胃食管反流病"
+    ],
+    "atrophic_gastritis": [
+      "萎缩性胃炎",
+      "Atrophic gastritis",
+      "慢性萎缩性胃炎",
+      "CAG",
+      "atrophic gastritis"
+    ],
+    "intestinal_metaplasia": [
+      "肠上皮化生",
+      "Intestinal metaplasia",
+      "肠化",
+      "IM"
+    ],
+    "adenomatous_polyp": [
+      "腺瘤性息肉",
+      "Adenomatous polyp",
+      "腺瘤",
+      "adenoma",
+      "结肠腺瘤"
+    ],
+    "ibd": [
+      "炎症性肠病(IBD)",
+      "Inflammatory bowel disease",
+      "IBD",
+      "炎症性肠病"
+    ],
+    "ulcerative_colitis": [
+      "溃疡性结肠炎",
+      "Ulcerative colitis",
+      "UC",
+      "溃结"
+    ],
+    "crohns_disease": [
+      "克罗恩病",
+      "Crohn's disease",
+      "CD",
+      "克罗恩"
+    ],
+    "psc": [
+      "原发性硬化性胆管炎(PSC)",
+      "Primary sclerosing cholangitis",
+      "PSC",
+      "原发性硬化性胆管炎"
+    ],
+    "chronic_cholecystitis": [
+      "慢性胆囊炎",
+      "Chronic cholecystitis"
+    ],
+    "bile_duct_stones": [
+      "胆管结石",
+      "Bile duct stones"
+    ],
+    "choledochal_cyst": [
+      "胆总管囊肿",
+      "Choledochal cyst"
+    ],
+    "liver_cirrhosis": [
+      "肝硬化",
+      "Liver cirrhosis",
+      "cirrhosis"
+    ],
+    "alcoholic_cirrhosis": [
+      "酒精性肝硬化",
+      "Alcoholic cirrhosis"
+    ],
+    "breast_density_ge75": [
+      "乳腺密度≥75%",
+      "Mammographic breast density ≥75%",
+      "mammographic density",
+      "致密型乳腺"
+    ],
+    "bone_density_high": [
+      "骨密度增高",
+      "High bone density"
+    ],
+    "endometriosis": [
+      "子宫内膜异位症",
+      "Endometriosis"
+    ],
+    "chronic_uti": [
+      "慢性尿路感染",
+      "Chronic urinary tract infection"
+    ],
+    "catheter_long_term": [
+      "导尿管使用>10年",
+      "Long-term urinary catheter (>10y)"
+    ],
+    "kidney_stones": [
+      "肾结石病史",
+      "History of kidney stones"
+    ],
+    "esrd_dialysis_3y": [
+      "终末期肾病/透析>3年",
+      "ESRD / dialysis >3y"
+    ],
+    "copd": [
+      "慢阻肺(COPD)",
+      "Chronic obstructive pulmonary disease",
+      "COPD",
+      "慢阻肺",
+      "慢性阻塞性肺疾病"
+    ],
+    "asbestos_exposure": [
+      "石棉暴露",
+      "Asbestos exposure",
+      "asbestos"
+    ],
+    "occupational_aromatic_amine": [
+      "职业芳香胺暴露",
+      "Occupational aromatic amine exposure"
+    ],
+    "occupational_aromatic_amine_high": [
+      "职业芳香胺暴露(高剂量)",
+      "Occupational aromatic amine exposure (high dose)"
+    ],
+    "aflatoxin_b1": [
+      "黄曲霉毒素B1暴露",
+      "Aflatoxin B1 exposure"
+    ],
+    "cyclophosphamide_therapy": [
+      "环磷酰胺治疗",
+      "Cyclophosphamide therapy"
+    ],
+    "ethnicity_african": [
+      "非洲裔种族",
+      "African ethnicity"
+    ],
+    "fatty_liver": [
+      "脂肪肝",
+      "Fatty liver",
+      "Hepatic steatosis",
+      "NAFLD",
+      "非酒精性脂肪肝",
+      "酒精性脂肪肝",
+      "脂肪性肝病"
+    ],
+    "alcohol_daily_light": [
+      "每日少量饮酒",
+      "少量饮酒",
+      "light daily alcohol",
+      "少量酒精"
+    ],
+    "alcohol_daily_heavy": [
+      "每日大量饮酒",
+      "大量饮酒",
+      "heavy daily alcohol",
+      "重度饮酒",
+      "heavy drinking"
+    ],
+    "family_history_liver": [
+      "肝癌家族史",
+      "family history liver cancer",
+      "family hx of liver cancer",
+      "父亲患肝癌",
+      "母亲患肝癌"
+    ],
+    "gastric_partial_gastrectomy": [
+      "胃部分切除术",
+      "胃大部切除",
+      "胃次全切除",
+      "胃切除术后",
+      "partial gastrectomy",
+      "gastric resection"
+    ],
+    "gastric_mirror": [
+      "胃镜",
+      "胃镜检查",
+      "胃黏膜病理",
+      "胃活检",
+      "浅表性胃炎",
+      "慢性浅表性胃炎",
+      "非萎缩性胃炎",
+      "低级别上皮内瘤变",
+      "低级别异型增生",
+      "高级别上皮内瘤变",
+      "高级别异型增生",
+      "gastric endoscopy",
+      "gastroscopy"
+    ],
+    "family_history_bladder": [
+      "膀胱癌家族史",
+      "family history bladder cancer",
+      "尿路上皮癌家族史"
+    ]
+  }
+}

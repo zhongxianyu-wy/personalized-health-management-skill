@@ -1,0 +1,1347 @@
+{
+  "factors": {
+    "smoking_general": {
+      "exam_sections": [
+        "个人史",
+        "问诊",
+        "生活方式"
+      ],
+      "expected_evidence": [
+        "个人史",
+        "问诊"
+      ],
+      "value_units": null
+    },
+    "smoking_continuous": {
+      "exam_sections": [
+        "个人史",
+        "问诊",
+        "生活方式"
+      ],
+      "expected_evidence": [
+        "个人史",
+        "问诊"
+      ],
+      "value_units": null
+    },
+    "smoking_current": {
+      "exam_sections": [
+        "个人史",
+        "问诊",
+        "生活方式"
+      ],
+      "expected_evidence": [
+        "个人史",
+        "问诊"
+      ],
+      "value_units": null
+    },
+    "smoking_male": {
+      "exam_sections": [
+        "个人史",
+        "问诊",
+        "生活方式"
+      ],
+      "expected_evidence": [
+        "个人史",
+        "问诊"
+      ],
+      "value_units": null
+    },
+    "smoking_female": {
+      "exam_sections": [
+        "个人史",
+        "问诊",
+        "生活方式"
+      ],
+      "expected_evidence": [
+        "个人史",
+        "问诊"
+      ],
+      "value_units": null
+    },
+    "smoking_adenocarcinoma": {
+      "exam_sections": [
+        "个人史",
+        "问诊",
+        "生活方式"
+      ],
+      "expected_evidence": [
+        "个人史",
+        "问诊"
+      ],
+      "value_units": null
+    },
+    "smoking_squamous": {
+      "exam_sections": [
+        "个人史",
+        "问诊",
+        "生活方式"
+      ],
+      "expected_evidence": [
+        "个人史",
+        "问诊"
+      ],
+      "value_units": null
+    },
+    "smoking_quit_over_10y": {
+      "exam_sections": [
+        "个人史",
+        "问诊",
+        "生活方式"
+      ],
+      "expected_evidence": [
+        "个人史",
+        "问诊"
+      ],
+      "value_units": null
+    },
+    "smoking_cessation_5y": {
+      "exam_sections": [
+        "个人史",
+        "问诊",
+        "生活方式"
+      ],
+      "expected_evidence": [
+        "个人史",
+        "问诊"
+      ],
+      "value_units": null
+    },
+    "smoking_cessation_10y": {
+      "exam_sections": [
+        "个人史",
+        "问诊",
+        "生活方式"
+      ],
+      "expected_evidence": [
+        "个人史",
+        "问诊"
+      ],
+      "value_units": null
+    },
+    "smoking_cessation_15y": {
+      "exam_sections": [
+        "个人史",
+        "问诊",
+        "生活方式"
+      ],
+      "expected_evidence": [
+        "个人史",
+        "问诊"
+      ],
+      "value_units": null
+    },
+    "secondhand_smoke": {
+      "exam_sections": [
+        "个人史",
+        "问诊",
+        "生活方式"
+      ],
+      "expected_evidence": [
+        "个人史",
+        "问诊"
+      ],
+      "value_units": null
+    },
+    "smoking_alcohol_synergy": {
+      "exam_sections": [
+        "个人史",
+        "问诊",
+        "生活方式"
+      ],
+      "expected_evidence": [
+        "个人史",
+        "问诊"
+      ],
+      "value_units": null
+    },
+    "alcohol_10g_per_day": {
+      "exam_sections": [
+        "个人史",
+        "问诊",
+        "生活方式"
+      ],
+      "expected_evidence": [
+        "个人史",
+        "问诊"
+      ],
+      "value_units": null
+    },
+    "alcohol_3plus_drinks": {
+      "exam_sections": [
+        "个人史",
+        "问诊",
+        "生活方式"
+      ],
+      "expected_evidence": [
+        "个人史",
+        "问诊"
+      ],
+      "value_units": null
+    },
+    "alcohol_light": {
+      "exam_sections": [
+        "个人史",
+        "问诊",
+        "生活方式"
+      ],
+      "expected_evidence": [
+        "个人史",
+        "问诊"
+      ],
+      "value_units": null
+    },
+    "alcohol_non_cardia": {
+      "exam_sections": [
+        "个人史",
+        "问诊",
+        "生活方式"
+      ],
+      "expected_evidence": [
+        "个人史",
+        "问诊"
+      ],
+      "value_units": null
+    },
+    "alcohol_squamous_3plus": {
+      "exam_sections": [
+        "个人史",
+        "问诊",
+        "生活方式"
+      ],
+      "expected_evidence": [
+        "个人史",
+        "问诊"
+      ],
+      "value_units": null
+    },
+    "alcohol_30g_per_day": {
+      "exam_sections": [
+        "个人史",
+        "问诊",
+        "生活方式"
+      ],
+      "expected_evidence": [
+        "个人史",
+        "问诊"
+      ],
+      "value_units": null
+    },
+    "processed_meat": {
+      "exam_sections": [
+        "个人史",
+        "问诊",
+        "生活方式"
+      ],
+      "expected_evidence": [
+        "个人史",
+        "问诊"
+      ],
+      "value_units": null
+    },
+    "red_meat_high": {
+      "exam_sections": [
+        "个人史",
+        "问诊",
+        "生活方式"
+      ],
+      "expected_evidence": [
+        "个人史",
+        "问诊"
+      ],
+      "value_units": null
+    },
+    "pickled_food": {
+      "exam_sections": [
+        "个人史",
+        "问诊",
+        "生活方式"
+      ],
+      "expected_evidence": [
+        "个人史",
+        "问诊"
+      ],
+      "value_units": null
+    },
+    "hot_food": {
+      "exam_sections": [
+        "个人史",
+        "问诊",
+        "生活方式"
+      ],
+      "expected_evidence": [
+        "个人史",
+        "问诊"
+      ],
+      "value_units": null
+    },
+    "high_salt_diet": {
+      "exam_sections": [
+        "个人史",
+        "问诊",
+        "生活方式"
+      ],
+      "expected_evidence": [
+        "个人史",
+        "问诊"
+      ],
+      "value_units": null
+    },
+    "calcium_high_intake": {
+      "exam_sections": [
+        "个人史",
+        "问诊",
+        "生活方式"
+      ],
+      "expected_evidence": [
+        "个人史",
+        "问诊"
+      ],
+      "value_units": null
+    },
+    "areca_chewing": {
+      "exam_sections": [
+        "个人史",
+        "问诊",
+        "生活方式"
+      ],
+      "expected_evidence": [
+        "个人史",
+        "问诊"
+      ],
+      "value_units": null
+    },
+    "poor_oral_hygiene": {
+      "exam_sections": [
+        "个人史",
+        "问诊",
+        "生活方式"
+      ],
+      "expected_evidence": [
+        "个人史",
+        "问诊"
+      ],
+      "value_units": null
+    },
+    "obesity_bmi_ge30": {
+      "exam_sections": [
+        "一般检查",
+        "BMI"
+      ],
+      "expected_evidence": [
+        "一般检查",
+        "BMI"
+      ],
+      "value_units": null
+    },
+    "obesity_bmi_ge30_postmeno": {
+      "exam_sections": [
+        "个人史",
+        "问诊",
+        "生活方式"
+      ],
+      "expected_evidence": [
+        "个人史",
+        "问诊"
+      ],
+      "value_units": null
+    },
+    "obesity_bmi_per_5": {
+      "exam_sections": [
+        "一般检查",
+        "BMI"
+      ],
+      "expected_evidence": [
+        "一般检查",
+        "BMI"
+      ],
+      "value_units": null
+    },
+    "metabolic_syndrome": {
+      "exam_sections": [
+        "既往史",
+        "现病史",
+        "问诊"
+      ],
+      "expected_evidence": [
+        "既往史",
+        "现病史"
+      ],
+      "value_units": null
+    },
+    "type2_diabetes": {
+      "exam_sections": [
+        "检验科",
+        "空腹血糖",
+        "糖化血红蛋白"
+      ],
+      "expected_evidence": [
+        "检验科",
+        "空腹血糖"
+      ],
+      "value_units": null
+    },
+    "diabetes_general": {
+      "exam_sections": [
+        "既往史",
+        "现病史",
+        "问诊"
+      ],
+      "expected_evidence": [
+        "既往史",
+        "现病史"
+      ],
+      "value_units": null
+    },
+    "hypertension": {
+      "exam_sections": [
+        "一般检查",
+        "血压"
+      ],
+      "expected_evidence": [
+        "一般检查",
+        "血压"
+      ],
+      "value_units": null
+    },
+    "hbv_hbsag_positive": {
+      "exam_sections": [
+        "检验科",
+        "乙肝五项"
+      ],
+      "expected_evidence": [
+        "检验科",
+        "乙肝五项"
+      ],
+      "value_units": null
+    },
+    "hbv_hbsag_hbeag_positive": {
+      "exam_sections": [
+        "检验科",
+        "乙肝五项"
+      ],
+      "expected_evidence": [
+        "检验科",
+        "乙肝五项"
+      ],
+      "value_units": null
+    },
+    "hcv_antibody_positive": {
+      "exam_sections": [
+        "检验科",
+        "丙肝抗体"
+      ],
+      "expected_evidence": [
+        "检验科",
+        "丙肝抗体"
+      ],
+      "value_units": null
+    },
+    "hpv16_18": {
+      "exam_sections": [
+        "检验科",
+        "HPV分型"
+      ],
+      "expected_evidence": [
+        "检验科",
+        "HPV分型"
+      ],
+      "value_units": null
+    },
+    "hpv_persistent": {
+      "exam_sections": [
+        "检验科",
+        "HPV分型",
+        "宫颈TCT"
+      ],
+      "expected_evidence": [
+        "检验科",
+        "HPV分型"
+      ],
+      "value_units": null
+    },
+    "hpv_oropharyngeal": {
+      "exam_sections": [
+        "既往史",
+        "现病史",
+        "问诊"
+      ],
+      "expected_evidence": [
+        "既往史",
+        "现病史"
+      ],
+      "value_units": null
+    },
+    "ebv_nasopharyngeal": {
+      "exam_sections": [
+        "既往史",
+        "现病史",
+        "问诊"
+      ],
+      "expected_evidence": [
+        "既往史",
+        "现病史"
+      ],
+      "value_units": null
+    },
+    "h_pylori": {
+      "exam_sections": [
+        "检验科",
+        "C13呼气试验",
+        "胃镜"
+      ],
+      "expected_evidence": [
+        "检验科",
+        "C13呼气试验"
+      ],
+      "value_units": null
+    },
+    "liver_fluke": {
+      "exam_sections": [
+        "既往史",
+        "现病史",
+        "问诊"
+      ],
+      "expected_evidence": [
+        "既往史",
+        "现病史"
+      ],
+      "value_units": null
+    },
+    "schistosomiasis": {
+      "exam_sections": [
+        "既往史",
+        "现病史",
+        "问诊"
+      ],
+      "expected_evidence": [
+        "既往史",
+        "现病史"
+      ],
+      "value_units": null
+    },
+    "hiv_immunosuppression": {
+      "exam_sections": [
+        "既往史",
+        "现病史",
+        "问诊"
+      ],
+      "expected_evidence": [
+        "既往史",
+        "现病史"
+      ],
+      "value_units": null
+    },
+    "family_history_first_degree": {
+      "exam_sections": [
+        "家族史",
+        "问诊"
+      ],
+      "expected_evidence": [
+        "家族史",
+        "问诊"
+      ],
+      "value_units": null
+    },
+    "family_history_multiple": {
+      "exam_sections": [
+        "家族史",
+        "问诊"
+      ],
+      "expected_evidence": [
+        "家族史",
+        "问诊"
+      ],
+      "value_units": null
+    },
+    "family_history_crc_first": {
+      "exam_sections": [
+        "家族史",
+        "问诊"
+      ],
+      "expected_evidence": [
+        "家族史",
+        "问诊"
+      ],
+      "value_units": null
+    },
+    "family_history_crc_multiple": {
+      "exam_sections": [
+        "家族史",
+        "问诊"
+      ],
+      "expected_evidence": [
+        "家族史",
+        "问诊"
+      ],
+      "value_units": null
+    },
+    "family_history_multiple_same": {
+      "exam_sections": [
+        "家族史",
+        "问诊"
+      ],
+      "expected_evidence": [
+        "家族史",
+        "问诊"
+      ],
+      "value_units": null
+    },
+    "family_history_breast_first": {
+      "exam_sections": [
+        "家族史",
+        "问诊"
+      ],
+      "expected_evidence": [
+        "家族史",
+        "问诊"
+      ],
+      "value_units": null
+    },
+    "family_history_ovarian_first": {
+      "exam_sections": [
+        "家族史",
+        "问诊"
+      ],
+      "expected_evidence": [
+        "家族史",
+        "问诊"
+      ],
+      "value_units": null
+    },
+    "family_history_gastric_first": {
+      "exam_sections": [
+        "家族史",
+        "问诊"
+      ],
+      "expected_evidence": [
+        "家族史",
+        "问诊"
+      ],
+      "value_units": null
+    },
+    "family_history_esophageal": {
+      "exam_sections": [
+        "家族史",
+        "问诊"
+      ],
+      "expected_evidence": [
+        "家族史",
+        "问诊"
+      ],
+      "value_units": null
+    },
+    "family_history_prostate": {
+      "exam_sections": [
+        "家族史",
+        "问诊"
+      ],
+      "expected_evidence": [
+        "家族史",
+        "问诊"
+      ],
+      "value_units": null
+    },
+    "family_history_kidney": {
+      "exam_sections": [
+        "家族史",
+        "问诊"
+      ],
+      "expected_evidence": [
+        "家族史",
+        "问诊"
+      ],
+      "value_units": null
+    },
+    "brca1_carrier": {
+      "exam_sections": [
+        "既往史",
+        "现病史",
+        "问诊"
+      ],
+      "expected_evidence": [
+        "既往史",
+        "现病史"
+      ],
+      "value_units": null
+    },
+    "brca1_mutation_carrier": {
+      "exam_sections": [
+        "既往史",
+        "现病史",
+        "问诊"
+      ],
+      "expected_evidence": [
+        "既往史",
+        "现病史"
+      ],
+      "value_units": null
+    },
+    "brca2_mutation_carrier": {
+      "exam_sections": [
+        "既往史",
+        "现病史",
+        "问诊"
+      ],
+      "expected_evidence": [
+        "既往史",
+        "现病史"
+      ],
+      "value_units": null
+    },
+    "brca12_mutation_carrier": {
+      "exam_sections": [
+        "既往史",
+        "现病史",
+        "问诊"
+      ],
+      "expected_evidence": [
+        "既往史",
+        "现病史"
+      ],
+      "value_units": null
+    },
+    "menarche_before_12": {
+      "exam_sections": [
+        "既往史",
+        "现病史",
+        "问诊"
+      ],
+      "expected_evidence": [
+        "既往史",
+        "现病史"
+      ],
+      "value_units": null
+    },
+    "nulliparous": {
+      "exam_sections": [
+        "既往史",
+        "现病史",
+        "问诊"
+      ],
+      "expected_evidence": [
+        "既往史",
+        "现病史"
+      ],
+      "value_units": null
+    },
+    "nulliparous_or_infertile": {
+      "exam_sections": [
+        "既往史",
+        "现病史",
+        "问诊"
+      ],
+      "expected_evidence": [
+        "既往史",
+        "现病史"
+      ],
+      "value_units": null
+    },
+    "multiparous_5plus": {
+      "exam_sections": [
+        "既往史",
+        "现病史",
+        "问诊"
+      ],
+      "expected_evidence": [
+        "既往史",
+        "现病史"
+      ],
+      "value_units": null
+    },
+    "breastfeeding_per_12mo": {
+      "exam_sections": [
+        "既往史",
+        "现病史",
+        "问诊"
+      ],
+      "expected_evidence": [
+        "既往史",
+        "现病史"
+      ],
+      "value_units": null
+    },
+    "first_birth_after_30": {
+      "exam_sections": [
+        "既往史",
+        "现病史",
+        "问诊"
+      ],
+      "expected_evidence": [
+        "既往史",
+        "现病史"
+      ],
+      "value_units": null
+    },
+    "late_menopause": {
+      "exam_sections": [
+        "既往史",
+        "现病史",
+        "问诊"
+      ],
+      "expected_evidence": [
+        "既往史",
+        "现病史"
+      ],
+      "value_units": null
+    },
+    "ocp_protective_per_5y": {
+      "exam_sections": [
+        "既往史",
+        "现病史",
+        "问诊"
+      ],
+      "expected_evidence": [
+        "既往史",
+        "现病史"
+      ],
+      "value_units": null
+    },
+    "ocp_long_term": {
+      "exam_sections": [
+        "既往史",
+        "现病史",
+        "问诊"
+      ],
+      "expected_evidence": [
+        "既往史",
+        "现病史"
+      ],
+      "value_units": null
+    },
+    "hrt_5y": {
+      "exam_sections": [
+        "既往史",
+        "现病史",
+        "问诊"
+      ],
+      "expected_evidence": [
+        "既往史",
+        "现病史"
+      ],
+      "value_units": null
+    },
+    "postmeno_hormone_5y": {
+      "exam_sections": [
+        "既往史",
+        "现病史",
+        "问诊"
+      ],
+      "expected_evidence": [
+        "既往史",
+        "现病史"
+      ],
+      "value_units": null
+    },
+    "multiple_sexual_partners": {
+      "exam_sections": [
+        "个人史",
+        "问诊",
+        "生活方式"
+      ],
+      "expected_evidence": [
+        "个人史",
+        "问诊"
+      ],
+      "value_units": null
+    },
+    "first_intercourse_before_16": {
+      "exam_sections": [
+        "个人史",
+        "问诊",
+        "生活方式"
+      ],
+      "expected_evidence": [
+        "个人史",
+        "问诊"
+      ],
+      "value_units": null
+    },
+    "barrett_esophagus": {
+      "exam_sections": [
+        "胃镜",
+        "病理"
+      ],
+      "expected_evidence": [
+        "胃镜",
+        "病理"
+      ],
+      "value_units": null
+    },
+    "gerd_reflux_esophagitis": {
+      "exam_sections": [
+        "胃镜"
+      ],
+      "expected_evidence": [
+        "胃镜"
+      ],
+      "value_units": null
+    },
+    "atrophic_gastritis": {
+      "exam_sections": [
+        "胃镜",
+        "病理"
+      ],
+      "expected_evidence": [
+        "胃镜",
+        "病理"
+      ],
+      "value_units": null
+    },
+    "intestinal_metaplasia": {
+      "exam_sections": [
+        "胃镜",
+        "病理"
+      ],
+      "expected_evidence": [
+        "胃镜",
+        "病理"
+      ],
+      "value_units": null
+    },
+    "adenomatous_polyp": {
+      "exam_sections": [
+        "肠镜",
+        "病理"
+      ],
+      "expected_evidence": [
+        "肠镜",
+        "病理"
+      ],
+      "value_units": null
+    },
+    "ibd": {
+      "exam_sections": [
+        "既往史",
+        "现病史",
+        "问诊"
+      ],
+      "expected_evidence": [
+        "既往史",
+        "现病史"
+      ],
+      "value_units": null
+    },
+    "ulcerative_colitis": {
+      "exam_sections": [
+        "既往史",
+        "现病史",
+        "问诊"
+      ],
+      "expected_evidence": [
+        "既往史",
+        "现病史"
+      ],
+      "value_units": null
+    },
+    "crohns_disease": {
+      "exam_sections": [
+        "既往史",
+        "现病史",
+        "问诊"
+      ],
+      "expected_evidence": [
+        "既往史",
+        "现病史"
+      ],
+      "value_units": null
+    },
+    "psc": {
+      "exam_sections": [
+        "既往史",
+        "现病史",
+        "问诊"
+      ],
+      "expected_evidence": [
+        "既往史",
+        "现病史"
+      ],
+      "value_units": null
+    },
+    "chronic_cholecystitis": {
+      "exam_sections": [
+        "腹部超声"
+      ],
+      "expected_evidence": [
+        "腹部超声"
+      ],
+      "value_units": null
+    },
+    "bile_duct_stones": {
+      "exam_sections": [
+        "腹部超声",
+        "MRCP"
+      ],
+      "expected_evidence": [
+        "腹部超声",
+        "MRCP"
+      ],
+      "value_units": null
+    },
+    "choledochal_cyst": {
+      "exam_sections": [
+        "腹部超声",
+        "MRCP"
+      ],
+      "expected_evidence": [
+        "腹部超声",
+        "MRCP"
+      ],
+      "value_units": null
+    },
+    "liver_cirrhosis": {
+      "exam_sections": [
+        "腹部超声",
+        "影像"
+      ],
+      "expected_evidence": [
+        "腹部超声",
+        "影像"
+      ],
+      "value_units": null
+    },
+    "alcoholic_cirrhosis": {
+      "exam_sections": [
+        "腹部超声",
+        "影像"
+      ],
+      "expected_evidence": [
+        "腹部超声",
+        "影像"
+      ],
+      "value_units": null
+    },
+    "breast_density_ge75": {
+      "exam_sections": [
+        "乳腺钼靶",
+        "乳腺超声"
+      ],
+      "expected_evidence": [
+        "乳腺钼靶",
+        "乳腺超声"
+      ],
+      "value_units": null
+    },
+    "bone_density_high": {
+      "exam_sections": [
+        "影像",
+        "内镜",
+        "超声",
+        "病理"
+      ],
+      "expected_evidence": [
+        "影像",
+        "内镜"
+      ],
+      "value_units": null
+    },
+    "endometriosis": {
+      "exam_sections": [
+        "妇科超声"
+      ],
+      "expected_evidence": [
+        "妇科超声"
+      ],
+      "value_units": null
+    },
+    "chronic_uti": {
+      "exam_sections": [
+        "既往史",
+        "现病史",
+        "问诊"
+      ],
+      "expected_evidence": [
+        "既往史",
+        "现病史"
+      ],
+      "value_units": null
+    },
+    "catheter_long_term": {
+      "exam_sections": [
+        "既往史",
+        "现病史",
+        "问诊"
+      ],
+      "expected_evidence": [
+        "既往史",
+        "现病史"
+      ],
+      "value_units": null
+    },
+    "kidney_stones": {
+      "exam_sections": [
+        "泌尿超声",
+        "腹部超声"
+      ],
+      "expected_evidence": [
+        "泌尿超声",
+        "腹部超声"
+      ],
+      "value_units": null
+    },
+    "esrd_dialysis_3y": {
+      "exam_sections": [
+        "检验科",
+        "肌酐",
+        "eGFR"
+      ],
+      "expected_evidence": [
+        "检验科",
+        "肌酐"
+      ],
+      "value_units": null
+    },
+    "copd": {
+      "exam_sections": [
+        "肺功能",
+        "影像"
+      ],
+      "expected_evidence": [
+        "肺功能",
+        "影像"
+      ],
+      "value_units": null
+    },
+    "asbestos_exposure": {
+      "exam_sections": [
+        "个人史",
+        "问诊",
+        "生活方式"
+      ],
+      "expected_evidence": [
+        "个人史",
+        "问诊"
+      ],
+      "value_units": null
+    },
+    "occupational_aromatic_amine": {
+      "exam_sections": [
+        "个人史",
+        "问诊",
+        "生活方式"
+      ],
+      "expected_evidence": [
+        "个人史",
+        "问诊"
+      ],
+      "value_units": null
+    },
+    "occupational_aromatic_amine_high": {
+      "exam_sections": [
+        "个人史",
+        "问诊",
+        "生活方式"
+      ],
+      "expected_evidence": [
+        "个人史",
+        "问诊"
+      ],
+      "value_units": null
+    },
+    "aflatoxin_b1": {
+      "exam_sections": [
+        "个人史",
+        "问诊",
+        "生活方式"
+      ],
+      "expected_evidence": [
+        "个人史",
+        "问诊"
+      ],
+      "value_units": null
+    },
+    "cyclophosphamide_therapy": {
+      "exam_sections": [
+        "既往史",
+        "现病史",
+        "问诊"
+      ],
+      "expected_evidence": [
+        "既往史",
+        "现病史"
+      ],
+      "value_units": null
+    },
+    "ethnicity_african": {
+      "exam_sections": [
+        "人口学",
+        "首页"
+      ],
+      "expected_evidence": [
+        "人口学",
+        "首页"
+      ],
+      "value_units": null
+    },
+    "kidney_mass": {
+      "exam_sections": [
+        "腹部超声",
+        "CT",
+        "MRI"
+      ],
+      "expected_evidence": [
+        "腹部超声",
+        "CT"
+      ],
+      "value_units": null
+    },
+    "pancreas_mass": {
+      "exam_sections": [
+        "腹部超声",
+        "CT",
+        "MRI",
+        "EUS"
+      ],
+      "expected_evidence": [
+        "腹部超声",
+        "CT"
+      ],
+      "value_units": null
+    },
+    "ovarian_mass": {
+      "exam_sections": [
+        "妇科超声",
+        "腹部超声"
+      ],
+      "expected_evidence": [
+        "妇科超声"
+      ],
+      "value_units": null
+    },
+    "prostate_mri": {
+      "exam_sections": [
+        "前列腺MRI"
+      ],
+      "expected_evidence": [
+        "前列腺MRI"
+      ],
+      "value_units": null
+    },
+    "gastric_mirror": {
+      "exam_sections": [
+        "胃镜",
+        "病理"
+      ],
+      "expected_evidence": [
+        "胃镜",
+        "病理"
+      ],
+      "value_units": null
+    },
+    "esophageal_mirror": {
+      "exam_sections": [
+        "胃镜",
+        "病理"
+      ],
+      "expected_evidence": [
+        "胃镜",
+        "病理"
+      ],
+      "value_units": null
+    },
+    "colorectal_mirror": {
+      "exam_sections": [
+        "肠镜",
+        "病理"
+      ],
+      "expected_evidence": [
+        "肠镜",
+        "病理"
+      ],
+      "value_units": null
+    },
+    "cervical_tct": {
+      "exam_sections": [
+        "宫颈TCT"
+      ],
+      "expected_evidence": [
+        "宫颈TCT"
+      ],
+      "value_units": null
+    },
+    "cervical_hpv": {
+      "exam_sections": [
+        "HPV分型"
+      ],
+      "expected_evidence": [
+        "HPV分型"
+      ],
+      "value_units": null
+    },
+    "urine_cytology": {
+      "exam_sections": [
+        "尿常规",
+        "尿细胞学"
+      ],
+      "expected_evidence": [
+        "尿细胞学"
+      ],
+      "value_units": null
+    },
+    "breast_biopsy": {
+      "exam_sections": [
+        "乳腺活检",
+        "病理"
+      ],
+      "expected_evidence": [
+        "乳腺活检",
+        "病理"
+      ],
+      "value_units": null
+    },
+    "alt_ast": {
+      "exam_sections": [
+        "检验科",
+        "肝功能"
+      ],
+      "expected_evidence": [
+        "检验科",
+        "肝功能"
+      ],
+      "value_units": null
+    },
+    "egfr": {
+      "exam_sections": [
+        "检验科",
+        "肾功能"
+      ],
+      "expected_evidence": [
+        "检验科",
+        "肾功能"
+      ],
+      "value_units": null
+    },
+    "hematuria": {
+      "exam_sections": [
+        "尿常规"
+      ],
+      "expected_evidence": [
+        "尿常规"
+      ],
+      "value_units": null
+    },
+    "ebv_dna": {
+      "exam_sections": [
+        "检验科",
+        "EBV-DNA"
+      ],
+      "expected_evidence": [
+        "检验科",
+        "EBV-DNA"
+      ],
+      "value_units": null
+    },
+    "bilirubin_alp_ggt": {
+      "exam_sections": [
+        "检验科",
+        "肝功能"
+      ],
+      "expected_evidence": [
+        "检验科",
+        "肝功能"
+      ],
+      "value_units": null
+    }
+  }
+}

@@ -1,0 +1,2113 @@
+{
+  "version": "evidence-v0002",
+  "risk_factors": [
+    {
+      "factor_id": "smoking_general",
+      "factor_name_zh": "吸烟",
+      "factor_name_en": "Smoking (general)",
+      "factor_type": "lifestyle",
+      "applicable_sex": "all",
+      "applicable_age_min": null,
+      "applicable_age_max": null,
+      "level_schema": [
+        "present",
+        "absent"
+      ],
+      "interaction_needed_if_missing": true,
+      "interaction_question_group": "smoking_general"
+    },
+    {
+      "factor_id": "smoking_continuous",
+      "factor_name_zh": "吸烟(持续吸烟)",
+      "factor_name_en": "Continuous smoker",
+      "factor_type": "lifestyle",
+      "applicable_sex": "all",
+      "applicable_age_min": null,
+      "applicable_age_max": null,
+      "level_schema": [
+        "present",
+        "absent"
+      ],
+      "interaction_needed_if_missing": true,
+      "interaction_question_group": "smoking_continuous"
+    },
+    {
+      "factor_id": "smoking_current",
+      "factor_name_zh": "吸烟(当前)",
+      "factor_name_en": "Current smoker",
+      "factor_type": "lifestyle",
+      "applicable_sex": "all",
+      "applicable_age_min": null,
+      "applicable_age_max": null,
+      "level_schema": [
+        "present",
+        "absent"
+      ],
+      "interaction_needed_if_missing": false
+    },
+    {
+      "factor_id": "smoking_male",
+      "factor_name_zh": "吸烟(男性)",
+      "factor_name_en": "Smoking (male)",
+      "factor_type": "lifestyle",
+      "applicable_sex": "male",
+      "applicable_age_min": null,
+      "applicable_age_max": null,
+      "level_schema": [
+        "present",
+        "absent"
+      ],
+      "interaction_needed_if_missing": false
+    },
+    {
+      "factor_id": "smoking_female",
+      "factor_name_zh": "吸烟(女性)",
+      "factor_name_en": "Smoking (female)",
+      "factor_type": "lifestyle",
+      "applicable_sex": "female",
+      "applicable_age_min": null,
+      "applicable_age_max": null,
+      "level_schema": [
+        "present",
+        "absent"
+      ],
+      "interaction_needed_if_missing": false
+    },
+    {
+      "factor_id": "smoking_adenocarcinoma",
+      "factor_name_zh": "吸烟(腺癌)",
+      "factor_name_en": "Smoking (adenocarcinoma subtype)",
+      "factor_type": "lifestyle",
+      "applicable_sex": "all",
+      "applicable_age_min": null,
+      "applicable_age_max": null,
+      "level_schema": [
+        "present",
+        "absent"
+      ],
+      "interaction_needed_if_missing": false
+    },
+    {
+      "factor_id": "smoking_squamous",
+      "factor_name_zh": "吸烟(鳞癌)",
+      "factor_name_en": "Smoking (squamous subtype)",
+      "factor_type": "lifestyle",
+      "applicable_sex": "all",
+      "applicable_age_min": null,
+      "applicable_age_max": null,
+      "level_schema": [
+        "present",
+        "absent"
+      ],
+      "interaction_needed_if_missing": false
+    },
+    {
+      "factor_id": "smoking_quit_over_10y",
+      "factor_name_zh": "吸烟(曾吸,已戒>10年)",
+      "factor_name_en": "Former smoker, quit >10y",
+      "factor_type": "lifestyle",
+      "applicable_sex": "all",
+      "applicable_age_min": null,
+      "applicable_age_max": null,
+      "level_schema": [
+        "present",
+        "absent"
+      ],
+      "interaction_needed_if_missing": false
+    },
+    {
+      "factor_id": "smoking_cessation_5y",
+      "factor_name_zh": "戒烟5年",
+      "factor_name_en": "Smoking cessation (5y)",
+      "factor_type": "lifestyle",
+      "applicable_sex": "all",
+      "applicable_age_min": null,
+      "applicable_age_max": null,
+      "level_schema": [
+        "present",
+        "absent"
+      ],
+      "interaction_needed_if_missing": false
+    },
+    {
+      "factor_id": "smoking_cessation_10y",
+      "factor_name_zh": "戒烟10年",
+      "factor_name_en": "Smoking cessation (10y)",
+      "factor_type": "lifestyle",
+      "applicable_sex": "all",
+      "applicable_age_min": null,
+      "applicable_age_max": null,
+      "level_schema": [
+        "present",
+        "absent"
+      ],
+      "interaction_needed_if_missing": false
+    },
+    {
+      "factor_id": "smoking_cessation_15y",
+      "factor_name_zh": "戒烟15年",
+      "factor_name_en": "Smoking cessation (15y)",
+      "factor_type": "lifestyle",
+      "applicable_sex": "all",
+      "applicable_age_min": null,
+      "applicable_age_max": null,
+      "level_schema": [
+        "present",
+        "absent"
+      ],
+      "interaction_needed_if_missing": false
+    },
+    {
+      "factor_id": "secondhand_smoke",
+      "factor_name_zh": "二手烟暴露",
+      "factor_name_en": "Secondhand smoke exposure",
+      "factor_type": "lifestyle",
+      "applicable_sex": "all",
+      "applicable_age_min": null,
+      "applicable_age_max": null,
+      "level_schema": [
+        "present",
+        "absent"
+      ],
+      "interaction_needed_if_missing": false
+    },
+    {
+      "factor_id": "smoking_alcohol_synergy",
+      "factor_name_zh": "吸烟+饮酒协同",
+      "factor_name_en": "Smoking + alcohol synergy",
+      "factor_type": "lifestyle",
+      "applicable_sex": "all",
+      "applicable_age_min": null,
+      "applicable_age_max": null,
+      "level_schema": [
+        "present",
+        "absent"
+      ],
+      "interaction_needed_if_missing": false
+    },
+    {
+      "factor_id": "alcohol_10g_per_day",
+      "factor_name_zh": "饮酒(10g/天)",
+      "factor_name_en": "Alcohol 10g/day",
+      "factor_type": "lifestyle",
+      "applicable_sex": "all",
+      "applicable_age_min": null,
+      "applicable_age_max": null,
+      "level_schema": [
+        "present",
+        "absent"
+      ],
+      "interaction_needed_if_missing": false
+    },
+    {
+      "factor_id": "alcohol_3plus_drinks",
+      "factor_name_zh": "饮酒(≥3杯/天)",
+      "factor_name_en": "Alcohol ≥3 drinks/day",
+      "factor_type": "lifestyle",
+      "applicable_sex": "all",
+      "applicable_age_min": null,
+      "applicable_age_max": null,
+      "level_schema": [
+        "present",
+        "absent"
+      ],
+      "interaction_needed_if_missing": false
+    },
+    {
+      "factor_id": "alcohol_light",
+      "factor_name_zh": "饮酒(少量<1杯/天)",
+      "factor_name_en": "Alcohol <1 drink/day",
+      "factor_type": "lifestyle",
+      "applicable_sex": "all",
+      "applicable_age_min": null,
+      "applicable_age_max": null,
+      "level_schema": [
+        "present",
+        "absent"
+      ],
+      "interaction_needed_if_missing": false
+    },
+    {
+      "factor_id": "alcohol_non_cardia",
+      "factor_name_zh": "饮酒(非贲门癌)",
+      "factor_name_en": "Alcohol (non-cardia gastric)",
+      "factor_type": "lifestyle",
+      "applicable_sex": "all",
+      "applicable_age_min": null,
+      "applicable_age_max": null,
+      "level_schema": [
+        "present",
+        "absent"
+      ],
+      "interaction_needed_if_missing": false
+    },
+    {
+      "factor_id": "alcohol_squamous_3plus",
+      "factor_name_zh": "饮酒(鳞癌，≥3杯/天)",
+      "factor_name_en": "Alcohol (squamous, ≥3 drinks/day)",
+      "factor_type": "lifestyle",
+      "applicable_sex": "all",
+      "applicable_age_min": null,
+      "applicable_age_max": null,
+      "level_schema": [
+        "present",
+        "absent"
+      ],
+      "interaction_needed_if_missing": false
+    },
+    {
+      "factor_id": "alcohol_30g_per_day",
+      "factor_name_zh": "饮酒≥30g/天",
+      "factor_name_en": "Alcohol ≥30g/day",
+      "factor_type": "lifestyle",
+      "applicable_sex": "all",
+      "applicable_age_min": null,
+      "applicable_age_max": null,
+      "level_schema": [
+        "present",
+        "absent"
+      ],
+      "interaction_needed_if_missing": true,
+      "interaction_question_group": "alcohol_30g_per_day"
+    },
+    {
+      "factor_id": "processed_meat",
+      "factor_name_zh": "加工肉类",
+      "factor_name_en": "Processed meat intake",
+      "factor_type": "lifestyle",
+      "applicable_sex": "all",
+      "applicable_age_min": null,
+      "applicable_age_max": null,
+      "level_schema": [
+        "present",
+        "absent"
+      ],
+      "interaction_needed_if_missing": false
+    },
+    {
+      "factor_id": "red_meat_high",
+      "factor_name_zh": "红肉>50g/天",
+      "factor_name_en": "Red meat >50g/day",
+      "factor_type": "lifestyle",
+      "applicable_sex": "all",
+      "applicable_age_min": null,
+      "applicable_age_max": null,
+      "level_schema": [
+        "present",
+        "absent"
+      ],
+      "interaction_needed_if_missing": false
+    },
+    {
+      "factor_id": "pickled_food",
+      "factor_name_zh": "腌制食品",
+      "factor_name_en": "Pickled food intake",
+      "factor_type": "lifestyle",
+      "applicable_sex": "all",
+      "applicable_age_min": null,
+      "applicable_age_max": null,
+      "level_schema": [
+        "present",
+        "absent"
+      ],
+      "interaction_needed_if_missing": false
+    },
+    {
+      "factor_id": "hot_food",
+      "factor_name_zh": "高温饮食",
+      "factor_name_en": "Very hot food intake",
+      "factor_type": "lifestyle",
+      "applicable_sex": "all",
+      "applicable_age_min": null,
+      "applicable_age_max": null,
+      "level_schema": [
+        "present",
+        "absent"
+      ],
+      "interaction_needed_if_missing": false
+    },
+    {
+      "factor_id": "high_salt_diet",
+      "factor_name_zh": "高盐饮食",
+      "factor_name_en": "High-salt diet",
+      "factor_type": "lifestyle",
+      "applicable_sex": "all",
+      "applicable_age_min": null,
+      "applicable_age_max": null,
+      "level_schema": [
+        "present",
+        "absent"
+      ],
+      "interaction_needed_if_missing": false
+    },
+    {
+      "factor_id": "calcium_high_intake",
+      "factor_name_zh": "钙摄入>1500mg/天",
+      "factor_name_en": "Calcium >1500mg/day",
+      "factor_type": "lifestyle",
+      "applicable_sex": "all",
+      "applicable_age_min": null,
+      "applicable_age_max": null,
+      "level_schema": [
+        "present",
+        "absent"
+      ],
+      "interaction_needed_if_missing": false
+    },
+    {
+      "factor_id": "areca_chewing",
+      "factor_name_zh": "咀嚼槟榔",
+      "factor_name_en": "Areca nut chewing",
+      "factor_type": "lifestyle",
+      "applicable_sex": "all",
+      "applicable_age_min": null,
+      "applicable_age_max": null,
+      "level_schema": [
+        "present",
+        "absent"
+      ],
+      "interaction_needed_if_missing": false
+    },
+    {
+      "factor_id": "poor_oral_hygiene",
+      "factor_name_zh": "口腔卫生差",
+      "factor_name_en": "Poor oral hygiene",
+      "factor_type": "lifestyle",
+      "applicable_sex": "all",
+      "applicable_age_min": null,
+      "applicable_age_max": null,
+      "level_schema": [
+        "present",
+        "absent"
+      ],
+      "interaction_needed_if_missing": false
+    },
+    {
+      "factor_id": "obesity_bmi_ge30",
+      "factor_name_zh": "肥胖(BMI≥30)",
+      "factor_name_en": "Obesity (BMI ≥30)",
+      "factor_type": "lifestyle",
+      "applicable_sex": "all",
+      "applicable_age_min": null,
+      "applicable_age_max": null,
+      "level_schema": [
+        "present",
+        "absent"
+      ],
+      "interaction_needed_if_missing": false
+    },
+    {
+      "factor_id": "obesity_bmi_ge30_postmeno",
+      "factor_name_zh": "肥胖(BMI≥30,绝经后)",
+      "factor_name_en": "Obesity (BMI ≥30 postmenopausal)",
+      "factor_type": "lifestyle",
+      "applicable_sex": "female",
+      "applicable_age_min": null,
+      "applicable_age_max": null,
+      "level_schema": [
+        "present",
+        "absent"
+      ],
+      "interaction_needed_if_missing": false
+    },
+    {
+      "factor_id": "obesity_bmi_per_5",
+      "factor_name_zh": "肥胖(BMI每5kg/m²)",
+      "factor_name_en": "Obesity (per 5kg/m² BMI)",
+      "factor_type": "lifestyle",
+      "applicable_sex": "all",
+      "applicable_age_min": null,
+      "applicable_age_max": null,
+      "level_schema": [
+        "present",
+        "absent"
+      ],
+      "interaction_needed_if_missing": false
+    },
+    {
+      "factor_id": "metabolic_syndrome",
+      "factor_name_zh": "代谢综合征",
+      "factor_name_en": "Metabolic syndrome",
+      "factor_type": "medical_history",
+      "applicable_sex": "all",
+      "applicable_age_min": null,
+      "applicable_age_max": null,
+      "level_schema": [
+        "present",
+        "absent"
+      ],
+      "interaction_needed_if_missing": false
+    },
+    {
+      "factor_id": "type2_diabetes",
+      "factor_name_zh": "2型糖尿病",
+      "factor_name_en": "Type 2 diabetes",
+      "factor_type": "medical_history",
+      "applicable_sex": "all",
+      "applicable_age_min": null,
+      "applicable_age_max": null,
+      "level_schema": [
+        "present",
+        "absent"
+      ],
+      "interaction_needed_if_missing": false
+    },
+    {
+      "factor_id": "diabetes_general",
+      "factor_name_zh": "糖尿病",
+      "factor_name_en": "Diabetes (general)",
+      "factor_type": "medical_history",
+      "applicable_sex": "all",
+      "applicable_age_min": null,
+      "applicable_age_max": null,
+      "level_schema": [
+        "present",
+        "absent"
+      ],
+      "interaction_needed_if_missing": false
+    },
+    {
+      "factor_id": "hypertension",
+      "factor_name_zh": "高血压",
+      "factor_name_en": "Hypertension",
+      "factor_type": "medical_history",
+      "applicable_sex": "all",
+      "applicable_age_min": null,
+      "applicable_age_max": null,
+      "level_schema": [
+        "present",
+        "absent"
+      ],
+      "interaction_needed_if_missing": false
+    },
+    {
+      "factor_id": "hbv_hbsag_positive",
+      "factor_name_zh": "HBsAg阳性",
+      "factor_name_en": "HBsAg positive (HBV)",
+      "factor_type": "medical_history",
+      "applicable_sex": "all",
+      "applicable_age_min": null,
+      "applicable_age_max": null,
+      "level_schema": [
+        "present",
+        "absent"
+      ],
+      "interaction_needed_if_missing": false
+    },
+    {
+      "factor_id": "hbv_hbsag_hbeag_positive",
+      "factor_name_zh": "HBsAg+HBeAg (大三阳)",
+      "factor_name_en": "HBsAg + HBeAg positive (HBV)",
+      "factor_type": "medical_history",
+      "applicable_sex": "all",
+      "applicable_age_min": null,
+      "applicable_age_max": null,
+      "level_schema": [
+        "present",
+        "absent"
+      ],
+      "interaction_needed_if_missing": false
+    },
+    {
+      "factor_id": "hcv_antibody_positive",
+      "factor_name_zh": "HCV抗体阳性",
+      "factor_name_en": "HCV antibody positive",
+      "factor_type": "medical_history",
+      "applicable_sex": "all",
+      "applicable_age_min": null,
+      "applicable_age_max": null,
+      "level_schema": [
+        "present",
+        "absent"
+      ],
+      "interaction_needed_if_missing": false
+    },
+    {
+      "factor_id": "hpv16_18",
+      "factor_name_zh": "HPV16/18",
+      "factor_name_en": "HPV 16/18 infection",
+      "factor_type": "medical_history",
+      "applicable_sex": "all",
+      "applicable_age_min": null,
+      "applicable_age_max": null,
+      "level_schema": [
+        "present",
+        "absent"
+      ],
+      "interaction_needed_if_missing": false
+    },
+    {
+      "factor_id": "hpv_persistent",
+      "factor_name_zh": "HPV持续感染",
+      "factor_name_en": "HPV persistent infection",
+      "factor_type": "medical_history",
+      "applicable_sex": "all",
+      "applicable_age_min": null,
+      "applicable_age_max": null,
+      "level_schema": [
+        "present",
+        "absent"
+      ],
+      "interaction_needed_if_missing": false
+    },
+    {
+      "factor_id": "hpv_oropharyngeal",
+      "factor_name_zh": "HPV感染(口咽癌)",
+      "factor_name_en": "HPV infection (oropharyngeal)",
+      "factor_type": "medical_history",
+      "applicable_sex": "all",
+      "applicable_age_min": null,
+      "applicable_age_max": null,
+      "level_schema": [
+        "present",
+        "absent"
+      ],
+      "interaction_needed_if_missing": false
+    },
+    {
+      "factor_id": "ebv_nasopharyngeal",
+      "factor_name_zh": "EBV感染(鼻咽癌)",
+      "factor_name_en": "EBV infection (nasopharyngeal)",
+      "factor_type": "medical_history",
+      "applicable_sex": "all",
+      "applicable_age_min": null,
+      "applicable_age_max": null,
+      "level_schema": [
+        "present",
+        "absent"
+      ],
+      "interaction_needed_if_missing": false
+    },
+    {
+      "factor_id": "h_pylori",
+      "factor_name_zh": "幽门螺杆菌(H. pylori)感染",
+      "factor_name_en": "Helicobacter pylori infection",
+      "factor_type": "medical_history",
+      "applicable_sex": "all",
+      "applicable_age_min": null,
+      "applicable_age_max": null,
+      "level_schema": [
+        "present",
+        "absent"
+      ],
+      "interaction_needed_if_missing": true,
+      "interaction_question_group": "h_pylori"
+    },
+    {
+      "factor_id": "liver_fluke",
+      "factor_name_zh": "肝吸虫感染(东南亚)",
+      "factor_name_en": "Liver fluke infection",
+      "factor_type": "medical_history",
+      "applicable_sex": "all",
+      "applicable_age_min": null,
+      "applicable_age_max": null,
+      "level_schema": [
+        "present",
+        "absent"
+      ],
+      "interaction_needed_if_missing": false
+    },
+    {
+      "factor_id": "schistosomiasis",
+      "factor_name_zh": "血吸虫感染(热带地区)",
+      "factor_name_en": "Schistosomiasis",
+      "factor_type": "medical_history",
+      "applicable_sex": "all",
+      "applicable_age_min": null,
+      "applicable_age_max": null,
+      "level_schema": [
+        "present",
+        "absent"
+      ],
+      "interaction_needed_if_missing": false
+    },
+    {
+      "factor_id": "hiv_immunosuppression",
+      "factor_name_zh": "免疫抑制(HIV)",
+      "factor_name_en": "HIV-related immunosuppression",
+      "factor_type": "medical_history",
+      "applicable_sex": "all",
+      "applicable_age_min": null,
+      "applicable_age_max": null,
+      "level_schema": [
+        "present",
+        "absent"
+      ],
+      "interaction_needed_if_missing": false
+    },
+    {
+      "factor_id": "family_history_first_degree",
+      "factor_name_zh": "家族史(一级亲属)",
+      "factor_name_en": "Family history (first-degree)",
+      "factor_type": "family_history",
+      "applicable_sex": "all",
+      "applicable_age_min": null,
+      "applicable_age_max": null,
+      "level_schema": [
+        "present",
+        "absent"
+      ],
+      "interaction_needed_if_missing": true,
+      "interaction_question_group": "family_history_first_degree"
+    },
+    {
+      "factor_id": "family_history_multiple",
+      "factor_name_zh": "家族史(多名亲属)",
+      "factor_name_en": "Family history (multiple relatives)",
+      "factor_type": "family_history",
+      "applicable_sex": "all",
+      "applicable_age_min": null,
+      "applicable_age_max": null,
+      "level_schema": [
+        "present",
+        "absent"
+      ],
+      "interaction_needed_if_missing": false
+    },
+    {
+      "factor_id": "family_history_crc_first",
+      "factor_name_zh": "一级亲属患CRC",
+      "factor_name_en": "Family history of CRC (first-degree)",
+      "factor_type": "family_history",
+      "applicable_sex": "all",
+      "applicable_age_min": null,
+      "applicable_age_max": null,
+      "level_schema": [
+        "present",
+        "absent"
+      ],
+      "interaction_needed_if_missing": false
+    },
+    {
+      "factor_id": "family_history_crc_multiple",
+      "factor_name_zh": "多个一级亲属患CRC",
+      "factor_name_en": "Multiple first-degree relatives with CRC",
+      "factor_type": "family_history",
+      "applicable_sex": "all",
+      "applicable_age_min": null,
+      "applicable_age_max": null,
+      "level_schema": [
+        "present",
+        "absent"
+      ],
+      "interaction_needed_if_missing": false
+    },
+    {
+      "factor_id": "family_history_multiple_same",
+      "factor_name_zh": "多个一级亲属患病",
+      "factor_name_en": "Multiple first-degree relatives with same cancer",
+      "factor_type": "family_history",
+      "applicable_sex": "all",
+      "applicable_age_min": null,
+      "applicable_age_max": null,
+      "level_schema": [
+        "present",
+        "absent"
+      ],
+      "interaction_needed_if_missing": false
+    },
+    {
+      "factor_id": "family_history_breast_first",
+      "factor_name_zh": "一级亲属患乳腺癌",
+      "factor_name_en": "Family history of breast cancer (first-degree)",
+      "factor_type": "family_history",
+      "applicable_sex": "female",
+      "applicable_age_min": null,
+      "applicable_age_max": null,
+      "level_schema": [
+        "present",
+        "absent"
+      ],
+      "interaction_needed_if_missing": false
+    },
+    {
+      "factor_id": "family_history_ovarian_first",
+      "factor_name_zh": "卵巢癌家族史(一级亲属)",
+      "factor_name_en": "Family history of ovarian cancer (first-degree)",
+      "factor_type": "family_history",
+      "applicable_sex": "female",
+      "applicable_age_min": null,
+      "applicable_age_max": null,
+      "level_schema": [
+        "present",
+        "absent"
+      ],
+      "interaction_needed_if_missing": false
+    },
+    {
+      "factor_id": "family_history_gastric_first",
+      "factor_name_zh": "胃癌家族史(一级亲属)",
+      "factor_name_en": "Family history of gastric cancer (first-degree)",
+      "factor_type": "family_history",
+      "applicable_sex": "all",
+      "applicable_age_min": null,
+      "applicable_age_max": null,
+      "level_schema": [
+        "present",
+        "absent"
+      ],
+      "interaction_needed_if_missing": false
+    },
+    {
+      "factor_id": "family_history_esophageal",
+      "factor_name_zh": "食管癌家族史",
+      "factor_name_en": "Family history of esophageal cancer",
+      "factor_type": "family_history",
+      "applicable_sex": "all",
+      "applicable_age_min": null,
+      "applicable_age_max": null,
+      "level_schema": [
+        "present",
+        "absent"
+      ],
+      "interaction_needed_if_missing": false
+    },
+    {
+      "factor_id": "family_history_prostate",
+      "factor_name_zh": "前列腺癌家族史(一二级亲属)",
+      "factor_name_en": "Family history of prostate cancer (1st/2nd-degree)",
+      "factor_type": "family_history",
+      "applicable_sex": "male",
+      "applicable_age_min": null,
+      "applicable_age_max": null,
+      "level_schema": [
+        "present",
+        "absent"
+      ],
+      "interaction_needed_if_missing": false
+    },
+    {
+      "factor_id": "family_history_kidney",
+      "factor_name_zh": "肾癌家族史",
+      "factor_name_en": "Family history of kidney cancer",
+      "factor_type": "family_history",
+      "applicable_sex": "all",
+      "applicable_age_min": null,
+      "applicable_age_max": null,
+      "level_schema": [
+        "present",
+        "absent"
+      ],
+      "interaction_needed_if_missing": false
+    },
+    {
+      "factor_id": "brca1_carrier",
+      "factor_name_zh": "BRCA1携带者",
+      "factor_name_en": "BRCA1 carrier",
+      "factor_type": "medical_history",
+      "applicable_sex": "female",
+      "applicable_age_min": null,
+      "applicable_age_max": null,
+      "level_schema": [
+        "present",
+        "absent"
+      ],
+      "interaction_needed_if_missing": false
+    },
+    {
+      "factor_id": "brca1_mutation_carrier",
+      "factor_name_zh": "BRCA1突变携带者",
+      "factor_name_en": "BRCA1 mutation carrier",
+      "factor_type": "medical_history",
+      "applicable_sex": "female",
+      "applicable_age_min": null,
+      "applicable_age_max": null,
+      "level_schema": [
+        "present",
+        "absent"
+      ],
+      "interaction_needed_if_missing": false
+    },
+    {
+      "factor_id": "brca2_mutation_carrier",
+      "factor_name_zh": "BRCA2突变携带者",
+      "factor_name_en": "BRCA2 mutation carrier",
+      "factor_type": "medical_history",
+      "applicable_sex": "female",
+      "applicable_age_min": null,
+      "applicable_age_max": null,
+      "level_schema": [
+        "present",
+        "absent"
+      ],
+      "interaction_needed_if_missing": false
+    },
+    {
+      "factor_id": "brca12_mutation_carrier",
+      "factor_name_zh": "BRCA1/2突变携带者",
+      "factor_name_en": "BRCA1/2 mutation carrier",
+      "factor_type": "medical_history",
+      "applicable_sex": "all",
+      "applicable_age_min": null,
+      "applicable_age_max": null,
+      "level_schema": [
+        "present",
+        "absent"
+      ],
+      "interaction_needed_if_missing": false
+    },
+    {
+      "factor_id": "menarche_before_12",
+      "factor_name_zh": "月经初潮<12岁",
+      "factor_name_en": "Menarche before age 12",
+      "factor_type": "medical_history",
+      "applicable_sex": "female",
+      "applicable_age_min": null,
+      "applicable_age_max": null,
+      "level_schema": [
+        "present",
+        "absent"
+      ],
+      "interaction_needed_if_missing": false
+    },
+    {
+      "factor_id": "nulliparous",
+      "factor_name_zh": "未生育",
+      "factor_name_en": "Nulliparity",
+      "factor_type": "medical_history",
+      "applicable_sex": "female",
+      "applicable_age_min": null,
+      "applicable_age_max": null,
+      "level_schema": [
+        "present",
+        "absent"
+      ],
+      "interaction_needed_if_missing": false
+    },
+    {
+      "factor_id": "nulliparous_or_infertile",
+      "factor_name_zh": "未生育/不孕症",
+      "factor_name_en": "Nulliparity or infertility",
+      "factor_type": "medical_history",
+      "applicable_sex": "female",
+      "applicable_age_min": null,
+      "applicable_age_max": null,
+      "level_schema": [
+        "present",
+        "absent"
+      ],
+      "interaction_needed_if_missing": false
+    },
+    {
+      "factor_id": "multiparous_5plus",
+      "factor_name_zh": "多产(≥5次)",
+      "factor_name_en": "Multiparity (≥5 births)",
+      "factor_type": "medical_history",
+      "applicable_sex": "female",
+      "applicable_age_min": null,
+      "applicable_age_max": null,
+      "level_schema": [
+        "present",
+        "absent"
+      ],
+      "interaction_needed_if_missing": false
+    },
+    {
+      "factor_id": "breastfeeding_per_12mo",
+      "factor_name_zh": "哺乳(每12月)",
+      "factor_name_en": "Breastfeeding (per 12 months)",
+      "factor_type": "medical_history",
+      "applicable_sex": "female",
+      "applicable_age_min": null,
+      "applicable_age_max": null,
+      "level_schema": [
+        "present",
+        "absent"
+      ],
+      "interaction_needed_if_missing": false
+    },
+    {
+      "factor_id": "first_birth_after_30",
+      "factor_name_zh": "首胎>30岁",
+      "factor_name_en": "First birth after age 30",
+      "factor_type": "medical_history",
+      "applicable_sex": "female",
+      "applicable_age_min": null,
+      "applicable_age_max": null,
+      "level_schema": [
+        "present",
+        "absent"
+      ],
+      "interaction_needed_if_missing": false
+    },
+    {
+      "factor_id": "late_menopause",
+      "factor_name_zh": "绝经晚>55岁",
+      "factor_name_en": "Late menopause (>55)",
+      "factor_type": "medical_history",
+      "applicable_sex": "female",
+      "applicable_age_min": null,
+      "applicable_age_max": null,
+      "level_schema": [
+        "present",
+        "absent"
+      ],
+      "interaction_needed_if_missing": false
+    },
+    {
+      "factor_id": "ocp_protective_per_5y",
+      "factor_name_zh": "口服避孕药(保护因素,每5年)",
+      "factor_name_en": "Oral contraceptives (protective, per 5y)",
+      "factor_type": "medical_history",
+      "applicable_sex": "female",
+      "applicable_age_min": null,
+      "applicable_age_max": null,
+      "level_schema": [
+        "present",
+        "absent"
+      ],
+      "interaction_needed_if_missing": false
+    },
+    {
+      "factor_id": "ocp_long_term",
+      "factor_name_zh": "长期口服避孕药>5年",
+      "factor_name_en": "Long-term oral contraceptives (>5y)",
+      "factor_type": "medical_history",
+      "applicable_sex": "female",
+      "applicable_age_min": null,
+      "applicable_age_max": null,
+      "level_schema": [
+        "present",
+        "absent"
+      ],
+      "interaction_needed_if_missing": false
+    },
+    {
+      "factor_id": "hrt_5y",
+      "factor_name_zh": "激素替代治疗5年",
+      "factor_name_en": "Hormone replacement therapy (5y)",
+      "factor_type": "medical_history",
+      "applicable_sex": "female",
+      "applicable_age_min": null,
+      "applicable_age_max": null,
+      "level_schema": [
+        "present",
+        "absent"
+      ],
+      "interaction_needed_if_missing": false
+    },
+    {
+      "factor_id": "postmeno_hormone_5y",
+      "factor_name_zh": "绝经后激素治疗5年",
+      "factor_name_en": "Postmenopausal hormone therapy (5y)",
+      "factor_type": "medical_history",
+      "applicable_sex": "female",
+      "applicable_age_min": null,
+      "applicable_age_max": null,
+      "level_schema": [
+        "present",
+        "absent"
+      ],
+      "interaction_needed_if_missing": false
+    },
+    {
+      "factor_id": "multiple_sexual_partners",
+      "factor_name_zh": "多个性伴侣(≥5)",
+      "factor_name_en": "Multiple sexual partners (≥5)",
+      "factor_type": "lifestyle",
+      "applicable_sex": "all",
+      "applicable_age_min": null,
+      "applicable_age_max": null,
+      "level_schema": [
+        "present",
+        "absent"
+      ],
+      "interaction_needed_if_missing": false
+    },
+    {
+      "factor_id": "first_intercourse_before_16",
+      "factor_name_zh": "首次性生活<16岁",
+      "factor_name_en": "First intercourse before 16",
+      "factor_type": "lifestyle",
+      "applicable_sex": "all",
+      "applicable_age_min": null,
+      "applicable_age_max": null,
+      "level_schema": [
+        "present",
+        "absent"
+      ],
+      "interaction_needed_if_missing": false
+    },
+    {
+      "factor_id": "barrett_esophagus",
+      "factor_name_zh": "Barrett食管",
+      "factor_name_en": "Barrett esophagus",
+      "factor_type": "exam_finding",
+      "applicable_sex": "all",
+      "applicable_age_min": null,
+      "applicable_age_max": null,
+      "level_schema": [
+        "present",
+        "absent"
+      ],
+      "interaction_needed_if_missing": false
+    },
+    {
+      "factor_id": "gerd_reflux_esophagitis",
+      "factor_name_zh": "GERD/反流性食管炎",
+      "factor_name_en": "GERD / reflux esophagitis",
+      "factor_type": "exam_finding",
+      "applicable_sex": "all",
+      "applicable_age_min": null,
+      "applicable_age_max": null,
+      "level_schema": [
+        "present",
+        "absent"
+      ],
+      "interaction_needed_if_missing": false
+    },
+    {
+      "factor_id": "atrophic_gastritis",
+      "factor_name_zh": "萎缩性胃炎",
+      "factor_name_en": "Atrophic gastritis",
+      "factor_type": "exam_finding",
+      "applicable_sex": "all",
+      "applicable_age_min": null,
+      "applicable_age_max": null,
+      "level_schema": [
+        "present",
+        "absent",
+        "C1",
+        "C2",
+        "O1",
+        "O2"
+      ],
+      "interaction_needed_if_missing": false
+    },
+    {
+      "factor_id": "intestinal_metaplasia",
+      "factor_name_zh": "肠上皮化生",
+      "factor_name_en": "Intestinal metaplasia",
+      "factor_type": "exam_finding",
+      "applicable_sex": "all",
+      "applicable_age_min": null,
+      "applicable_age_max": null,
+      "level_schema": [
+        "present",
+        "absent"
+      ],
+      "interaction_needed_if_missing": false
+    },
+    {
+      "factor_id": "adenomatous_polyp",
+      "factor_name_zh": "腺瘤性息肉",
+      "factor_name_en": "Adenomatous polyp",
+      "factor_type": "exam_finding",
+      "applicable_sex": "all",
+      "applicable_age_min": null,
+      "applicable_age_max": null,
+      "level_schema": [
+        "present",
+        "absent"
+      ],
+      "interaction_needed_if_missing": false
+    },
+    {
+      "factor_id": "ibd",
+      "factor_name_zh": "炎症性肠病(IBD)",
+      "factor_name_en": "Inflammatory bowel disease",
+      "factor_type": "medical_history",
+      "applicable_sex": "all",
+      "applicable_age_min": null,
+      "applicable_age_max": null,
+      "level_schema": [
+        "present",
+        "absent"
+      ],
+      "interaction_needed_if_missing": false
+    },
+    {
+      "factor_id": "ulcerative_colitis",
+      "factor_name_zh": "溃疡性结肠炎",
+      "factor_name_en": "Ulcerative colitis",
+      "factor_type": "medical_history",
+      "applicable_sex": "all",
+      "applicable_age_min": null,
+      "applicable_age_max": null,
+      "level_schema": [
+        "present",
+        "absent"
+      ],
+      "interaction_needed_if_missing": false
+    },
+    {
+      "factor_id": "crohns_disease",
+      "factor_name_zh": "克罗恩病",
+      "factor_name_en": "Crohn's disease",
+      "factor_type": "medical_history",
+      "applicable_sex": "all",
+      "applicable_age_min": null,
+      "applicable_age_max": null,
+      "level_schema": [
+        "present",
+        "absent"
+      ],
+      "interaction_needed_if_missing": false
+    },
+    {
+      "factor_id": "psc",
+      "factor_name_zh": "原发性硬化性胆管炎(PSC)",
+      "factor_name_en": "Primary sclerosing cholangitis",
+      "factor_type": "medical_history",
+      "applicable_sex": "all",
+      "applicable_age_min": null,
+      "applicable_age_max": null,
+      "level_schema": [
+        "present",
+        "absent"
+      ],
+      "interaction_needed_if_missing": false
+    },
+    {
+      "factor_id": "chronic_cholecystitis",
+      "factor_name_zh": "慢性胆囊炎",
+      "factor_name_en": "Chronic cholecystitis",
+      "factor_type": "medical_history",
+      "applicable_sex": "all",
+      "applicable_age_min": null,
+      "applicable_age_max": null,
+      "level_schema": [
+        "present",
+        "absent"
+      ],
+      "interaction_needed_if_missing": false
+    },
+    {
+      "factor_id": "bile_duct_stones",
+      "factor_name_zh": "胆管结石",
+      "factor_name_en": "Bile duct stones",
+      "factor_type": "medical_history",
+      "applicable_sex": "all",
+      "applicable_age_min": null,
+      "applicable_age_max": null,
+      "level_schema": [
+        "present",
+        "absent"
+      ],
+      "interaction_needed_if_missing": false
+    },
+    {
+      "factor_id": "choledochal_cyst",
+      "factor_name_zh": "胆总管囊肿",
+      "factor_name_en": "Choledochal cyst",
+      "factor_type": "medical_history",
+      "applicable_sex": "all",
+      "applicable_age_min": null,
+      "applicable_age_max": null,
+      "level_schema": [
+        "present",
+        "absent"
+      ],
+      "interaction_needed_if_missing": false
+    },
+    {
+      "factor_id": "liver_cirrhosis",
+      "factor_name_zh": "肝硬化",
+      "factor_name_en": "Liver cirrhosis",
+      "factor_type": "medical_history",
+      "applicable_sex": "all",
+      "applicable_age_min": null,
+      "applicable_age_max": null,
+      "level_schema": [
+        "present",
+        "absent"
+      ],
+      "interaction_needed_if_missing": false
+    },
+    {
+      "factor_id": "alcoholic_cirrhosis",
+      "factor_name_zh": "酒精性肝硬化",
+      "factor_name_en": "Alcoholic cirrhosis",
+      "factor_type": "medical_history",
+      "applicable_sex": "all",
+      "applicable_age_min": null,
+      "applicable_age_max": null,
+      "level_schema": [
+        "present",
+        "absent"
+      ],
+      "interaction_needed_if_missing": false
+    },
+    {
+      "factor_id": "breast_density_ge75",
+      "factor_name_zh": "乳腺密度≥75%",
+      "factor_name_en": "Mammographic breast density ≥75%",
+      "factor_type": "exam_finding",
+      "applicable_sex": "female",
+      "applicable_age_min": null,
+      "applicable_age_max": null,
+      "level_schema": [
+        "present",
+        "absent"
+      ],
+      "interaction_needed_if_missing": false
+    },
+    {
+      "factor_id": "bone_density_high",
+      "factor_name_zh": "骨密度增高",
+      "factor_name_en": "High bone density",
+      "factor_type": "exam_finding",
+      "applicable_sex": "all",
+      "applicable_age_min": null,
+      "applicable_age_max": null,
+      "level_schema": [
+        "present",
+        "absent"
+      ],
+      "interaction_needed_if_missing": false
+    },
+    {
+      "factor_id": "endometriosis",
+      "factor_name_zh": "子宫内膜异位症",
+      "factor_name_en": "Endometriosis",
+      "factor_type": "medical_history",
+      "applicable_sex": "female",
+      "applicable_age_min": null,
+      "applicable_age_max": null,
+      "level_schema": [
+        "present",
+        "absent"
+      ],
+      "interaction_needed_if_missing": false
+    },
+    {
+      "factor_id": "chronic_uti",
+      "factor_name_zh": "慢性尿路感染",
+      "factor_name_en": "Chronic urinary tract infection",
+      "factor_type": "medical_history",
+      "applicable_sex": "all",
+      "applicable_age_min": null,
+      "applicable_age_max": null,
+      "level_schema": [
+        "present",
+        "absent"
+      ],
+      "interaction_needed_if_missing": false
+    },
+    {
+      "factor_id": "catheter_long_term",
+      "factor_name_zh": "导尿管使用>10年",
+      "factor_name_en": "Long-term urinary catheter (>10y)",
+      "factor_type": "medical_history",
+      "applicable_sex": "all",
+      "applicable_age_min": null,
+      "applicable_age_max": null,
+      "level_schema": [
+        "present",
+        "absent"
+      ],
+      "interaction_needed_if_missing": false
+    },
+    {
+      "factor_id": "kidney_stones",
+      "factor_name_zh": "肾结石病史",
+      "factor_name_en": "History of kidney stones",
+      "factor_type": "medical_history",
+      "applicable_sex": "all",
+      "applicable_age_min": null,
+      "applicable_age_max": null,
+      "level_schema": [
+        "present",
+        "absent"
+      ],
+      "interaction_needed_if_missing": false
+    },
+    {
+      "factor_id": "esrd_dialysis_3y",
+      "factor_name_zh": "终末期肾病/透析>3年",
+      "factor_name_en": "ESRD / dialysis >3y",
+      "factor_type": "medical_history",
+      "applicable_sex": "all",
+      "applicable_age_min": null,
+      "applicable_age_max": null,
+      "level_schema": [
+        "present",
+        "absent"
+      ],
+      "interaction_needed_if_missing": false
+    },
+    {
+      "factor_id": "copd",
+      "factor_name_zh": "慢阻肺(COPD)",
+      "factor_name_en": "Chronic obstructive pulmonary disease",
+      "factor_type": "medical_history",
+      "applicable_sex": "all",
+      "applicable_age_min": null,
+      "applicable_age_max": null,
+      "level_schema": [
+        "present",
+        "absent"
+      ],
+      "interaction_needed_if_missing": false
+    },
+    {
+      "factor_id": "asbestos_exposure",
+      "factor_name_zh": "石棉暴露",
+      "factor_name_en": "Asbestos exposure",
+      "factor_type": "lifestyle",
+      "applicable_sex": "all",
+      "applicable_age_min": null,
+      "applicable_age_max": null,
+      "level_schema": [
+        "present",
+        "absent"
+      ],
+      "interaction_needed_if_missing": false
+    },
+    {
+      "factor_id": "occupational_aromatic_amine",
+      "factor_name_zh": "职业芳香胺暴露",
+      "factor_name_en": "Occupational aromatic amine exposure",
+      "factor_type": "lifestyle",
+      "applicable_sex": "all",
+      "applicable_age_min": null,
+      "applicable_age_max": null,
+      "level_schema": [
+        "present",
+        "absent"
+      ],
+      "interaction_needed_if_missing": false
+    },
+    {
+      "factor_id": "occupational_aromatic_amine_high",
+      "factor_name_zh": "职业芳香胺暴露(高剂量)",
+      "factor_name_en": "Occupational aromatic amine exposure (high dose)",
+      "factor_type": "lifestyle",
+      "applicable_sex": "all",
+      "applicable_age_min": null,
+      "applicable_age_max": null,
+      "level_schema": [
+        "present",
+        "absent"
+      ],
+      "interaction_needed_if_missing": false
+    },
+    {
+      "factor_id": "aflatoxin_b1",
+      "factor_name_zh": "黄曲霉毒素B1暴露",
+      "factor_name_en": "Aflatoxin B1 exposure",
+      "factor_type": "lifestyle",
+      "applicable_sex": "all",
+      "applicable_age_min": null,
+      "applicable_age_max": null,
+      "level_schema": [
+        "present",
+        "absent"
+      ],
+      "interaction_needed_if_missing": false
+    },
+    {
+      "factor_id": "cyclophosphamide_therapy",
+      "factor_name_zh": "环磷酰胺治疗",
+      "factor_name_en": "Cyclophosphamide therapy",
+      "factor_type": "medical_history",
+      "applicable_sex": "all",
+      "applicable_age_min": null,
+      "applicable_age_max": null,
+      "level_schema": [
+        "present",
+        "absent"
+      ],
+      "interaction_needed_if_missing": false
+    },
+    {
+      "factor_id": "ethnicity_african",
+      "factor_name_zh": "非洲裔种族",
+      "factor_name_en": "African ethnicity",
+      "factor_type": "demographic",
+      "applicable_sex": "all",
+      "applicable_age_min": null,
+      "applicable_age_max": null,
+      "level_schema": [
+        "present",
+        "absent"
+      ],
+      "interaction_needed_if_missing": false
+    },
+    {
+      "factor_id": "fatty_liver",
+      "factor_name_zh": "脂肪肝",
+      "factor_name_en": "Fatty liver / Hepatic steatosis",
+      "factor_type": "exam_finding",
+      "applicable_sex": "all",
+      "applicable_age_min": null,
+      "applicable_age_max": null,
+      "level_schema": [
+        "mild",
+        "moderate",
+        "severe"
+      ],
+      "interaction_needed_if_missing": false,
+      "interaction_question_group": null
+    },
+    {
+      "factor_id": "alcohol_daily_light",
+      "factor_name_zh": "每日少量饮酒",
+      "factor_name_en": "Daily light alcohol",
+      "factor_type": "lifestyle",
+      "applicable_sex": "all",
+      "applicable_age_min": null,
+      "applicable_age_max": null,
+      "level_schema": [
+        "present",
+        "absent"
+      ],
+      "interaction_needed_if_missing": false,
+      "interaction_question_group": null
+    },
+    {
+      "factor_id": "alcohol_daily_heavy",
+      "factor_name_zh": "每日大量饮酒",
+      "factor_name_en": "Daily heavy alcohol",
+      "factor_type": "lifestyle",
+      "applicable_sex": "all",
+      "applicable_age_min": null,
+      "applicable_age_max": null,
+      "level_schema": [
+        "present",
+        "absent"
+      ],
+      "interaction_needed_if_missing": false,
+      "interaction_question_group": null
+    },
+    {
+      "factor_id": "family_history_liver",
+      "factor_name_zh": "肝癌家族史",
+      "factor_name_en": "Family history of liver cancer",
+      "factor_type": "family_history",
+      "applicable_sex": "all",
+      "applicable_age_min": null,
+      "applicable_age_max": null,
+      "level_schema": [
+        "present",
+        "absent"
+      ],
+      "interaction_needed_if_missing": false,
+      "interaction_question_group": null
+    },
+    {
+      "factor_id": "gastric_partial_gastrectomy",
+      "factor_name_zh": "胃部分切除术后",
+      "factor_name_en": "Status post partial gastrectomy",
+      "factor_type": "medical_history",
+      "applicable_sex": "all",
+      "applicable_age_min": null,
+      "applicable_age_max": null,
+      "level_schema": [
+        "present",
+        "absent"
+      ],
+      "interaction_needed_if_missing": false,
+      "interaction_question_group": null
+    },
+    {
+      "factor_id": "family_history_bladder",
+      "factor_name_zh": "膀胱癌家族史",
+      "factor_name_en": "Family history of bladder cancer",
+      "factor_type": "family_history",
+      "applicable_sex": "all",
+      "applicable_age_min": null,
+      "applicable_age_max": null,
+      "level_schema": [
+        "present",
+        "absent"
+      ],
+      "interaction_needed_if_missing": false,
+      "interaction_question_group": null
+    },
+    {
+      "factor_id": "kidney_mass",
+      "factor_name_zh": "肾脏占位",
+      "factor_name_en": "Kidney mass",
+      "factor_type": "exam_finding",
+      "applicable_sex": "all",
+      "applicable_age_min": null,
+      "applicable_age_max": null,
+      "level_schema": [
+        "none",
+        "le_1cm",
+        "1_4cm",
+        "gt_4cm"
+      ],
+      "interaction_needed_if_missing": false
+    },
+    {
+      "factor_id": "pancreas_mass",
+      "factor_name_zh": "胰腺占位",
+      "factor_name_en": "Pancreas mass",
+      "factor_type": "exam_finding",
+      "applicable_sex": "all",
+      "applicable_age_min": null,
+      "applicable_age_max": null,
+      "level_schema": [
+        "none",
+        "abnormal_signal",
+        "le_2cm",
+        "gt_2cm"
+      ],
+      "interaction_needed_if_missing": false
+    },
+    {
+      "factor_id": "ovarian_mass",
+      "factor_name_zh": "卵巢占位",
+      "factor_name_en": "Ovarian mass",
+      "factor_type": "exam_finding",
+      "applicable_sex": "all",
+      "applicable_age_min": null,
+      "applicable_age_max": null,
+      "level_schema": [
+        "none",
+        "le_3cm_simple",
+        "3_7cm_complex",
+        "gt_7cm_ascites"
+      ],
+      "interaction_needed_if_missing": false
+    },
+    {
+      "factor_id": "prostate_mri",
+      "factor_name_zh": "前列腺MRI(PI-RADS)",
+      "factor_name_en": "Prostate MRI (PI-RADS)",
+      "factor_type": "exam_finding",
+      "applicable_sex": "male",
+      "applicable_age_min": null,
+      "applicable_age_max": null,
+      "level_schema": [
+        "pi_rads_1_2",
+        "pi_rads_3",
+        "pi_rads_4",
+        "pi_rads_5"
+      ],
+      "interaction_needed_if_missing": false
+    },
+    {
+      "factor_id": "gastric_mirror",
+      "factor_name_zh": "胃镜病理分级",
+      "factor_name_en": "Gastric endoscopy pathology grade",
+      "factor_type": "exam_finding",
+      "applicable_sex": "all",
+      "applicable_age_min": null,
+      "applicable_age_max": null,
+      "level_schema": [
+        "none_superficial",
+        "atrophy_intestinal_metaplasia",
+        "low_grade_dysplasia",
+        "high_grade_dysplasia"
+      ],
+      "interaction_needed_if_missing": false
+    },
+    {
+      "factor_id": "esophageal_mirror",
+      "factor_name_zh": "食管镜病理分级",
+      "factor_name_en": "Esophageal endoscopy pathology grade",
+      "factor_type": "exam_finding",
+      "applicable_sex": "all",
+      "applicable_age_min": null,
+      "applicable_age_max": null,
+      "level_schema": [
+        "none",
+        "mild_dysplasia",
+        "moderate_dysplasia",
+        "severe_dysplasia_cis"
+      ],
+      "interaction_needed_if_missing": false
+    },
+    {
+      "factor_id": "colorectal_mirror",
+      "factor_name_zh": "肠镜病理分级",
+      "factor_name_en": "Colorectal endoscopy pathology grade",
+      "factor_type": "exam_finding",
+      "applicable_sex": "all",
+      "applicable_age_min": null,
+      "applicable_age_max": null,
+      "level_schema": [
+        "none_hyperplastic",
+        "1_2_small_adenoma",
+        "multiple_large_high_grade",
+        "cancer_high_grade_dysplasia"
+      ],
+      "interaction_needed_if_missing": false
+    },
+    {
+      "factor_id": "cervical_tct",
+      "factor_name_zh": "宫颈TCT分级",
+      "factor_name_en": "Cervical TCT grade",
+      "factor_type": "exam_finding",
+      "applicable_sex": "female",
+      "applicable_age_min": null,
+      "applicable_age_max": null,
+      "level_schema": [
+        "normal_nilm",
+        "ascus_lsil",
+        "hsil",
+        "cin2_3"
+      ],
+      "interaction_needed_if_missing": false
+    },
+    {
+      "factor_id": "cervical_hpv",
+      "factor_name_zh": "宫颈HPV分型",
+      "factor_name_en": "Cervical HPV typing",
+      "factor_type": "exam_finding",
+      "applicable_sex": "female",
+      "applicable_age_min": null,
+      "applicable_age_max": null,
+      "level_schema": [
+        "negative",
+        "low_risk",
+        "high_risk_16_18",
+        "high_risk_persistent"
+      ],
+      "interaction_needed_if_missing": false
+    },
+    {
+      "factor_id": "urine_cytology",
+      "factor_name_zh": "尿细胞学",
+      "factor_name_en": "Urine cytology",
+      "factor_type": "exam_finding",
+      "applicable_sex": "all",
+      "applicable_age_min": null,
+      "applicable_age_max": null,
+      "level_schema": [
+        "negative",
+        "atypia",
+        "suspicious",
+        "positive"
+      ],
+      "interaction_needed_if_missing": false
+    },
+    {
+      "factor_id": "breast_biopsy",
+      "factor_name_zh": "乳腺活检病理",
+      "factor_name_en": "Breast biopsy pathology",
+      "factor_type": "exam_finding",
+      "applicable_sex": "female",
+      "applicable_age_min": null,
+      "applicable_age_max": null,
+      "level_schema": [
+        "normal",
+        "fibroadenoma_hyperplasia",
+        "atypical_hyperplasia",
+        "dcis_early_invasive"
+      ],
+      "interaction_needed_if_missing": false
+    },
+    {
+      "factor_id": "alt_ast",
+      "factor_name_zh": "肝酶异常(ALT/AST)",
+      "factor_name_en": "Elevated ALT/AST",
+      "factor_type": "exam_finding",
+      "applicable_sex": "all",
+      "applicable_age_min": null,
+      "applicable_age_max": null,
+      "level_schema": [
+        "normal",
+        "1_2x",
+        "2_5x",
+        "gt_5x"
+      ],
+      "interaction_needed_if_missing": false
+    },
+    {
+      "factor_id": "egfr",
+      "factor_name_zh": "肾功能异常(eGFR)",
+      "factor_name_en": "Reduced eGFR",
+      "factor_type": "exam_finding",
+      "applicable_sex": "all",
+      "applicable_age_min": null,
+      "applicable_age_max": null,
+      "level_schema": [
+        "ge_90",
+        "60_89",
+        "30_59",
+        "lt_30"
+      ],
+      "interaction_needed_if_missing": false
+    },
+    {
+      "factor_id": "hematuria",
+      "factor_name_zh": "血尿",
+      "factor_name_en": "Hematuria",
+      "factor_type": "exam_finding",
+      "applicable_sex": "all",
+      "applicable_age_min": null,
+      "applicable_age_max": null,
+      "level_schema": [
+        "none",
+        "microscopic",
+        "gross",
+        "persistent_gross"
+      ],
+      "interaction_needed_if_missing": false
+    },
+    {
+      "factor_id": "ebv_dna",
+      "factor_name_zh": "EBV-DNA载量",
+      "factor_name_en": "EBV DNA load",
+      "factor_type": "exam_finding",
+      "applicable_sex": "all",
+      "applicable_age_min": null,
+      "applicable_age_max": null,
+      "level_schema": [
+        "negative",
+        "low",
+        "moderate",
+        "high_persistent"
+      ],
+      "interaction_needed_if_missing": false
+    },
+    {
+      "factor_id": "bilirubin_alp_ggt",
+      "factor_name_zh": "胆道酶学异常(胆红素/ALP/GGT)",
+      "factor_name_en": "Elevated bilirubin/ALP/GGT",
+      "factor_type": "exam_finding",
+      "applicable_sex": "all",
+      "applicable_age_min": null,
+      "applicable_age_max": null,
+      "level_schema": [
+        "normal",
+        "single_mild",
+        "multiple_moderate",
+        "significant"
+      ],
+      "interaction_needed_if_missing": false
+    },
+    {
+      "factor_id": "lynch_mlh1_carrier",
+      "factor_name_zh": "林奇综合征 MLH1 致病突变携带者",
+      "factor_name_en": "Lynch syndrome MLH1 pathogenic variant carrier",
+      "factor_type": "genetic",
+      "applicable_sex": "all",
+      "applicable_age_min": null,
+      "applicable_age_max": null,
+      "level_schema": [
+        "present",
+        "absent"
+      ],
+      "interaction_needed_if_missing": false,
+      "positive_test_definition": "胚系 MLH1 基因致病/可能致病变异(PV/LPV)，或 IHC MLH1 缺失+胚系检测确认"
+    },
+    {
+      "factor_id": "lynch_msh2_carrier",
+      "factor_name_zh": "林奇综合征 MSH2 致病突变携带者",
+      "factor_name_en": "Lynch syndrome MSH2 pathogenic variant carrier",
+      "factor_type": "genetic",
+      "applicable_sex": "all",
+      "applicable_age_min": null,
+      "applicable_age_max": null,
+      "level_schema": [
+        "present",
+        "absent"
+      ],
+      "interaction_needed_if_missing": false,
+      "positive_test_definition": "胚系 MSH2/EPCAM 基因致病/可能致病变异，或 IHC MSH2 缺失+胚系检测确认"
+    },
+    {
+      "factor_id": "lynch_msh6_carrier",
+      "factor_name_zh": "林奇综合征 MSH6 致病突变携带者",
+      "factor_name_en": "Lynch syndrome MSH6 pathogenic variant carrier",
+      "factor_type": "genetic",
+      "applicable_sex": "all",
+      "applicable_age_min": null,
+      "applicable_age_max": null,
+      "level_schema": [
+        "present",
+        "absent"
+      ],
+      "interaction_needed_if_missing": false,
+      "positive_test_definition": "胚系 MSH6 基因致病/可能致病变异，或 IHC MSH6 缺失+胚系检测确认"
+    },
+    {
+      "factor_id": "lynch_pms2_carrier",
+      "factor_name_zh": "林奇综合征 PMS2 致病突变携带者",
+      "factor_name_en": "Lynch syndrome PMS2 pathogenic variant carrier",
+      "factor_type": "genetic",
+      "applicable_sex": "all",
+      "applicable_age_min": null,
+      "applicable_age_max": null,
+      "level_schema": [
+        "present",
+        "absent"
+      ],
+      "interaction_needed_if_missing": false,
+      "positive_test_definition": "胚系 PMS2 基因致病/可能致病变异，或 IHC PMS2 缺失+胚系检测确认"
+    },
+    {
+      "factor_id": "lynch_unspecified_carrier",
+      "factor_name_zh": "林奇综合征携带者(基因未明)",
+      "factor_name_en": "Lynch syndrome carrier (gene unspecified)",
+      "factor_type": "genetic",
+      "applicable_sex": "all",
+      "applicable_age_min": null,
+      "applicable_age_max": null,
+      "level_schema": [
+        "present",
+        "absent"
+      ],
+      "interaction_needed_if_missing": false,
+      "positive_test_definition": "临床确诊 Lynch 综合征但未完成分型，或 MMR 家族性筛查阳性且基因未明"
+    },
+    {
+      "factor_id": "smoking_pancreatic",
+      "factor_name_zh": "吸烟(胰腺癌相关)",
+      "factor_name_en": "Smoking (pancreatic cancer association)",
+      "factor_type": "lifestyle",
+      "applicable_sex": "all",
+      "applicable_age_min": null,
+      "applicable_age_max": null,
+      "level_schema": [
+        "present",
+        "absent"
+      ],
+      "interaction_needed_if_missing": false
+    },
+    {
+      "factor_id": "family_history_pancreatic_first",
+      "factor_name_zh": "胰腺癌家族史(一级亲属)",
+      "factor_name_en": "First-degree family history of pancreatic cancer",
+      "factor_type": "family_history",
+      "applicable_sex": "all",
+      "applicable_age_min": null,
+      "applicable_age_max": null,
+      "level_schema": [
+        "present",
+        "absent"
+      ],
+      "interaction_needed_if_missing": false
+    },
+    {
+      "factor_id": "obesity_pancreatic",
+      "factor_name_zh": "肥胖(BMI≥30)(胰腺癌相关)",
+      "factor_name_en": "Obesity BMI≥30 (pancreatic cancer association)",
+      "factor_type": "lifestyle",
+      "applicable_sex": "all",
+      "applicable_age_min": null,
+      "applicable_age_max": null,
+      "level_schema": [
+        "present",
+        "absent"
+      ],
+      "interaction_needed_if_missing": false
+    },
+    {
+      "factor_id": "chronic_pancreatitis",
+      "factor_name_zh": "慢性胰腺炎",
+      "factor_name_en": "Chronic pancreatitis",
+      "factor_type": "comorbidity",
+      "applicable_sex": "all",
+      "applicable_age_min": null,
+      "applicable_age_max": null,
+      "level_schema": [
+        "present",
+        "absent"
+      ],
+      "interaction_needed_if_missing": false
+    },
+    {
+      "factor_id": "brca2_pancreatic_mutation",
+      "factor_name_zh": "BRCA2 携带者(胰腺癌高危)",
+      "factor_name_en": "BRCA2 pathogenic variant (pancreatic cancer risk)",
+      "factor_type": "genetic",
+      "applicable_sex": "all",
+      "applicable_age_min": null,
+      "applicable_age_max": null,
+      "level_schema": [
+        "present",
+        "absent"
+      ],
+      "interaction_needed_if_missing": false
+    },
+    {
+      "factor_id": "thyroid_family_history_first",
+      "factor_name_zh": "甲状腺癌家族史(一级亲属)",
+      "factor_name_en": "First-degree family history of thyroid cancer",
+      "factor_type": "family_history",
+      "applicable_sex": "all",
+      "applicable_age_min": null,
+      "applicable_age_max": null,
+      "level_schema": [
+        "present",
+        "absent"
+      ],
+      "interaction_needed_if_missing": false
+    },
+    {
+      "factor_id": "radiation_exposure_head_neck_childhood",
+      "factor_name_zh": "儿童期头颈部外照射史",
+      "factor_name_en": "Childhood head-neck external radiation exposure",
+      "factor_type": "exposure",
+      "applicable_sex": "all",
+      "applicable_age_min": null,
+      "applicable_age_max": null,
+      "level_schema": [
+        "present",
+        "absent"
+      ],
+      "interaction_needed_if_missing": false
+    },
+    {
+      "factor_id": "pancreatic_cancer_family_history_1deg",
+      "factor_name_zh": "胰腺癌家族史（一级亲属患胰腺癌）",
+      "factor_name_en": "Pancreatic Cancer Family History 1Deg",
+      "factor_type": "family_history",
+      "applicable_sex": "all",
+      "applicable_age_min": null,
+      "applicable_age_max": null,
+      "level_schema": [
+        "present",
+        "absent"
+      ],
+      "interaction_needed_if_missing": true,
+      "interaction_question_group": "pancreatic_cancer_family_history_1deg"
+    },
+    {
+      "factor_id": "new_onset_diabetes_over50",
+      "factor_name_zh": "新发糖尿病（50岁以上，病程<3年）",
+      "factor_name_en": "New Onset Diabetes Over50",
+      "factor_type": "medical_history",
+      "applicable_sex": "all",
+      "applicable_age_min": null,
+      "applicable_age_max": null,
+      "level_schema": [
+        "present",
+        "absent"
+      ],
+      "interaction_needed_if_missing": true,
+      "interaction_question_group": "new_onset_diabetes_over50"
+    },
+    {
+      "factor_id": "long_standing_diabetes",
+      "factor_name_zh": "长期糖尿病（>5年）",
+      "factor_name_en": "Long Standing Diabetes",
+      "factor_type": "medical_history",
+      "applicable_sex": "all",
+      "applicable_age_min": null,
+      "applicable_age_max": null,
+      "level_schema": [
+        "present",
+        "absent"
+      ],
+      "interaction_needed_if_missing": true,
+      "interaction_question_group": "long_standing_diabetes"
+    },
+    {
+      "factor_id": "brca2_mutation_pancreatic",
+      "factor_name_zh": "BRCA2基因突变携带者",
+      "factor_name_en": "Brca2 Mutation Pancreatic",
+      "factor_type": "medical_history",
+      "applicable_sex": "all",
+      "applicable_age_min": null,
+      "applicable_age_max": null,
+      "level_schema": [
+        "present",
+        "absent"
+      ],
+      "interaction_needed_if_missing": true,
+      "interaction_question_group": "brca2_mutation_pancreatic"
+    },
+    {
+      "factor_id": "palb2_mutation",
+      "factor_name_zh": "PALB2基因突变携带者",
+      "factor_name_en": "Palb2 Mutation",
+      "factor_type": "medical_history",
+      "applicable_sex": "all",
+      "applicable_age_min": null,
+      "applicable_age_max": null,
+      "level_schema": [
+        "present",
+        "absent"
+      ],
+      "interaction_needed_if_missing": true,
+      "interaction_question_group": "palb2_mutation"
+    },
+    {
+      "factor_id": "cdkn2a_mutation",
+      "factor_name_zh": "CDKN2A基因突变（FAMMM综合征）",
+      "factor_name_en": "Cdkn2A Mutation",
+      "factor_type": "medical_history",
+      "applicable_sex": "all",
+      "applicable_age_min": null,
+      "applicable_age_max": null,
+      "level_schema": [
+        "present",
+        "absent"
+      ],
+      "interaction_needed_if_missing": true,
+      "interaction_question_group": "cdkn2a_mutation"
+    },
+    {
+      "factor_id": "lynch_syndrome_pancreatic",
+      "factor_name_zh": "Lynch综合征",
+      "factor_name_en": "Lynch Syndrome Pancreatic",
+      "factor_type": "medical_history",
+      "applicable_sex": "all",
+      "applicable_age_min": null,
+      "applicable_age_max": null,
+      "level_schema": [
+        "present",
+        "absent"
+      ],
+      "interaction_needed_if_missing": true,
+      "interaction_question_group": "lynch_syndrome_pancreatic"
+    },
+    {
+      "factor_id": "peutz_jeghers_stk11",
+      "factor_name_zh": "Peutz-Jeghers综合征（STK11/LKB1突变）",
+      "factor_name_en": "Peutz Jeghers Stk11",
+      "factor_type": "medical_history",
+      "applicable_sex": "all",
+      "applicable_age_min": null,
+      "applicable_age_max": null,
+      "level_schema": [
+        "present",
+        "absent"
+      ],
+      "interaction_needed_if_missing": true,
+      "interaction_question_group": "peutz_jeghers_stk11"
+    },
+    {
+      "factor_id": "smoking_active_pancreatic",
+      "factor_name_zh": "吸烟（当前吸烟）",
+      "factor_name_en": "Smoking Active Pancreatic",
+      "factor_type": "lifestyle",
+      "applicable_sex": "all",
+      "applicable_age_min": null,
+      "applicable_age_max": null,
+      "level_schema": [
+        "present",
+        "absent"
+      ],
+      "interaction_needed_if_missing": true,
+      "interaction_question_group": "smoking_active_pancreatic"
+    },
+    {
+      "factor_id": "obesity_bmi30_pancreatic",
+      "factor_name_zh": "肥胖（BMI≥30）",
+      "factor_name_en": "Obesity Bmi30 Pancreatic",
+      "factor_type": "lifestyle",
+      "applicable_sex": "all",
+      "applicable_age_min": null,
+      "applicable_age_max": null,
+      "level_schema": [
+        "present",
+        "absent"
+      ],
+      "interaction_needed_if_missing": true,
+      "interaction_question_group": "obesity_bmi30_pancreatic"
+    },
+    {
+      "factor_id": "h_pylori_infection_pancreatic",
+      "factor_name_zh": "幽门螺杆菌感染",
+      "factor_name_en": "H Pylori Infection Pancreatic",
+      "factor_type": "medical_history",
+      "applicable_sex": "all",
+      "applicable_age_min": null,
+      "applicable_age_max": null,
+      "level_schema": [
+        "present",
+        "absent"
+      ],
+      "interaction_needed_if_missing": true,
+      "interaction_question_group": "h_pylori_infection_pancreatic"
+    }
+  ]
+}
