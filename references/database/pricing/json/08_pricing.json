@@ -1,0 +1,29 @@
+{
+  "version": "2026-06-04",
+  "currency": "CNY",
+  "updated": "2026-06-18",
+  "note": "mid 为套餐计算用权威单值（具体数字，非区间）；low/high 仅供地区差异参考。来源见 source。",
+  "items": {
+    "basic_panel": {"name": "基础必检(血尿便常规+肝肾脂糖+心电+胸片+腹部超声)", "aliases": ["基础必检", "基础"], "mid": 550, "low": 300, "high": 800, "source": "北大医院A类594.64元"},
+    "ldct": {"name": "低剂量螺旋CT(LDCT)", "aliases": ["LDCT", "低剂量螺旋CT", "螺旋CT", "低剂量CT"], "mid": 500, "low": 300, "high": 800, "source": "三甲约500"},
+    "gastroscopy": {"name": "无痛胃镜", "aliases": ["无痛胃镜", "胃镜"], "mid": 1000, "low": 700, "high": 1800, "source": "含麻醉"},
+    "colonoscopy": {"name": "无痛肠镜", "aliases": ["无痛肠镜", "肠镜"], "mid": 1000, "low": 700, "high": 1500, "source": "含麻醉"},
+    "gi_combined": {"name": "胃肠镜联合(无痛)", "aliases": ["胃肠镜联合"], "mid": 1800, "low": 1500, "high": 2500, "source": "上海六院套餐"},
+    "psa": {"name": "PSA(总PSA)", "aliases": ["PSA", "前列腺特异性抗原"], "mid": 50, "low": 50, "high": 50, "source": "医保规范单项≤50"},
+    "tumor_markers_5": {"name": "肿瘤标志物5项", "aliases": ["肿瘤标志物5项", "肿标5项", "肿标"], "mid": 220, "low": 220, "high": 220, "source": "医保规范后由~500降至220"},
+    "afp": {"name": "甲胎蛋白AFP", "aliases": ["AFP", "甲胎蛋白"], "mid": 50, "low": 50, "high": 50, "source": "单项≤50"},
+    "breast_us": {"name": "乳腺超声", "aliases": ["乳腺超声"], "mid": 120, "low": 65, "high": 180, "source": ""},
+    "mammography": {"name": "乳腺钼靶(X线)", "aliases": ["乳腺钼靶", "钼靶"], "mid": 200, "low": 117, "high": 300, "source": ""},
+    "breast_mri": {"name": "乳腺MRI增强", "aliases": ["乳腺MRI", "乳腺增强MRI"], "mid": 1000, "low": 800, "high": 1500, "source": "BRCA高危标准筛查"},
+    "hpv": {"name": "HPV核酸检测", "aliases": ["HPV"], "mid": 320, "low": 200, "high": 350, "source": ""},
+    "tct": {"name": "宫颈TCT(液基细胞学)", "aliases": ["TCT", "宫颈TCT"], "mid": 210, "low": 150, "high": 250, "source": ""},
+    "thyroid_us": {"name": "甲状腺及颈部淋巴结彩超", "aliases": ["甲状腺彩超", "甲状腺超声", "甲状腺及颈部淋巴结彩超"], "mid": 120, "low": 80, "high": 200, "source": ""},
+    "hba1c": {"name": "糖化血红蛋白(HbA1c)", "aliases": ["糖化血红蛋白", "HbA1c"], "mid": 70, "low": 40, "high": 100, "source": ""},
+    "ogtt": {"name": "口服葡萄糖耐量试验(OGTT)", "aliases": ["OGTT"], "mid": 180, "low": 100, "high": 300, "source": "三甲150-200"},
+    "lipid_panel": {"name": "血脂全套(TC/TG/HDL-C/LDL-C)", "aliases": ["血脂", "血脂全套"], "mid": 40, "low": 19, "high": 60, "source": ""},
+    "carotid_us": {"name": "颈动脉超声", "aliases": ["颈动脉超声"], "mid": 200, "low": 150, "high": 250, "source": ""},
+    "genetic_counsel": {"name": "遗传咨询门诊", "aliases": ["遗传咨询", "遗传咨询门诊"], "mid": 500, "low": 300, "high": 800, "source": "三甲遗传门诊挂号+咨询"},
+    "echo": {"name": "超声心动图(心脏彩超)", "aliases": ["超声心动图", "心脏彩超"], "mid": 142, "low": 130, "high": 250, "source": "杭州某三甲142"},
+    "jizaoan": {"name": "吉早安cfDNA甲基化多癌早筛", "aliases": ["吉早安", "cfDNA甲基化", "多癌早筛"], "mid": 2480, "low": 1980, "high": 2980, "source": "geneplus.cn市场参考1980-2980"}
+  }
+}
