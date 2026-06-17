@@ -110,6 +110,8 @@ def test_full_schema_keys_present(artifacts: Path, answers_path: Path) -> None:
     expected_keys = {
         "schema_version", "run_id", "generated_at", "person",
         "jizaoan_result", "jizaoan_top_cancers", "brca_status",
+        "brca_detail", "checkup_window",
+        "timeline_tiers", "x_addons", "package_tiers", "liquid_biopsy_perf", "long_term_intervention",
         "health_summary", "snapshot", "voi", "tumor_markers",
         "evidence_version",
     }
