@@ -100,10 +100,34 @@ def _brca_status(answers: dict[str, Any]) -> str:
     return "unknown"
 
 
-def _checkup_window(snapshot: dict[str, Any]) -> str:
-    """推荐体检时间窗（按最高风险 tier）。"""
+def _brca_detail(answers: dict[str, Any], brca_status: str) -> str:
+    """BRCA 遗传风险详情文案。问卷无 q_brca_detail 悬空题，brca 阳性时从
+    q_genetic_mutations_brca 的值(brca1/brca2)合成默认详情，避免遗传风险标签空白。"""
+    if brca_status != "positive":
+        return ""
+    v = answers.get("q_genetic_mutations_brca")
+    if isinstance(v, list):
+        genes = [g.upper() for g in v if g in ("brca1", "brca2")]
+    elif isinstance(v, str) and v in ("brca1", "brca2"):
+        genes = [v.upper()]
+    else:
+        genes = []
+    label = "/".join(genes) if genes else "BRCA"
+    return f"{label} 基因突变致病位点携带者"
+
+
+def _checkup_window(snapshot: dict[str, Any], brca_status: str, health_risk_level: Any) -> str:
+    """推荐体检时间窗。联动高危信号（与 timeline priority 档同源，避免报头窗口与首档矛盾）：
+    BRCA阳性 / 任一癌症后验>1% / 健康总结评估较严重 → "1-2 周内"；否则按最高 risk_tier。"""
     cancers = snapshot.get("cancers", []) if isinstance(snapshot, dict) else []
-    # 含 imaging_tier（pathology_confirmed/urgent_workup/high_workup/moderate_workup）
+    if brca_status == "positive":
+        return "1-2 周内"
+    if any(isinstance(c, dict) and (c.get("posterior_probability") or 0) > 0.01 for c in cancers):
+        return "1-2 周内"
+    rl = str(health_risk_level or "")
+    if any(k in rl for k in ("严重", "🔴", "🟠", "高风险")):
+        return "1-2 周内"
+    # 否则按最高 risk_tier（含 imaging_tier）
     order = {"pathology_confirmed": 5, "very_high": 4, "urgent_workup": 4,
              "high": 3, "high_workup": 3, "medium": 2, "moderate_workup": 2, "low": 1}
     top = ""
@@ -186,6 +210,7 @@ def assemble_report_json(
 
     person_ctx = snapshot.get("person_context", {}) if isinstance(snapshot, dict) else {}
     jizaoan_result, jizaoan_top_cancers = _jizaoan(answers)
+    brca_status = _brca_status(answers)
 
     patient = health.get("patient_data", {}) if isinstance(health, dict) else {}
     assessment = health.get("assessment_result", {}) if isinstance(health, dict) else {}
@@ -207,9 +232,9 @@ def assemble_report_json(
         },
         "jizaoan_result": jizaoan_result,
         "jizaoan_top_cancers": jizaoan_top_cancers,
-        "brca_status": _brca_status(answers),
-        "brca_detail": answers.get("q_brca_detail") or "",
-        "checkup_window": _checkup_window(snapshot),
+        "brca_status": brca_status,
+        "brca_detail": _brca_detail(answers, brca_status),
+        "checkup_window": _checkup_window(snapshot, brca_status, assessment.get("risk_level")),
         "timeline_tiers": _read_json(artifacts / "timeline_tiers.json", {"priority": [], "important": [], "maintain": []}),
         "x_addons": _read_json(artifacts / "x_addons.json", []),
         "package_tiers": _read_json(artifacts / "package_tiers.json", []),

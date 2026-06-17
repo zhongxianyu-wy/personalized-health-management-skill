@@ -1,7 +1,8 @@
 """Tests for the P1 thin report renderer (render_report).
 
 render_report is a THIN Jinja2 renderer: it loads
-``templates/integrated_report_v14.html`` under StrictUndefined and renders a
+``templates/integrated_report_temp.html`` (sole authority template, strictly
+aligned to temp/html-preview-10.html) under StrictUndefined and renders a
 report.json-shaped dict plus a disclaimer. No math, no LLM, no network.
 """
 
@@ -20,7 +21,7 @@ import build_report_json  # noqa: E402
 import render_report  # noqa: E402
 
 SKILL_ROOT = Path(__file__).resolve().parent.parent
-TEMPLATE = SKILL_ROOT / "templates" / "integrated_report_v14.html"
+TEMPLATE = SKILL_ROOT / "templates" / "integrated_report_temp.html"
 DISCLAIMER = "本报告仅用于健康管理参考，不构成医学诊断。"
 
 
@@ -121,7 +122,7 @@ def test_render_report_positive_case_renders(positive_report: dict) -> None:
     html = render_report.render_report(positive_report, TEMPLATE, DISCLAIMER)
 
     assert DISCLAIMER in html
-    assert "ldct" in html
+    assert "核心建议执行时间轴" in html  # temp 时间轴标题常驻（temp 模版不渲染 voi.rankings）
 
 
 # ---------------------------------------------------------------------------

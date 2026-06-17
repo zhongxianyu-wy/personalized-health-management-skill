@@ -53,7 +53,7 @@ REQUIRED_FIXTURES = tuple(str(_SKILL_ROOT / p) for p in (
     "references/database/cancerrisk/json/risk_assertions_derived.json",
     "references/database/cancerrisk/json/detection_performance_derived.json",
     "references/database/cancerrisk/json/screening_recommendations.json",
-    "templates/integrated_report_v14.html",
+    "templates/integrated_report_temp.html",
     "templates/health_summary_v1.html",
 ))
 

@@ -707,7 +707,7 @@ def is_candidate_filled(candidate: dict[str, Any]) -> bool:
     the operator can sanity-check.
     """
     records = candidate.get("records")
-    return isinstance(records, list)
+    return isinstance(records, list) and len(records) > 0
 
 
 def write_json(path: Path, payload: dict[str, Any]) -> None:
