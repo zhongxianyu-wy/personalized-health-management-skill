@@ -110,31 +110,37 @@ interactive:
           - {value: occasional, label: "偶尔饮酒",   exists: false}
           - {value: heavy,      label: "经常大量饮酒", exists: true}
           - {value: unknown,    label: "不愿透露"}
-      - question_id: q_genetic_testing_done
-        prompt: "您是否做过基因检测（如 BRCA 突变、Lynch 综合征相关检测等）？"
+      - question_id: q_has_genetic_mutation
+        prompt: "您是否有基因突变（如 BRCA、Lynch 综合征等遗传性肿瘤相关基因）？"
         type: single_choice
         target: gate
         options:
-          - {value: "yes",   label: "做过基因检测"}
-          - {value: "no",    label: "未做过"}
-          - {value: unknown, label: "不清楚"}
+          - {value: "yes", label: "有基因突变"}
+          - {value: "no",  label: "无"}
       - question_id: q_genetic_mutations_brca
-        prompt: "BRCA 基因检测结果（可多选；均无则选「均无BRCA突变」）？"
+        prompt: "BRCA 相关突变（可多选；均无则选「无/不清楚」）？"
         type: multi_select
-        conditional_on: {question_id: q_genetic_testing_done, value: "yes"}
+        conditional_on: {question_id: q_has_genetic_mutation, value: "yes"}
         options:
           - {value: brca1, label: "BRCA1 突变", factor_id: brca1_mutation_carrier, factor_level: present, exists: true}
           - {value: brca2, label: "BRCA2 突变", factor_id: brca2_mutation_carrier, factor_level: present, exists: true}
-          - {value: none,  label: "均无BRCA突变"}
-      - question_id: q_genetic_mutations_lynch
-        prompt: "Lynch 综合征相关基因突变（可多选；均无则不选直接继续）？"
+          - {value: none,  label: "无/不清楚"}
+      - question_id: q_genetic_mutations_lynch_mlh1_msh2
+        prompt: "Lynch 综合征突变（MLH1/MSH2，可多选；无则选「无/不清楚」）？"
         type: multi_select
-        conditional_on: {question_id: q_genetic_testing_done, value: "yes"}
+        conditional_on: {question_id: q_has_genetic_mutation, value: "yes"}
         options:
-          - {value: mlh1, label: "Lynch MLH1 突变", factor_id: lynch_syndrome_mlh1, factor_level: present, exists: true}
-          - {value: msh2, label: "Lynch MSH2 突变", factor_id: lynch_syndrome_msh2, factor_level: present, exists: true}
-          - {value: msh6, label: "Lynch MSH6 突变", factor_id: lynch_syndrome_msh6, factor_level: present, exists: true}
-          - {value: pms2, label: "Lynch PMS2 突变", factor_id: lynch_syndrome_pms2, factor_level: present, exists: true}
+          - {value: mlh1, label: "MLH1 突变", factor_id: lynch_syndrome_mlh1, factor_level: present, exists: true}
+          - {value: msh2, label: "MSH2 突变", factor_id: lynch_syndrome_msh2, factor_level: present, exists: true}
+          - {value: none,  label: "无/不清楚"}
+      - question_id: q_genetic_mutations_lynch_msh6_pms2
+        prompt: "Lynch 综合征突变（MSH6/PMS2，可多选；无则选「无/不清楚」）？"
+        type: multi_select
+        conditional_on: {question_id: q_has_genetic_mutation, value: "yes"}
+        options:
+          - {value: msh6, label: "MSH6 突变", factor_id: lynch_syndrome_msh6, factor_level: present, exists: true}
+          - {value: pms2, label: "PMS2 突变", factor_id: lynch_syndrome_pms2, factor_level: present, exists: true}
+          - {value: none,  label: "无/不清楚"}
       # text_fill: shown only when q_family_history_cancer=yes; placement=last
       # ensures it follows all single-choice questions regardless of yaml order.
       - question_id: q_family_history_detail

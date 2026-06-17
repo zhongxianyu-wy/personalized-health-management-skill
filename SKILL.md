@@ -143,7 +143,7 @@ uv run --python 3.11 --with PyYAML --with jsonschema --with jinja2 --with reques
     ```bash
     ... scripts/run_formal_analysis.py ... --person-id <id> --stop-after report-artifacts
     ```
-    exit 0 → 按「报告 section artifact」配方读对应 MD/JSON 产 5 JSON 到 `<out>/artifacts/`：`timeline_tiers.json` / `x_addons.json` / `package_tiers.json` / `liquid_biopsy_perf.json` / `long_term_intervention.json`。**这些 artifact 无任何脚本产出，跳过则报告 5 个核心 section 渲染空**（specificity 留空由 build_report_json 兜底，勿 LLM 填）。
+    exit 0 → 按「报告 section artifact」配方读对应 MD/JSON 产 5 JSON 到 `<out>/artifacts/`：`timeline_tiers.json` / `x_addons.json` / `package_tiers.json` / `liquid_biopsy_perf.json` / `long_term_intervention.json`。**这些 artifact 无任何脚本产出，跳过则报告 5 个核心 section 渲染空**——`build_report_json` 会检测 5 artifact 全空并标 `sections_incomplete=true` + stderr 警告，`run_formal_analysis` 渲染后 HALT 警告（report.html 虽生成但为**空壳=无效交付**，必须回本步产 5 JSON 非空后重跑第11步）。（specificity 留空由 build_report_json 兜底，勿 LLM 填）。
 
 11. 跑最终报告+归档（不带 stop-after）：
     ```bash
