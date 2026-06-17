@@ -106,6 +106,7 @@ def _compute_single_method_voi(
 
 
 _JIZAOAN_SPECIFICITY = 0.990  # from product documentation
+_JIZAOAN_SENSITIVITY = 0.819  # 白皮书综合灵敏度口径（统一 81.9%，对齐 temp/03-MD/jizaoan_white_paper_v2026）
 
 
 def _compute_jizaoan_voi(
@@ -148,13 +149,9 @@ def _compute_jizaoan_voi(
         })
     if not breakdown:
         return None
-    # Use global all-cancer average for display (white-paper product spec),
-    # not the person-specific subset which varies with sex/cancer profile.
-    global_sens = (
-        round(sum(all_jizaoan_sensitivities) / len(all_jizaoan_sensitivities), 4)
-        if all_jizaoan_sensitivities else
-        round(sum(sens_list) / max(len(sens_list), 1), 4)
-    )
+    # 白皮书综合灵敏度口径 0.819（统一 81.9%）。VoI 计算(total_voi)仍用分癌种 sens
+    # 逐癌求和；global_sens 仅用于显示口径，对齐 temp/03-MD/jizaoan_white_paper_v2026。
+    global_sens = _JIZAOAN_SENSITIVITY
     return ScreeningVoI(
         cancer_id=",".join(sorted(b["cancer_id"] for b in breakdown)),
         cancer_name_zh="+".join(sorted(b["cancer_name_zh"] for b in breakdown)),

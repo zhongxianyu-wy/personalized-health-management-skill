@@ -645,6 +645,23 @@
       "conversion_rule": "LR+/LR- from sensitivity/specificity",
       "unusable_reason": null,
       "source_id": "pancreatic_cancer_evidence_v2"
+    },
+    {
+      "test_id": "jizaoan_multi_cancer_screening_overall",
+      "cancer_id": "overall",
+      "raw_sensitivity": 0.819,
+      "raw_specificity": 0.99,
+      "sensitivity": 0.819,
+      "specificity": 0.99,
+      "probability_boundary_adjustment": false,
+      "lr_positive": 81.89999999999992,
+      "lr_negative": 0.18282828282828287,
+      "positive_log_odds_delta": 4.405498990859023,
+      "negative_log_odds_delta": -1.6992079118628096,
+      "conversion_status": "usable",
+      "conversion_rule": "LR+/LR- from sensitivity/specificity",
+      "unusable_reason": null,
+      "source_id": "jizaoan_white_paper_v2026"
     }
   ]
 }
