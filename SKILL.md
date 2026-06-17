@@ -93,7 +93,7 @@ uv run --python 3.11 --with PyYAML --with jsonschema --with jinja2 --with reques
      python scripts/run_formal_analysis.py --input <input> --analysis-output <out> --stop-after mineru
    ```
 
-2. 🔴 **CP1 精炼建档**（agent）。对每个 `artifacts/mineru/<data_id>/content.md` 先做质量门：少于 20 行或不含 {检查,化验,报告,结果,项目} → 停并报错；否则写同目录 `refined.md`，保留人口学/异常行/肿瘤标志物（含正常值）/影像结论/阳性体征。不得概括掉值/单位/参考范围/日期（字面校验需要）。详见 `references/runtime_workflow.md`。
+2. 🔴 **CP1 精炼建档**（agent）。对每个 `artifacts/mineru/<data_id>/content.md` 先做质量门：少于 20 行或不含 {检查,化验,报告,结果,项目} → 停并报错；否则写同目录 `refined.md`，保留人口学/异常行/肿瘤标志物（含正常值）/影像结论/阳性体征/**胃肠镜等内镜检查记录（含息肉/病理/切除/Boston 评分——若有必抽全段；漏抽会致"已做"误判为"未做过"，如肠镜+息肉切除被误判为缺口）**。不得概括掉值/单位/参考范围/日期（字面校验需要）。详见 `references/runtime_workflow.md`。
 
 3. 跑到问诊：
    ```bash
