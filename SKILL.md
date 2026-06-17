@@ -82,7 +82,7 @@ uv run --python 3.11 --with PyYAML --with jsonschema --with jinja2 --with reques
 | 9 | 贝叶斯风险 | `snapshot_risk.py` | `cancerrisk/json/`(priors/derived/screening_recommendations) | 脚本确定性 | — |
 | 10 | VoI 排序 | `voi_calculator.py` | `cancerrisk/json/`(voi_parameters/screening_methods/detection_derived) | 脚本确定性 | — |
 | 11 | 筛查推荐 | _(LLM 参考 MD)_ | `screening_general/md/` + `screening_personalized/md/` | **LLM 读 MD** | — |
-| 12 | 综合报告+归档 | `build_report_json.py`+`render_report.py`+`archive_manager.py` | `report.html`+`manifest.json`（模板 `templates/integrated_report_v14.html`）→ `output/<id>/` | 脚本渲染 | — |
+| 12 | 综合报告+归档 | LLM 产 section artifact → `build_report_json.py`+`render_report.py`+`archive_manager.py` | `report.html`（v20 模版）+`manifest.json` → `output/<id>/` | LLM+脚本渲染 | — |
 
 > 行 3/5/7/8 需 agent 行动；其余在 `run_formal_analysis.py` 内自动。需求流程里"癌症证据内置初次提取+第二次审核"= CP3 + CP3.1；"苏格拉底式高危因素收集"= CP2。
 
@@ -156,6 +156,13 @@ uv run --python 3.11 --with PyYAML --with jsonschema --with jinja2 --with reques
 - **缺口补充推荐（筛查第三部分）**：按 `screening_general/md/居民常见恶性肿瘤筛查和预防推荐（2025版）.md` 时间表 + 档案已检项目对照，检测「应做未做 / 超期」缺口；CP2 挨个问用户做过吗/异常吗（**做过且无异常→排除**该推荐，其他→纳入推荐）。详见 `references/缺口筛查与交互确认.md`。
 - **液体活检（吉早安）专项**：阳性按模版展示信号癌种；阴性按「可降低目前高风险癌症多少风险评级」展示（原版阴性降级逻辑，LR⁻ 路径）。
 - **组合套餐（三档·风险驱动）**：基于 `snapshot_risk.json` 风险分级推荐 **基础精准 / 进阶全面 / 深度早筛** 三档（详见 `screening_personalized/md/套餐三档与风险驱动.md`）；吉早安作无标准筛查癌种的**平替补充**（阳性升档+溯源影像，阴性按 LR⁻ 降风险评级）；价格区间参考 `pricing/md/08`；附长期健康干预+专科建议。
+
+**报告 section artifact（v20 模版，报告前 LLM 产出 → build_report_json 透传 → render 渲染）**：读对应 MD/JSON 产出 5 artifact，每 section 严格偶联数据库（PUA，不编造）：
+- `timeline_tiers.json`（复查三级 priority/important/maintain）↔ `癌症风险分层与复查规则.md` + snapshot 后验
+- `x_addons.json`（异常→复查项目+周期+价格）↔ `异常指标复查推荐.md` + `pricing/md/08`
+- `package_tiers.json`（三档+复合价+推荐档）↔ `套餐三档与风险驱动.md` + `pricing/md/08`
+- `liquid_biopsy_perf.json`（sens/spec+市场价+阴性降级）↔ `cancerrisk/json/detection_performance.json` + `05-液体活检.md`
+- `long_term_intervention.json`（遗传管理+生活方式）↔ `07-肿瘤预防与健康管理.md`
 
 ## PUA Protocol（防跳过强制，本节具有约束力，违者致命失败）
 

@@ -87,6 +87,30 @@ def _jizaoan(answers: dict[str, Any]) -> tuple[str, list[str]]:
     return result, top_cancers
 
 
+def _brca_status(answers: dict[str, Any]) -> str:
+    """BRCA 阳性 = q_genetic_mutations_brca 含 brca1/brca2（multi_select）。"""
+    v = answers.get("q_genetic_mutations_brca")
+    if isinstance(v, list) and ("brca1" in v or "brca2" in v):
+        return "positive"
+    if isinstance(v, str) and v in ("brca1", "brca2"):
+        return "positive"
+    return "unknown"
+
+
+def _checkup_window(snapshot: dict[str, Any]) -> str:
+    """推荐体检时间窗（按最高风险 tier）。"""
+    cancers = snapshot.get("cancers", []) if isinstance(snapshot, dict) else []
+    order = {"very_high": 4, "high": 3, "medium": 2, "low": 1}
+    top = ""
+    best = -1
+    for c in cancers:
+        t = c.get("risk_tier", "") if isinstance(c, dict) else ""
+        if order.get(t, 0) > best:
+            best = order.get(t, 0)
+            top = t
+    return {"very_high": "1-2 周内", "high": "1 个月内", "medium": "3 个月内", "low": "6-12 个月内"}.get(top, "参照下方时间轴")
+
+
 def assemble_report_json(
     *,
     artifacts: Path,
@@ -129,7 +153,14 @@ def assemble_report_json(
         },
         "jizaoan_result": jizaoan_result,
         "jizaoan_top_cancers": jizaoan_top_cancers,
-        "brca_status": "unknown",
+        "brca_status": _brca_status(answers),
+        "brca_detail": answers.get("q_brca_detail") or "",
+        "checkup_window": _checkup_window(snapshot),
+        "timeline_tiers": _read_json(artifacts / "timeline_tiers.json", {"priority": [], "important": [], "maintain": []}),
+        "x_addons": _read_json(artifacts / "x_addons.json", []),
+        "package_tiers": _read_json(artifacts / "package_tiers.json", []),
+        "liquid_biopsy_perf": _read_json(artifacts / "liquid_biopsy_perf.json", {"sensitivity": "-", "specificity": "-", "market_price_range": "-", "negative_risk_reduction": ""}),
+        "long_term_intervention": _read_json(artifacts / "long_term_intervention.json", {"genetic_management": [], "lifestyle": []}),
         "health_summary": {
             "status": health.get("status"),
             "abnormal_non_cancer_count": health.get("abnormal_non_cancer_count", 0),
