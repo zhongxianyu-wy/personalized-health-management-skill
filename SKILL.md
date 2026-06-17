@@ -165,7 +165,7 @@ uv run --python 3.11 --with PyYAML --with jsonschema --with jinja2 --with reques
 - `timeline_tiers.json`（复查三级）schema `{priority/important/maintain:[{item_name,rationale}]}` ↔ `癌症风险分层与复查规则.md` + snapshot 后验 + `异常指标复查推荐.md`（priority≤3-5，三档均匀）
 - `x_addons.json` schema `[{risk_source,risk_level_tag(danger/warning/info),risk_level_label,method,interval,price_range,clinical_value}]` ↔ `异常指标复查推荐.md` + `pricing/md/08`（interval/price 须 MD 字面）
 - `package_tiers.json`（恒 3 档）schema `[{name,price_range,includes[],note,recommended}]`（recommended 仅 1 档）↔ `套餐三档与风险驱动.md` + `pricing/md/08`（price 须 pricing 字面）
-- `liquid_biopsy_perf.json` schema `{sensitivity,specificity,early_stage_sensitivity,market_price_range,clinical_hint,negative_risk_reduction}`：sensitivity/early_stage_sensitivity/market_price_range/clinical_hint/negative_risk_reduction 由 LLM 读 `05-基于液体活检的多癌种联合筛查.md` 字面搬运（综合口径不在分癌种 JSON，**MD 无则留「-」不编造**）；specificity **留空由脚本兜底**（勿 LLM 填）
+- `liquid_biopsy_perf.json` schema `{sensitivity,specificity,early_stage_sensitivity,market_price_range,clinical_hint,negative_risk_reduction}`：**sensitivity/specificity 由 build_report_json 脚本从 voi_ranking 吉早安行兜底（同源，消除 74.9%/82.2%/81.9% 多口径打架；勿 LLM 填）**；early_stage_sensitivity/market_price_range/clinical_hint/negative_risk_reduction 由 LLM 读 `05-基于液体活检的多癌种联合筛查.md` + pricing 字面搬运（**MD 无则留「-」不编造**）
 - `long_term_intervention.json` schema `{genetic_management[](仅 brca positive),lifestyle[]}` ↔ `07-肿瘤预防与健康管理.md`（药物/手术获益须 MD 字面）
 
 ## PUA Protocol（防跳过强制，本节具有约束力，违者致命失败）

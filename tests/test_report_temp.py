@@ -145,9 +145,10 @@ def test_spec_fallback_from_voi(tmp_path):
     assert report["liquid_biopsy_perf"]["specificity"] == "99.0%"
 
 
-def test_spec_not_overwritten(tmp_path):
-    """LLM 已填合法 specificity → 脚本不覆盖。"""
+def test_sens_spec_always_from_voi(tmp_path):
+    """sens/spec 总从 voi 同源兜底（覆盖 LLM artifact 的多口径值，消除打架）。"""
     report, _ = _render(tmp_path, brca=False, jizaoan="negative", with_voi_jizaoan=True,
-                        liquid={"sensitivity": "81.9%", "specificity": "99.5%",
+                        liquid={"sensitivity": "74.9%", "specificity": "99.5%",
                                 "market_price_range": "¥1,980-2,980"})
-    assert report["liquid_biopsy_perf"]["specificity"] == "99.5%"
+    assert report["liquid_biopsy_perf"]["specificity"] == "99.0%"   # voi 0.990 覆盖 LLM 99.5%
+    assert report["liquid_biopsy_perf"]["sensitivity"] == "72.9%"   # voi 0.729 覆盖 LLM 74.9%

@@ -286,18 +286,18 @@
     <table class="data-table">
         <thead>
             <tr>
-                <th style="width: 24%">风险触发源 / 核心医学背景</th>
-                <th style="width: 13%">CancerRisk 级别</th>
-                <th style="width: 25%">推荐个性化临床检查 (X)</th>
+                <th style="width: 25%">风险触发源 / 核心医学背景</th>
+                <th style="width: 15%">CancerRisk 级别</th>
+                <th style="width: 28%">推荐个性化临床检查 (X)</th>
                 <th style="width: 12%">推荐周期</th>
-                <th style="width: 12%">参考价格</th>
-                <th style="width: 14%">遗传临床价值说明</th>
+                <th style="width: 10%">参考价格</th>
+                <th style="width: 10%">遗传临床价值说明</th>
             </tr>
         </thead>
         <tbody>
         {% for x in x_addons %}
             <tr>
-                <td>{{ x.risk_source | default('—') }}</td>
+                <td>{{ x.risk_source | default('—') | safe }}</td>
                 <td><span class="tag tag-{{ x.risk_level_tag | default('info') }}">{{ x.risk_level_label | default(x.risk_level_tag) | default('—') }}</span></td>
                 <td><strong>{{ x.method | default('—') }}</strong></td>
                 <td>{{ x.interval | default('—') }}</td>

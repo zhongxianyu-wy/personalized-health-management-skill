@@ -119,11 +119,6 @@ def _format_cn_date(dt: datetime) -> str:
     return f"{dt.year}年{dt.month}月{dt.day}日"
 
 
-def _is_valid_percent(value: Any) -> bool:
-    """True if ``value`` looks like a filled percentage string (e.g. "99.0%")."""
-    return isinstance(value, str) and value.strip() not in ("", "-") and "%" in value
-
-
 def _liquid_biopsy_perf(artifacts: Path, voi: dict[str, Any]) -> dict[str, Any]:
     """Liquid-biopsy performance panel for the 液体活检 section.
 
@@ -146,16 +141,21 @@ def _liquid_biopsy_perf(artifacts: Path, voi: dict[str, Any]) -> dict[str, Any]:
         "clinical_hint": perf.get("clinical_hint", ""),
         "negative_risk_reduction": perf.get("negative_risk_reduction", ""),
     }
-    if not _is_valid_percent(result["specificity"]):
-        for r in voi.get("rankings", []) if isinstance(voi, dict) else []:
-            if not isinstance(r, dict):
-                continue
-            haystack = str(r.get("method", "")) + str(r.get("test_id", ""))
-            if "jizaoan" in haystack.lower():
-                spec = r.get("specificity")
-                if isinstance(spec, (int, float)) and 0 <= spec <= 1:
-                    result["specificity"] = f"{spec * 100:.1f}%"
-                    break
+    # sens 与 spec 都从 voi_ranking 吉早安行兜底（脚本确定性，同源）。pricing MD
+    # 自述其 74.9% 不该被引用为性能、05-MD 无综合 sens 数值——统一从 voi 取，
+    # 消除 74.9% / 82.2% / 81.9% 多口径打架。
+    for r in voi.get("rankings", []) if isinstance(voi, dict) else []:
+        if not isinstance(r, dict):
+            continue
+        haystack = str(r.get("method", "")) + str(r.get("test_id", ""))
+        if "jizaoan" in haystack.lower() or "吉早安" in haystack:
+            sens = r.get("sensitivity")
+            spec = r.get("specificity")
+            if isinstance(sens, (int, float)) and 0 <= sens <= 1:
+                result["sensitivity"] = f"{sens * 100:.1f}%"
+            if isinstance(spec, (int, float)) and 0 <= spec <= 1:
+                result["specificity"] = f"{spec * 100:.1f}%"
+            break
     return result
 
 
