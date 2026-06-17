@@ -6,7 +6,7 @@
       "test_name": "吉早安多癌早筛",
       "cancer_id": "lung_cancer",
       "sensitivity": 0.729,
-      "specificity": 0.991,
+      "specificity": 0.990,
       "population": "general adult population",
       "source_id": "jizaoan_white_paper_v2026",
       "notes": "Vendor-published performance for the Jizaoan multi-cancer panel."
@@ -16,7 +16,7 @@
       "test_name": "吉早安多癌早筛",
       "cancer_id": "liver_cancer",
       "sensitivity": 1.0,
-      "specificity": 0.991,
+      "specificity": 0.990,
       "population": "general adult population",
       "source_id": "jizaoan_white_paper_v2026",
       "notes": "Vendor-published performance for the Jizaoan multi-cancer panel."
@@ -26,7 +26,7 @@
       "test_name": "吉早安多癌早筛",
       "cancer_id": "gastric_cancer",
       "sensitivity": 0.761,
-      "specificity": 0.991,
+      "specificity": 0.990,
       "population": "general adult population",
       "source_id": "jizaoan_white_paper_v2026",
       "notes": "Vendor-published performance for the Jizaoan multi-cancer panel."
@@ -36,7 +36,7 @@
       "test_name": "吉早安多癌早筛",
       "cancer_id": "esophageal_cancer",
       "sensitivity": 0.792,
-      "specificity": 0.991,
+      "specificity": 0.990,
       "population": "general adult population",
       "source_id": "jizaoan_white_paper_v2026",
       "notes": "Vendor-published performance for the Jizaoan multi-cancer panel."
@@ -46,7 +46,7 @@
       "test_name": "吉早安多癌早筛",
       "cancer_id": "colorectal_cancer",
       "sensitivity": 0.862,
-      "specificity": 0.991,
+      "specificity": 0.990,
       "population": "general adult population",
       "source_id": "jizaoan_white_paper_v2026",
       "notes": "Vendor-published performance for the Jizaoan multi-cancer panel."
@@ -56,7 +56,7 @@
       "test_name": "吉早安多癌早筛",
       "cancer_id": "breast_cancer",
       "sensitivity": 0.889,
-      "specificity": 0.991,
+      "specificity": 0.990,
       "population": "general adult population",
       "source_id": "jizaoan_white_paper_v2026",
       "notes": "Vendor-published performance for the Jizaoan multi-cancer panel."
@@ -66,7 +66,7 @@
       "test_name": "吉早安多癌早筛",
       "cancer_id": "ovarian_cancer",
       "sensitivity": 0.879,
-      "specificity": 0.991,
+      "specificity": 0.990,
       "population": "general adult population",
       "source_id": "jizaoan_white_paper_v2026",
       "notes": "Vendor-published performance for the Jizaoan multi-cancer panel."
@@ -76,7 +76,7 @@
       "test_name": "吉早安多癌早筛",
       "cancer_id": "pancreatic_cancer",
       "sensitivity": 0.667,
-      "specificity": 0.991,
+      "specificity": 0.990,
       "population": "general adult population",
       "source_id": "jizaoan_white_paper_v2026",
       "notes": "中山大学肿瘤防治中心独立验证队列(2025-11)胰腺癌灵敏度 66.7%，特异性 99.0%。来源：research_findings.md §5.3；与其他7癌种同一研究。"

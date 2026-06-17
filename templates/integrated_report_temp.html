@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ person.name }}个性化体检与健康管理方案</title>
+    <style>
+        :root {
+            /* standard 主题（默认）：青蓝主色 */
+            --primary: #1a5f7a;
+            --primary-light: #ebf8ff;
+            --text-main: #2d3748;
+            --border-color: #e2e8f0;
+            --alert-danger: #e53e3e;
+            --alert-warning: #ed8936;
+            --alert-success: #38a169;
+            --tech-red: #c53030;
+            --tech-bg: #fff5f5;
+        }
+        /* genetic-alert 主题：BRCA 阳性切换为遗传紫（对齐 temp 高危配色） */
+        body.genetic-alert { --primary: #805ad5; --primary-light: #faf5ff; }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", "PingFang SC", "Microsoft YaHei", sans-serif;
+            color: var(--text-main);
+            background-color: #f7fafc;
+            margin: 0;
+            padding: 20px;
+            line-height: 1.5;
+        }
+
+        .report-container {
+            max-width: 1050px;
+            margin: 0 auto;
+            background: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            padding: 40px;
+        }
+
+        /* 报头设计 */
+        .report-header {
+            border-bottom: 2px solid var(--primary);
+            padding-bottom: 20px;
+            margin-bottom: 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+        }
+
+        .header-title h1 {
+            color: var(--primary);
+            margin: 0 0 8px 0;
+            font-size: 26px;
+        }
+
+        .header-title p {
+            margin: 0;
+            color: #718096;
+            font-size: 14px;
+        }
+
+        /* 遗传背景与现症警示双暴露摘要（仅高危渲染） */
+        .user-badge-grid {
+            background: #fff5f5;
+            border: 1px solid #fed7d7;
+            padding: 15px 20px;
+            border-radius: 8px;
+            margin-bottom: 25px;
+        }
+
+        .badge-line {
+            display: flex;
+            gap: 20px;
+            font-size: 14px;
+            margin-bottom: 6px;
+        }
+
+        .badge-line:last-child { margin-bottom: 0; }
+
+        /* 模块标题 */
+        h2.sec-title {
+            color: var(--primary);
+            font-size: 18px;
+            border-left: 4px solid var(--primary);
+            padding-left: 10px;
+            margin-top: 35px;
+            margin-bottom: 15px;
+        }
+
+        /* 时间轴看板（三档 grid） */
+        .timeline-container {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .timeline-card {
+            background: #fff;
+            border: 1px solid var(--border-color);
+            border-top: 4px solid var(--primary);
+            border-radius: 6px;
+            padding: 15px;
+        }
+
+        .timeline-card.priority { border-top-color: var(--alert-danger); }
+        .timeline-card.important { border-top-color: var(--alert-warning); }
+        .timeline-card.maintain { border-top-color: var(--alert-success); }
+
+        .card-title { font-weight: bold; margin-bottom: 10px; font-size: 14px; }
+        .timeline-card ul { padding-left: 18px; margin: 0; font-size: 13px; color: #4a5568;}
+        .timeline-card li { margin-bottom: 6px; }
+
+        /* X 加项数据联动宽表 */
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 25px;
+            font-size: 13px;
+        }
+
+        .data-table th {
+            background: var(--primary-light);
+            color: var(--primary);
+            padding: 12px;
+            font-weight: 600;
+            border-bottom: 2px solid var(--border-color);
+            text-align: left;
+        }
+
+        .data-table td {
+            padding: 12px;
+            border-bottom: 1px solid var(--border-color);
+            vertical-align: top;
+        }
+
+        /* 标签样式 */
+        .tag {
+            display: inline-block;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: bold;
+            color: #fff;
+        }
+        .tag-danger { background: var(--alert-danger); }
+        .tag-warning { background: var(--alert-warning); }
+        .tag-info { background: #4a5568; }
+
+        /* 液体活检独立看板（阳态红 / 阴态绿 / 未测灰，复用同一结构） */
+        .tech-board {
+            background: var(--tech-bg);
+            border: 1px solid #fed7d7;
+            border-radius: 10px;
+            padding: 22px;
+            margin-top: 25px;
+            box-shadow: inset 4px 0 0 0 var(--alert-danger);
+        }
+        .tech-board.negative {
+            background: #f0fff4; border-color: #c6f6d5;
+            box-shadow: inset 4px 0 0 0 var(--alert-success);
+        }
+        .tech-board.untested {
+            background: #f7fafc; border-color: #e2e8f0;
+            box-shadow: inset 4px 0 0 0 #718096;
+        }
+
+        .tech-badge-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px dashed #feb2b2;
+            padding-bottom: 12px;
+            margin-bottom: 15px;
+        }
+        .tech-board.negative .tech-badge-container { border-bottom-color: #9ae6b4; }
+        .tech-board.untested .tech-badge-container { border-bottom-color: #cbd5e0; }
+
+        .result-box {
+            background: var(--alert-danger);
+            color: #fff;
+            padding: 5px 14px;
+            border-radius: 20px;
+            font-weight: bold;
+            font-size: 14px;
+            display: inline-block;
+        }
+        .result-box.negative { background: var(--alert-success); }
+
+        /* 套餐卡片 grid（三档） */
+        .package-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+        }
+
+        .package-card {
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 20px;
+            background: #fff;
+        }
+
+        .pkg-name { font-size: 15px; font-weight: bold; color: var(--primary); margin-bottom: 5px;}
+        .pkg-price { font-size: 18px; font-weight: bold; color: var(--alert-danger); margin-bottom: 15px;}
+
+        /* 长期干预盒 */
+        .intervention-box {
+            background: #fffaf0;
+            border: 1px solid #feebc8;
+            padding: 20px;
+            border-radius: 6px;
+            font-size: 13px;
+        }
+
+        @media print {
+            body { background: #fff; padding: 0; }
+            .report-container { box-shadow: none; padding: 0; }
+        }
+    </style>
+</head>
+<body class="{% if brca_status == 'positive' %}genetic-alert{% else %}standard{% endif %}">
+
+<div class="report-container">
+
+    <!-- 头部基本信息 -->
+    <div class="report-header">
+        <div class="header-title">
+            <h1>{{ person.name }}个性化体检与健康管理方案</h1>
+            <p>基于 CancerRisk 风险画像{% if brca_status == 'positive' %} + 遗传高危特订方案{% endif %}</p>
+        </div>
+        <div style="text-align: right; font-size: 13px; color: #718096;">
+            推荐体检时间窗口：{{ checkup_window }}<br>
+            报告生成时间：{{ generated_at_display }}
+        </div>
+    </div>
+
+    <!-- 遗传背景与现症警示双暴露摘要（有任一高危才渲染） -->
+    {% if brca_status == 'positive' or jizaoan_result == 'positive' %}
+    <div class="user-badge-grid">
+        {% if brca_status == 'positive' %}
+        <div class="badge-line">
+            <div style="color: var(--tech-red);">🧬 <b>先天遗传风险：</b><strong>{{ brca_detail | default('基因突变致病携带者') }}</strong></div>
+        </div>
+        {% endif %}
+        {% if jizaoan_result == 'positive' %}
+        <div class="badge-line" style="margin-top: 5px; border-top: 1px dashed #fed7d7; padding-top: 5px;">
+            <div style="color: var(--tech-red);">🚨 <b>后天现症风险：</b><strong>吉早安® 甲基化检测阳性（{{ jizaoan_top_cancers | join('、') }}方向触发）</strong></div>
+        </div>
+        {% endif %}
+    </div>
+    {% endif %}
+
+    <!-- 01. 落地执行清单：核心建议执行时间轴（三档 grid） -->
+    <h2 class="sec-title" style="margin-top: 0;">⏱️ 核心建议执行时间轴{% if brca_status == 'positive' %} (遗传高危靶向就诊清单){% endif %}</h2>
+    <div class="timeline-container">
+        <div class="timeline-card priority">
+            <div class="card-title" style="color: var(--alert-danger)">🔴 优先执行 (1-2周内)</div>
+            <ul>
+            {% for t in timeline_tiers.priority %}
+                <li><b>{{ t.item_name | default('—') }}</b>{% if t.rationale %}（{{ t.rationale }}）{% endif %}</li>
+            {% endfor %}
+            </ul>
+        </div>
+        <div class="timeline-card important">
+            <div class="card-title" style="color: var(--alert-warning)">🟠 重要检查 (1个月内)</div>
+            <ul>
+            {% for t in timeline_tiers.important %}
+                <li><b>{{ t.item_name | default('—') }}</b>{% if t.rationale %}（{{ t.rationale }}）{% endif %}</li>
+            {% endfor %}
+            </ul>
+        </div>
+        <div class="timeline-card maintain">
+            <div class="card-title" style="color: var(--alert-success)">🟢 持续管理 (3-6个月)</div>
+            <ul>
+            {% for t in timeline_tiers.maintain %}
+                <li><b>{{ t.item_name | default('—') }}</b>{% if t.rationale %}（{{ t.rationale }}）{% endif %}</li>
+            {% endfor %}
+            </ul>
+        </div>
+    </div>
+
+    <!-- 02. 循证“X”个性化精准加项清单（宽表，带价格/周期/级别 tag） -->
+    <h2 class="sec-title">🧱 循证“X”个性化精准加项清单</h2>
+    <table class="data-table">
+        <thead>
+            <tr>
+                <th style="width: 24%">风险触发源 / 核心医学背景</th>
+                <th style="width: 13%">CancerRisk 级别</th>
+                <th style="width: 25%">推荐个性化临床检查 (X)</th>
+                <th style="width: 12%">推荐周期</th>
+                <th style="width: 12%">参考价格</th>
+                <th style="width: 14%">遗传临床价值说明</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for x in x_addons %}
+            <tr>
+                <td>{{ x.risk_source | default('—') }}</td>
+                <td><span class="tag tag-{{ x.risk_level_tag | default('info') }}">{{ x.risk_level_label | default(x.risk_level_tag) | default('—') }}</span></td>
+                <td><strong>{{ x.method | default('—') }}</strong></td>
+                <td>{{ x.interval | default('—') }}</td>
+                <td>{{ x.price_range | default('—') }}</td>
+                <td>{{ x.clinical_value | default('—') }}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <!-- 03. 前沿液体活检专项（阳态红看板 / 阴态绿简版 / 未测中性提示） -->
+    {% if jizaoan_result == 'positive' %}
+    <h2 class="sec-title" style="color: var(--tech-red); border-left-color: var(--tech-red);">🧬 前沿液体活检专项（吉早安® 阳性信号）</h2>
+    <div class="tech-board">
+        <div class="tech-badge-container">
+            <div style="font-size: 16px; font-weight: bold; color: var(--tech-red);">
+                🔍 吉早安® cfDNA 甲基化多癌早筛报告
+            </div>
+            <div class="result-box">检测结果：阳性（{{ jizaoan_top_cancers | join(' & ') }}信号）</div>
+        </div>
+        <div style="display: grid; grid-template-columns: 2.2fr 1fr; gap: 20px; font-size: 13px;">
+            <div>
+                <p style="margin: 0 0 10px 0; color: #2d3748;"><b>🚨 临床提示：</b>{{ liquid_biopsy_perf.clinical_hint | default('甲基化阳性信号提示对应器官早期异型细胞活动风险，需立即启动临床定位排查。') }}</p>
+                <p style="margin: 0; color: #c53030; font-weight: bold;">💡 行动闭环：甲基化阳性 ≠ 确诊癌症，需完成物理/病理排查；建议将吉早安® 纳入年度长程监测。</p>
+            </div>
+            <div style="background: #ffffff; border: 1px solid #fed7d7; border-radius: 6px; padding: 12px;">
+                <div style="font-weight: bold; color: var(--tech-red); margin-bottom: 5px;">🔬 技术性能：</div>
+                <div>• 综合敏感性：<b>{{ liquid_biopsy_perf.sensitivity | default('—') }}</b>{% if liquid_biopsy_perf.early_stage_sensitivity %}（早癌阶段 {{ liquid_biopsy_perf.early_stage_sensitivity }}）{% endif %}</div>
+                <div>• 综合特异性：<b>{{ liquid_biopsy_perf.specificity | default('—') }}</b>（排除假阳性干扰）</div>
+                <div style="margin-top: 8px; font-size: 11px; color: #718096;">* 市场参考价：<br>{{ liquid_biopsy_perf.market_price_range | default('—') }}</div>
+            </div>
+        </div>
+    </div>
+    {% elif jizaoan_result == 'negative' %}
+    <h2 class="sec-title">🧬 前沿液体活检专项（吉早安® 阴性）</h2>
+    <div class="tech-board negative">
+        <div class="tech-badge-container">
+            <div style="font-size: 16px; font-weight: bold; color: var(--alert-success);">
+                🔍 吉早安® cfDNA 甲基化多癌早筛报告
+            </div>
+            <div class="result-box negative">检测结果：阴性</div>
+        </div>
+        <p style="margin: 0; color: #2d3748;">{{ liquid_biopsy_perf.negative_risk_reduction | default('阴性结果通过 LR⁻ 路径降低覆盖癌种的风险评级，具体降幅见报告癌症风险模块。') }}</p>
+    </div>
+    {% else %}
+    <h2 class="sec-title">🧬 前沿液体活检专项（吉早安®）</h2>
+    <div class="tech-board untested">
+        <div class="tech-badge-container">
+            <div style="font-size: 16px; font-weight: bold; color: #718096;">
+                🔍 吉早安® cfDNA 甲基化多癌早筛
+            </div>
+            <div class="result-box" style="background: #718096;">本次未检测</div>
+        </div>
+        <p style="margin: 0; color: #2d3748;">本次体检未包含吉早安® 液体活检项目。结合个人癌症风险画像，可在套餐方案中评估是否补充该项多癌早筛（详见下方组合套餐）。</p>
+    </div>
+    {% endif %}
+
+    <!-- 04. 组合套餐及预算推荐（三档 grid，中档 recommended 高亮） -->
+    <h2 class="sec-title">📦 组合套餐及预算推荐</h2>
+    <div class="package-grid">
+        {% for p in package_tiers %}
+        <div class="package-card" style="{% if p.recommended %}border-top: 3px solid var(--primary); background: var(--primary-light);{% else %}border-top: 3px solid #718096;{% endif %}">
+            <div class="pkg-name">{{ p.name | default('—') }}{% if p.recommended %} (推荐){% endif %}</div>
+            <div class="pkg-price">{{ p.price_range | default('—') }}</div>
+            <p style="font-size: 12px; color: #4a5568;"><b>包含：</b>{{ p.includes | join(' + ') }}</p>
+            <p style="font-size: 11px; color: #718096;">🎯 {{ p.note | default('') }}</p>
+        </div>
+        {% endfor %}
+    </div>
+
+    <!-- 05. 长期健康干预与专科建议（遗传管理仅 BRCA 阳性 + 生活方式常驻） -->
+    <h2 class="sec-title">🥗 长期健康干预与专科建议</h2>
+    <div class="intervention-box">
+        {% if brca_status == 'positive' and long_term_intervention.genetic_management %}
+        <strong style="color: #744210; display: block; margin-bottom: 6px;">🧬 遗传特异性临床管理：</strong>
+        <ul style="margin: 0 0 15px 0; padding-left: 20px; color: #744210;">
+            {% for g in long_term_intervention.genetic_management %}
+            <li style="margin-bottom: 5px;">{{ g }}</li>
+            {% endfor %}
+        </ul>
+        {% endif %}
+        {% if long_term_intervention.lifestyle %}
+        <strong style="color: #744210; display: block; margin-bottom: 6px;">🥦 生活方式干预：</strong>
+        <ul style="margin: 0; padding-left: 20px; color: #744210;">
+            {% for l in long_term_intervention.lifestyle %}
+            <li style="margin-bottom: 5px;">{{ l }}</li>
+            {% endfor %}
+        </ul>
+        {% endif %}
+    </div>
+
+    <!-- 底部免责与版本信息 -->
+    <div style="margin-top: 40px; padding-top: 15px; border-top: 1px solid var(--border-color); font-size: 11px; color: #a0aec0; text-align: center;">
+        {{ disclaimer | default('本方案仅用于健康管理与筛查决策辅助，不构成医学诊断、治疗方案或用药建议。如有具体健康问题，请及时咨询专业医生。') }}<br>
+        证据库版本：{{ evidence_version | default('N/A') }}<br>
+        价格为市场参考报价，实际费用以医疗机构公示为准。
+    </div>
+
+</div>
+
+</body>
+</html>

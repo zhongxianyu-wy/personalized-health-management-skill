@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
 """Thin Jinja2 renderer for the single integrated report (P1 Task 4).
 
-Loads ``templates/integrated_report_v14.html`` under StrictUndefined and renders
-a report.json-shaped dict plus a disclaimer. NO math, NO LLM, NO network.
+Loads ``templates/integrated_report_temp.html`` (the sole authority template,
+strictly aligned to ``temp/html-preview-10.html``) under StrictUndefined and
+renders a report.json-shaped dict plus a disclaimer. NO math, NO LLM, NO network.
 """
 
 from __future__ import annotations
@@ -15,7 +16,7 @@ from typing import Any
 from jinja2 import Environment, FileSystemLoader, StrictUndefined, select_autoescape
 
 SKILL_ROOT = Path(__file__).resolve().parent.parent
-TEMPLATE_DEFAULT = SKILL_ROOT / "templates" / "integrated_report_v20.html"
+TEMPLATE_DEFAULT = SKILL_ROOT / "templates" / "integrated_report_temp.html"
 CONFIG_DEFAULT = SKILL_ROOT / "config" / "formal.yaml"
 
 

@@ -21,7 +21,7 @@ allowed-tools:
 version: "0.1.0"
 ---
 
-# 个性化健康管理 Skill（健康顾问「小雨」）
+# 个性化健康管理 Skill
 
 本 skill 是薄操作手册，按当前阶段按需加载 reference。单一入口为编排器：
 
@@ -33,11 +33,9 @@ uv run --python 3.11 --with PyYAML --with jsonschema --with jinja2 --with reques
 
 > **命令约定**：下文 `uv run ... python scripts/X.py` 简记为 `scripts/X.py`；步骤间 `...` 表示继承首步的 `--input/--analysis-output/--person-id`，从 CP2 起加 `--answers <file>`，不得丢旗。归档默认落 `output/<person_id>/`（与 SKILL.md 同级）。
 
-## Persona 小雨
+## 对话语气（功能性，非人设）
 
-身份：专业、严谨、温暖的健康管理伙伴。语气平和共情，用「您」，医学术语先白话再术语。处理用户焦虑时先安抚再给依据。
-
-**人设只影响对话层（CP1 精炼措辞、CP2 苏格拉底问诊、报告叙述语气），不改变 PUA 协议的严格性**：数值、ID、概率、筛查周期一律来自脚本与知识库，不得编造。
+语气平和、用「您」、医学术语先白话再术语；处理用户焦虑时先安抚再给依据。**语气只影响对话层（CP1 精炼措辞、CP2 苏格拉底问诊、报告叙述），不改变 PUA 协议的严格性**：数值、ID、概率、筛查周期一律来自脚本与知识库，不得编造。
 
 ## Use / Refuse
 
@@ -82,7 +80,7 @@ uv run --python 3.11 --with PyYAML --with jsonschema --with jinja2 --with reques
 | 9 | 贝叶斯风险 | `snapshot_risk.py` | `cancerrisk/json/`(priors/derived/screening_recommendations) | 脚本确定性 | — |
 | 10 | VoI 排序 | `voi_calculator.py` | `cancerrisk/json/`(voi_parameters/screening_methods/detection_derived) | 脚本确定性 | — |
 | 11 | 筛查推荐 | _(LLM 参考 MD)_ | `screening_general/md/` + `screening_personalized/md/` | **LLM 读 MD** | — |
-| 12 | 综合报告+归档 | LLM 产 section artifact → `build_report_json.py`+`render_report.py`+`archive_manager.py` | `report.html`（v20 模版）+`manifest.json` → `output/<id>/` | LLM+脚本渲染 | — |
+| 12 | 综合报告+归档 | LLM 产 5 section artifact → `build_report_json.py`+`render_report.py`+`archive_manager.py` | `report.html`（temp 模版，唯一权威）+`manifest.json` → `output/<id>/` | LLM+脚本渲染 | — |
 
 > 行 3/5/7/8 需 agent 行动；其余在 `run_formal_analysis.py` 内自动。需求流程里"癌症证据内置初次提取+第二次审核"= CP3 + CP3.1；"苏格拉底式高危因素收集"= CP2。
 
@@ -140,11 +138,17 @@ uv run --python 3.11 --with PyYAML --with jsonschema --with jinja2 --with reques
    ```
    **fills.json 的 @ 引用格式**：大 HTML 片段用 `@/absolute/path` 或 `@relative/path`（@ 后**直接跟路径**，**不带 `file:`**，否则 finalize 解析失败）。健康总结展示专用，不得用 snapshot 概率/ontology OR-LR/筛查逻辑。
 
-10. 跑最终 pipeline（snapshot+VoI+筛查推荐+报告+自动归档）：
+10. 🔴 **报告前产 5 section artifact**（agent）。跑到 report-artifacts（snapshot/VoI/筛查/归档完成）：
+    ```bash
+    ... scripts/run_formal_analysis.py ... --person-id <id> --stop-after report-artifacts
+    ```
+    exit 0 → 按「报告 section artifact」配方读对应 MD/JSON 产 5 JSON 到 `<out>/artifacts/`：`timeline_tiers.json` / `x_addons.json` / `package_tiers.json` / `liquid_biopsy_perf.json` / `long_term_intervention.json`。**这些 artifact 无任何脚本产出，跳过则报告 5 个核心 section 渲染空**（specificity 留空由 build_report_json 兜底，勿 LLM 填）。
+
+11. 跑最终报告+归档（不带 stop-after）：
     ```bash
     ... scripts/run_formal_analysis.py ... --person-id <id>
     ```
-    exit 0 → `report.html` 就绪（用户交付物）；snapshot 后自动 dedup 合入 `output/<person_id>/`。
+    exit 0 → `report.html` 就绪（temp 模版，用户交付物）；snapshot 已自动 dedup 合入 `output/<person_id>/`。
 
 ## 单一报告偶联规则（需求 7）
 
@@ -157,12 +161,12 @@ uv run --python 3.11 --with PyYAML --with jsonschema --with jinja2 --with reques
 - **液体活检（吉早安）专项**：阳性按模版展示信号癌种；阴性按「可降低目前高风险癌症多少风险评级」展示（原版阴性降级逻辑，LR⁻ 路径）。
 - **组合套餐（三档·风险驱动）**：基于 `snapshot_risk.json` 风险分级推荐 **基础精准 / 进阶全面 / 深度早筛** 三档（详见 `screening_personalized/md/套餐三档与风险驱动.md`）；吉早安作无标准筛查癌种的**平替补充**（阳性升档+溯源影像，阴性按 LR⁻ 降风险评级）；价格区间参考 `pricing/md/08`；附长期健康干预+专科建议。
 
-**报告 section artifact（v20 模版，报告前 LLM 产出 → build_report_json 透传 → render 渲染）**：读对应 MD/JSON 产出 5 artifact，每 section 严格偶联数据库（PUA，不编造）：
-- `timeline_tiers.json`（复查三级 priority/important/maintain）↔ `癌症风险分层与复查规则.md` + snapshot 后验
-- `x_addons.json`（异常→复查项目+周期+价格）↔ `异常指标复查推荐.md` + `pricing/md/08`
-- `package_tiers.json`（三档+复合价+推荐档）↔ `套餐三档与风险驱动.md` + `pricing/md/08`
-- `liquid_biopsy_perf.json`（sens/spec+市场价+阴性降级）↔ `cancerrisk/json/detection_performance.json` + `05-液体活检.md`
-- `long_term_intervention.json`（遗传管理+生活方式）↔ `07-肿瘤预防与健康管理.md`
+**报告 section artifact（temp 模版，报告前 LLM 产出 → build_report_json 透传 → render 渲染）**：5 artifact 落 `<out>/artifacts/`，文件名/字段名与模版 Jinja 变量严格一致，每 section 严格偶联数据库（PUA，不编造）。**文案类 LLM 读 MD 产（不查 JSON 表、数值不编造）；specificity 留空由 build_report_json 脚本从 voi_ranking 吉早安行兜底 0.990→99.0%（数值脚本算，真实数据源）**：
+- `timeline_tiers.json`（复查三级）schema `{priority/important/maintain:[{item_name,rationale}]}` ↔ `癌症风险分层与复查规则.md` + snapshot 后验 + `异常指标复查推荐.md`（priority≤3-5，三档均匀）
+- `x_addons.json` schema `[{risk_source,risk_level_tag(danger/warning/info),risk_level_label,method,interval,price_range,clinical_value}]` ↔ `异常指标复查推荐.md` + `pricing/md/08`（interval/price 须 MD 字面）
+- `package_tiers.json`（恒 3 档）schema `[{name,price_range,includes[],note,recommended}]`（recommended 仅 1 档）↔ `套餐三档与风险驱动.md` + `pricing/md/08`（price 须 pricing 字面）
+- `liquid_biopsy_perf.json` schema `{sensitivity,specificity,early_stage_sensitivity,market_price_range,clinical_hint,negative_risk_reduction}`：sensitivity/early_stage_sensitivity/market_price_range/clinical_hint/negative_risk_reduction 由 LLM 读 `05-基于液体活检的多癌种联合筛查.md` 字面搬运（综合口径不在分癌种 JSON，**MD 无则留「-」不编造**）；specificity **留空由脚本兜底**（勿 LLM 填）
+- `long_term_intervention.json` schema `{genetic_management[](仅 brca positive),lifestyle[]}` ↔ `07-肿瘤预防与健康管理.md`（药物/手术获益须 MD 字面）
 
 ## PUA Protocol（防跳过强制，本节具有约束力，违者致命失败）
 
@@ -183,6 +187,7 @@ uv run --python 3.11 --with PyYAML --with jsonschema --with jinja2 --with reques
 - `conditional_on` 触发时跳过 `text_fill` 跟进——触发匹配即强制立即问。
 - 不查 `conditional_on` 就批量问所有题——每个触发题后须紧跟其门控的 `text_fill`。
 - 只跑完部分阶段就用「全分析已完成」的语言总结。
+- 跳过第 10 步（报告前产 5 section artifact）直接跑最终报告 → temp 模版 5 个核心 section（复查三级/X加项/套餐/液检性能/长期干预）渲染空，输出无效。
 
 ### 进入下一检查点前的自报三项
 agent 须在回复中确认：①运行的脚本命令（带全 flag）；②收到的退出码；③产出的 artifact（路径+存在性检查）。任一缺失/失败→停并报告用户，不得继续。

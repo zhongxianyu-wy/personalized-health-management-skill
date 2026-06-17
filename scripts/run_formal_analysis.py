@@ -35,6 +35,7 @@ STOP_AFTER_CHOICES = [
     "health-summary-api",
     "archive-proposal",
     "archive",
+    "report-artifacts",
     "report",
 ]
 
@@ -1196,6 +1197,19 @@ def main():
         print("[stop-after=archive] archive auto-applied")
         return
 
+    if args.stop_after == "report-artifacts":
+        print(
+            "[stop-after=report-artifacts] snapshot/VoI/archive done. The skill "
+            "agent must now produce the 5 section artifacts per SKILL.md "
+            "'报告 section artifact (temp 模版)' recipe, then re-run WITHOUT "
+            "--stop-after to render report.html:\n"
+            "  timeline_tiers.json / x_addons.json / package_tiers.json / "
+            "liquid_biopsy_perf.json / long_term_intervention.json\n"
+            "  (into <out>/artifacts/). These are NOT produced by any script — "
+            "without them the temp template's 5 core sections render empty."
+        )
+        return
+
     # --- P1 Task 9: single integrated report ----------------------------
     # tumor_markers.json is already materialized above (master_scan.gate_tumor_markers
     # writes it before any early exit on the path to report), so no extra copy here.
@@ -1219,7 +1233,7 @@ def main():
     )
 
     report_html_path = render_report.write_report_html(
-        report, SKILL_ROOT / "templates" / "integrated_report_v14.html", disclaimer, out
+        report, SKILL_ROOT / "templates" / "integrated_report_temp.html", disclaimer, out
     )
     print(f"[report] report.html rendered -> {report_html_path}")
 

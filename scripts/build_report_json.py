@@ -18,8 +18,11 @@ Source artifacts (all under ``<out>/artifacts/`` unless noted):
 - ``answers.json`` (``{"answers": {...}}`` or bare dict) — ``q_jizaoan_result``
   and (when positive) ``q_jizaoan_top1`` / ``q_jizaoan_top2``.
 
-There is no BRCA answer key in the questionnaire, so ``brca_status`` always
-defaults to ``"unknown"``.
+``brca_status`` is derived from ``q_genetic_mutations_brca`` (positive when the
+multi-select contains brca1/brca2). ``liquid_biopsy_perf.specificity`` is
+back-filled from the Jizaoan row in ``voi_ranking.json`` (constant 0.990 →
+99.0%) when the LLM artifact omits it — a deterministic numeric fallback, the
+number is never invented (PUA: values come from script/data, not the model).
 """
 
 from __future__ import annotations
@@ -111,6 +114,51 @@ def _checkup_window(snapshot: dict[str, Any]) -> str:
     return {"very_high": "1-2 周内", "high": "1 个月内", "medium": "3 个月内", "low": "6-12 个月内"}.get(top, "参照下方时间轴")
 
 
+def _format_cn_date(dt: datetime) -> str:
+    """ISO datetime → 「YYYY年M月D日」供报告右上角展示。"""
+    return f"{dt.year}年{dt.month}月{dt.day}日"
+
+
+def _is_valid_percent(value: Any) -> bool:
+    """True if ``value`` looks like a filled percentage string (e.g. "99.0%")."""
+    return isinstance(value, str) and value.strip() not in ("", "-") and "%" in value
+
+
+def _liquid_biopsy_perf(artifacts: Path, voi: dict[str, Any]) -> dict[str, Any]:
+    """Liquid-biopsy performance panel for the 液体活检 section.
+
+    Sensitivity / early-stage sensitivity / market price / clinical hints come
+    from the LLM artifact ``liquid_biopsy_perf.json`` (LLM-authored from
+    ``05-基于液体活检的多癌种联合筛查.md`` — the composite sens numbers are NOT in
+    the per-cancer ``detection_performance.json``). ``specificity`` is
+    deterministically back-filled from the Jizaoan row in ``voi_ranking.json``
+    (constant 0.990 → "99.0%") when the LLM omits or malforms it, so the number
+    is never invented.
+    """
+    perf = _read_json(artifacts / "liquid_biopsy_perf.json", {})
+    if not isinstance(perf, dict):
+        perf = {}
+    result = {
+        "sensitivity": perf.get("sensitivity", "-"),
+        "specificity": perf.get("specificity", "-"),
+        "early_stage_sensitivity": perf.get("early_stage_sensitivity", ""),
+        "market_price_range": perf.get("market_price_range", "-"),
+        "clinical_hint": perf.get("clinical_hint", ""),
+        "negative_risk_reduction": perf.get("negative_risk_reduction", ""),
+    }
+    if not _is_valid_percent(result["specificity"]):
+        for r in voi.get("rankings", []) if isinstance(voi, dict) else []:
+            if not isinstance(r, dict):
+                continue
+            haystack = str(r.get("method", "")) + str(r.get("test_id", ""))
+            if "jizaoan" in haystack.lower():
+                spec = r.get("specificity")
+                if isinstance(spec, (int, float)) and 0 <= spec <= 1:
+                    result["specificity"] = f"{spec * 100:.1f}%"
+                    break
+    return result
+
+
 def assemble_report_json(
     *,
     artifacts: Path,
@@ -141,10 +189,12 @@ def assemble_report_json(
     if person_name == "未提供":
         person_name = person_id
 
+    now = datetime.now()
     report = {
         "schema_version": SCHEMA_VERSION,
         "run_id": run_id,
-        "generated_at": datetime.now().isoformat(),
+        "generated_at": now.isoformat(),
+        "generated_at_display": _format_cn_date(now),
         "person": {
             "person_id": person_id,
             "name": person_name,
@@ -159,7 +209,7 @@ def assemble_report_json(
         "timeline_tiers": _read_json(artifacts / "timeline_tiers.json", {"priority": [], "important": [], "maintain": []}),
         "x_addons": _read_json(artifacts / "x_addons.json", []),
         "package_tiers": _read_json(artifacts / "package_tiers.json", []),
-        "liquid_biopsy_perf": _read_json(artifacts / "liquid_biopsy_perf.json", {"sensitivity": "-", "specificity": "-", "market_price_range": "-", "negative_risk_reduction": ""}),
+        "liquid_biopsy_perf": _liquid_biopsy_perf(artifacts, voi),
         "long_term_intervention": _read_json(artifacts / "long_term_intervention.json", {"genetic_management": [], "lifestyle": []}),
         "health_summary": {
             "status": health.get("status"),

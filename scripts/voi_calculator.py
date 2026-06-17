@@ -105,7 +105,7 @@ def _compute_single_method_voi(
     )
 
 
-_JIZAOAN_SPECIFICITY = 0.991  # from product documentation
+_JIZAOAN_SPECIFICITY = 0.990  # from product documentation
 
 
 def _compute_jizaoan_voi(
@@ -164,7 +164,7 @@ def _compute_jizaoan_voi(
         recommendation=_classify(total_voi, thresholds),
         prior_risk=0.0,
         sensitivity=global_sens,
-        specificity=0.991,
+        specificity=0.990,
         cost_rmb=jizaoan_cost_rmb,
         cost_level="high",
         invasiveness="non-invasive",
