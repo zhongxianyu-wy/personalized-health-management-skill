@@ -149,6 +149,19 @@ def _format_cn_date(dt: datetime) -> str:
     return f"{dt.year}年{dt.month}月{dt.day}日"
 
 
+def _honorific_name(name: Any, sex: Any) -> str:
+    """报告头部称谓：中文姓首字 + 先生/女士（对齐 temp「魏女士」格式）。
+    非中文姓名或性别缺失 → 回退全名（避免「t先生」之类勉强拼接）。"""
+    if not isinstance(name, str) or not name:
+        return name if isinstance(name, str) else ""
+    first = name[0]
+    if "一" <= first <= "鿿":  # 首字为中文
+        title = "先生" if sex == "male" else "女士" if sex == "female" else ""
+        if title:
+            return f"{first}{title}"
+    return name
+
+
 def _liquid_biopsy_perf(artifacts: Path, voi: dict[str, Any]) -> dict[str, Any]:
     """Liquid-biopsy performance panel for the 液体活检 section.
 
@@ -228,6 +241,7 @@ def assemble_report_json(
         "person": {
             "person_id": person_id,
             "name": person_name,
+            "honorific_name": _honorific_name(person_name, person_ctx.get("sex")),
             "sex": person_ctx.get("sex"),
             "age": person_ctx.get("age"),
         },

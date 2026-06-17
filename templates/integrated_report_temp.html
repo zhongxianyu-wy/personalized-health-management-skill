@@ -227,7 +227,7 @@
     <!-- 头部基本信息 -->
     <div class="report-header">
         <div class="header-title">
-            <h1>{{ person.name }}个性化体检与健康管理方案</h1>
+            <h1>{{ person.honorific_name | default(person.name) }}个性化体检与健康管理方案</h1>
             <p>基于 CancerRisk 风险画像{% if brca_status == 'positive' %} + 遗传高危特订方案{% endif %}</p>
         </div>
         <div style="text-align: right; font-size: 13px; color: #718096;">
