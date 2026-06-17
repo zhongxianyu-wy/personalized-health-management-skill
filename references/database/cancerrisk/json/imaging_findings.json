@@ -6,7 +6,6 @@
     "semantics": "Each finding_id gives a malignancy PPV range for the SPECIFIC lesion that was found (NOT a risk factor for future incidence). PPVs are NOT additive with OR-based Bayes log-odds — snapshot_risk uses max(bayes_posterior, max_ppv_midpoint) per cancer and reports the dominant source in posterior_source.narrative.",
     "ppv_point_rule": "snapshot_risk uses the midpoint of malignancy_ppv_range as the comparison value; lesion size records should keep the maximum measured size separately.",
     "pending_ppv_cancers": [
-      "liver_cancer",
       "gastric_cancer",
       "colorectal_cancer",
       "esophageal_cancer",
@@ -18,7 +17,7 @@
       "head_neck_cancer",
       "biliary_tract_cancer"
     ],
-    "pending_ppv_note": "A2a: 这些癌种暂无影像 PPV 分级数据，待补充材料后填入。当前仅靠 OR 路径评估。"
+    "pending_ppv_note": "A2a: 胃/结直肠/食管/宫颈/卵巢/肾/头颈/胆道等无标准影像PPV分级，按OR路径评估(design-ppv立场)。已覆盖：肺/乳腺/甲状腺/胰腺/肝(LI-RADS)。"
   },
   "findings": [
     {
@@ -333,6 +332,42 @@
       ],
       "source_id": "Del Chiaro M, et al. Gut 2019",
       "next_step": "单独不特异; 结合主胰管扩张或糖尿病提高预测价值"
+    },
+    {
+      "finding_id": "liver_lirads_lr3",
+      "finding_name_zh": "肝脏结节 LI-RADS 3类",
+      "finding_name_en": "Liver LR-3",
+      "cancer_id": "liver_cancer",
+      "malignancy_ppv_range": [
+        0.1,
+        0.5
+      ],
+      "source_id": "LI-RADS v2018/AASLD HCC guidance",
+      "next_step": "3-6月影像随访"
+    },
+    {
+      "finding_id": "liver_lirads_lr4",
+      "finding_name_zh": "肝脏结节 LI-RADS 4类",
+      "finding_name_en": "Liver LR-4",
+      "cancer_id": "liver_cancer",
+      "malignancy_ppv_range": [
+        0.5,
+        0.85
+      ],
+      "source_id": "LI-RADS v2018/AASLD",
+      "next_step": "密切随访或活检"
+    },
+    {
+      "finding_id": "liver_lirads_lr5",
+      "finding_name_zh": "肝脏结节 LI-RADS 5类",
+      "finding_name_en": "Liver LR-5",
+      "cancer_id": "liver_cancer",
+      "malignancy_ppv_range": [
+        0.85,
+        0.99
+      ],
+      "source_id": "LI-RADS v2018/AASLD(可无活检诊断HCC)",
+      "next_step": "确诊HCC，治疗评估"
     }
   ]
 }
