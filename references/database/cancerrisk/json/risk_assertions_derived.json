@@ -2981,6 +2981,34 @@
       "conversion_status": "usable",
       "approximation": false,
       "source_id": "pancreatic_cancer_evidence_v2"
+    },
+    {
+      "assertion_id": "asrt_thyroid_cancer_autoantibody",
+      "assertion_key": "thyroid_cancer|thyroid_autoantibody_positive|present|asrt_thyroid_cancer_autoantibody",
+      "cancer_id": "thyroid_cancer",
+      "factor_id": "thyroid_autoantibody_positive",
+      "factor_level": "present",
+      "effect_type": "OR",
+      "calculation_value": 1.93,
+      "log_odds_delta": 0.6575200029167941,
+      "conversion_rule": "ln(OR)",
+      "conversion_status": "usable",
+      "approximation": false,
+      "source_id": "pmc6636211_meta"
+    },
+    {
+      "assertion_id": "asrt_thyroid_cancer_obesity",
+      "assertion_key": "thyroid_cancer|obesity_bmi30_thyroid|present|asrt_thyroid_cancer_obesity",
+      "cancer_id": "thyroid_cancer",
+      "factor_id": "obesity_bmi30_thyroid",
+      "factor_level": "present",
+      "effect_type": "RR",
+      "calculation_value": 1.33,
+      "log_odds_delta": 0.28517894223366247,
+      "conversion_rule": "ln(RR)_approximation",
+      "conversion_status": "usable",
+      "approximation": true,
+      "source_id": "pmc4315628_meta"
     }
   ]
 }

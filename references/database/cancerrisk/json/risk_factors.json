@@ -2108,6 +2108,36 @@
       ],
       "interaction_needed_if_missing": true,
       "interaction_question_group": "h_pylori_infection_pancreatic"
+    },
+    {
+      "factor_id": "thyroid_autoantibody_positive",
+      "factor_name_zh": "甲状腺自身抗体阳性(TPOAb/TgAb)/桥本",
+      "factor_name_en": "Thyroid autoantibody positive",
+      "factor_type": "medical_history",
+      "applicable_sex": "all",
+      "applicable_age_min": null,
+      "applicable_age_max": null,
+      "level_schema": [
+        "present",
+        "absent"
+      ],
+      "interaction_needed_if_missing": true,
+      "interaction_question_group": "thyroid_autoantibody"
+    },
+    {
+      "factor_id": "obesity_bmi30_thyroid",
+      "factor_name_zh": "肥胖(BMI≥30)",
+      "factor_name_en": "Obesity BMI>=30",
+      "factor_type": "lifestyle",
+      "applicable_sex": "all",
+      "applicable_age_min": null,
+      "applicable_age_max": null,
+      "level_schema": [
+        "present",
+        "absent"
+      ],
+      "interaction_needed_if_missing": false,
+      "interaction_question_group": "obesity"
     }
   ]
 }

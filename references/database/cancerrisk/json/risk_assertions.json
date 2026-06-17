@@ -3834,6 +3834,42 @@
       "citation_text": "Trikudanathan G, et al. World J Gastroenterol 2011;17:375-383",
       "v2_assertion_id": "pancreatic_or_h_pylori_infection_pancreatic",
       "v2_factor_zh": "幽门螺杆菌感染"
+    },
+    {
+      "assertion_id": "asrt_thyroid_cancer_autoantibody",
+      "cancer_id": "thyroid_cancer",
+      "factor_id": "thyroid_autoantibody_positive",
+      "factor_level": "present",
+      "effect_type": "OR",
+      "effect_value": 1.93,
+      "ci_low": 1.64,
+      "ci_high": 2.27,
+      "evidence_grade": "IA",
+      "population": "甲状腺结节/一般人群",
+      "source_id": "pmc6636211_meta",
+      "source_doc": "Positive thyroid antibodies & TC meta (PMC6636211)",
+      "source_line": null,
+      "citation_text": "meta: TgAb+ OR=1.93(1.64-2.27)",
+      "v2_assertion_id": "thyroid_autoantibody_or",
+      "v2_factor_zh": "甲状腺自身抗体阳性"
+    },
+    {
+      "assertion_id": "asrt_thyroid_cancer_obesity",
+      "cancer_id": "thyroid_cancer",
+      "factor_id": "obesity_bmi30_thyroid",
+      "factor_level": "present",
+      "effect_type": "RR",
+      "effect_value": 1.33,
+      "ci_low": 1.24,
+      "ci_high": 1.42,
+      "evidence_grade": "IA",
+      "population": "一般人群",
+      "source_id": "pmc4315628_meta",
+      "source_doc": "Obesity & TC meta (PMC4315628)",
+      "source_line": null,
+      "citation_text": "meta: obesity RR=1.33(1.24-1.42)",
+      "v2_assertion_id": "thyroid_obesity_rr",
+      "v2_factor_zh": "肥胖(BMI≥30)"
     }
   ]
 }
