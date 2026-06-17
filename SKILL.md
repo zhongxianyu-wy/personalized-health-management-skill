@@ -1,12 +1,15 @@
 ---
 name: 个性化健康管理
 description: |
-  Use when user sends a health checkup report (体检报告, 体检, medical checkup,
-  癌症风险, cancer risk, 健康报告, checkup analysis) and wants a single integrated
-  report: MinerU OCR → Socratic risk-factor interview → abnormal interpretation
-  (健康总结 API) → cancer-risk scoring (Bayesian dual-path) → personalized screening
-  → packaged HTML report. Triggers: 体检报告, 体检, 癌症风险, 健康报告, checkup, 筛查推荐.
-  Does not handle: diagnosis, treatment, medication, urgent triage, single-symptom Q&A.
+  Use when user sends or references a health checkup report (体检报告, 体检, 体检结果,
+  medical checkup, 癌症风险, cancer risk, 健康报告, 体检报告解读, 肿瘤标志物, 筛查推荐,
+  checkup analysis) and wants it analyzed into a single integrated report. Make sure to
+  use this skill whenever the user mentions 体检报告/体检结果/癌症风险/肿瘤标志物/筛查推荐/健康报告
+  — even if they don't explicitly say "分析", e.g. "帮我看看这份体检报告""这个指标偏高怎么回事(附报告)""肺结节要紧吗".
+  Pipeline: MinerU OCR → Socratic risk-factor interview → abnormal interpretation
+  (健康总结 API) → cancer-risk scoring (Bayesian dual-path) → personalized screening →
+  packaged HTML report. Does NOT handle: diagnosis, treatment, medication, urgent triage,
+  single-symptom Q&A, or general health/diet/exercise/lifestyle advice WITHOUT a checkup report.
 safety: |
   报告仅用于健康管理与筛查决策辅助，不构成医学诊断、治疗方案或用药建议。
 allowed-tools:
@@ -14,7 +17,7 @@ allowed-tools:
   - Write
   - Edit
   - Bash
-  - AskUserQuestion
+  - AskUserQuestion  # CP2 苏格拉底问诊；其他 runtime（openclaw/codex 等）用等效交互机制
 version: "0.1.0"
 ---
 
@@ -100,7 +103,7 @@ uv run --python 3.11 --with PyYAML --with jsonschema --with jinja2 --with reques
 
 4. 🔴 **CP2 苏格拉底问诊**（agent）。`--stop-after interactive` 后 exit 0 并打印 `[stop-after=interactive] questionnaire written`。
    - **4a** 读 `<out>/artifacts/interactive_questionnaire.json` 的 `questions`。
-   - **4b 苏格拉底三铁律**：①每次 `AskUserQuestion` 只问一题；②触发即解决（trigger 题答完→进下一无关题前走完跟进链）；③不完整→按完整度标准重问。
+   - **4b 苏格拉底三铁律**：①每次只问一题（Claude Code 用 `AskUserQuestion`；其他 runtime 用等效交互机制）；②触发即解决（trigger 题答完→进下一无关题前走完跟进链）；③不完整→按完整度标准重问。
      - `conditional_on` 检查：题有 `conditional_on`，查已答值≠`conditional_on.value` 则跳过。
      - label↔value 映射：用户选 label（「阳性」）→ 记 option 的 `value`（`positive`），绝不记原 label。
      - 触发：`q_family_history_cancer=yes`→立即问 `q_family_history_detail`（须含具体癌种+亲属人数，缺一不可）；`q_jizaoan_result=positive`→问 top1/top2 癌种。
