@@ -103,7 +103,9 @@ def _brca_status(answers: dict[str, Any]) -> str:
 def _checkup_window(snapshot: dict[str, Any]) -> str:
     """推荐体检时间窗（按最高风险 tier）。"""
     cancers = snapshot.get("cancers", []) if isinstance(snapshot, dict) else []
-    order = {"very_high": 4, "high": 3, "medium": 2, "low": 1}
+    # 含 imaging_tier（pathology_confirmed/urgent_workup/high_workup/moderate_workup）
+    order = {"pathology_confirmed": 5, "very_high": 4, "urgent_workup": 4,
+             "high": 3, "high_workup": 3, "medium": 2, "moderate_workup": 2, "low": 1}
     top = ""
     best = -1
     for c in cancers:
@@ -111,7 +113,10 @@ def _checkup_window(snapshot: dict[str, Any]) -> str:
         if order.get(t, 0) > best:
             best = order.get(t, 0)
             top = t
-    return {"very_high": "1-2 周内", "high": "1 个月内", "medium": "3 个月内", "low": "6-12 个月内"}.get(top, "参照下方时间轴")
+    return ({"pathology_confirmed": "1-2 周内", "very_high": "1-2 周内", "urgent_workup": "1-2 周内",
+             "high": "1 个月内", "high_workup": "1 个月内",
+             "medium": "3 个月内", "moderate_workup": "3 个月内", "low": "6-12 个月内"}
+            .get(top, "参照下方时间轴"))
 
 
 def _format_cn_date(dt: datetime) -> str:
@@ -136,7 +141,6 @@ def _liquid_biopsy_perf(artifacts: Path, voi: dict[str, Any]) -> dict[str, Any]:
     result = {
         "sensitivity": perf.get("sensitivity", "-"),
         "specificity": perf.get("specificity", "-"),
-        "early_stage_sensitivity": perf.get("early_stage_sensitivity", ""),
         "market_price_range": perf.get("market_price_range", "-"),
         "clinical_hint": perf.get("clinical_hint", ""),
         "negative_risk_reduction": perf.get("negative_risk_reduction", ""),

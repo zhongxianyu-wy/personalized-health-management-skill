@@ -325,7 +325,7 @@
             </div>
             <div style="background: #ffffff; border: 1px solid #fed7d7; border-radius: 6px; padding: 12px;">
                 <div style="font-weight: bold; color: var(--tech-red); margin-bottom: 5px;">🔬 技术性能：</div>
-                <div>• 综合敏感性：<b>{{ liquid_biopsy_perf.sensitivity | default('—') }}</b>{% if liquid_biopsy_perf.early_stage_sensitivity %}（早癌阶段 {{ liquid_biopsy_perf.early_stage_sensitivity }}）{% endif %}</div>
+                <div>• 综合敏感性：<b>{{ liquid_biopsy_perf.sensitivity | default('—') }}</b></div>
                 <div>• 综合特异性：<b>{{ liquid_biopsy_perf.specificity | default('—') }}</b>（排除假阳性干扰）</div>
                 <div style="margin-top: 8px; font-size: 11px; color: #718096;">* 市场参考价：<br>{{ liquid_biopsy_perf.market_price_range | default('—') }}</div>
             </div>

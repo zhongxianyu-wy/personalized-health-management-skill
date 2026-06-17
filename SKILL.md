@@ -83,6 +83,7 @@ uv run --python 3.11 --with PyYAML --with jsonschema --with jinja2 --with reques
 | 12 | 综合报告+归档 | LLM 产 5 section artifact → `build_report_json.py`+`render_report.py`+`archive_manager.py` | `report.html`（temp 模版，唯一权威）+`manifest.json` → `output/<id>/` | LLM+脚本渲染 | — |
 
 > 行 3/5/7/8 需 agent 行动；其余在 `run_formal_analysis.py` 内自动。需求流程里"癌症证据内置初次提取+第二次审核"= CP3 + CP3.1；"苏格拉底式高危因素收集"= CP2。
+> **执行顺序注**：demographics(行4)读 `content.md`/CLI 性别年龄，与 CP1(行3)独立；代码执行顺序 demographics→CP1 refine gate，但 CP1 产物 `refined.md` 是 CP3 证据填充的输入（逻辑上 CP1 先于 CP3，二者不冲突）。
 
 ## Minimal Workflow
 
@@ -173,7 +174,7 @@ uv run --python 3.11 --with PyYAML --with jsonschema --with jinja2 --with reques
 - `timeline_tiers.json`（时间轴三级）schema `{priority/important/maintain:[{item_name,rationale}]}` ↔ `癌症风险分层与复查规则.md`「时间轴三档规则」+ snapshot 后验(>1%/0.5%-1%) + 健康总结严重度 + `异常指标复查推荐.md`（priority=高风险紧急, important=中等, maintain=缺口；均匀机制=双优先级排序均分）
 - `x_addons.json` schema `[{risk_source,risk_level_tag(danger/warning/info),risk_level_label,method,interval,price_range,clinical_value}]` ↔ `异常指标复查推荐.md` + `pricing/md/08`（interval/price 须 MD 字面）
 - `package_tiers.json`（恒 3 档）schema `[{name,price_range,includes[],note,recommended}]`（**每档必填 recommended(bool)，仅 1 档 true，漏字段 StrictUndefined 报错**；档3 吉早安替换/弥补两策略各一卡或合并）↔ `套餐三档与风险驱动.md`（档1风险靶向聚合≥5项 / 档2全面覆盖 / 档3吉早安替换+弥补）+ `pricing/md/08`（price 须 pricing 字面）
-- `liquid_biopsy_perf.json` schema `{sensitivity,specificity,early_stage_sensitivity,market_price_range,clinical_hint,negative_risk_reduction}`：**sensitivity/specificity 由 build_report_json 脚本从 voi_ranking 吉早安行兜底（统一白皮书口径 81.9%/99.0%，voi_calculator::_JIZAOAN_SENSITIVITY=0.819；勿 LLM 填）**；early_stage_sensitivity/market_price_range/clinical_hint/negative_risk_reduction 由 LLM 读 `05-基于液体活检的多癌种联合筛查.md` + pricing 字面搬运（**MD 无则留「-」不编造**）
+- `liquid_biopsy_perf.json` schema `{sensitivity,specificity,market_price_range,clinical_hint,negative_risk_reduction}`：**sensitivity/specificity 由 build_report_json 脚本从 voi_ranking 吉早安行兜底（统一白皮书口径 81.9%/99.0%，voi_calculator::_JIZAOAN_SENSITIVITY=0.819；勿 LLM 填）**；market_price_range/clinical_hint/negative_risk_reduction 由 LLM 读 `05-基于液体活检的多癌种联合筛查.md` + pricing 字面搬运（**MD 无则留「-」不编造**）
 - `long_term_intervention.json` schema `{genetic_management[](仅 brca positive),lifestyle[]}` ↔ `07-肿瘤预防与健康管理.md`（药物/手术获益须 MD 字面）
 
 ## PUA Protocol（防跳过强制，本节具有约束力，违者致命失败）

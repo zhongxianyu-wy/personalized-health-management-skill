@@ -63,7 +63,7 @@ def _mock(tmp, *, brca=False, jizaoan="unknown", with_voi_jizaoan=False,
         "lifestyle": ["严格无烟戒酒", "维持BMI 18.5-23.9"],
     })
     w("liquid_biopsy_perf.json", liquid if liquid is not None else {
-        "sensitivity": "81.9%", "early_stage_sensitivity": "76.5%",
+        "sensitivity": "81.9%",
         "market_price_range": "¥1,980-2,980", "clinical_hint": "阳性信号提示早期异型细胞活动",
         "negative_risk_reduction": "阴性降低风险评级",
     })
