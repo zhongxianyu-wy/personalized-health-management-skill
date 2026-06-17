@@ -173,7 +173,21 @@ uv run --python 3.11 --with PyYAML --with jsonschema --with jinja2 --with reques
     - 检测项目按「**被吉早安替代的 8 癌专项** / **其他未被替代项**」两类展示，price 字段填「price1/price2」（如 `4320/5900`）。
   - 价格区间复合自 `pricing/md/08`；吉早安性能引用 `detection_performance.json`（不编造）；附长期健康干预+专科建议。
 
-**报告 section artifact（temp 模版，报告前 LLM 产出 → build_report_json 透传 → render 渲染）**：5 artifact 落 `<out>/artifacts/`，文件名/字段名与模版 Jinja 变量严格一致，每 section 严格偶联数据库（PUA，不编造）。**文案类 LLM 读 MD 产（不查 JSON 表、数值不编造）；specificity 留空由 build_report_json 脚本从 voi_ranking 吉早安行兜底 0.990→99.0%（数值脚本算，真实数据源）**：
+**报告 section artifact（temp 模版，报告前 LLM 产出 → build_report_json 透传 → render 渲染）**：5 artifact 落 `<out>/artifacts/`，文件名/字段名与模版 Jinja 变量严格一致。
+
+> **[BLOCKER-6 修复] 5 schema 集中表**（LLM 产 artifact 时对照此表，无需交叉读 3 处源码）：
+>
+> | artifact | schema | 必填 | 数据源 | 脚本辅助 |
+> |---|---|---|---|---|
+> | `timeline_tiers.json` | `{priority/important/maintain:[{item_name,rationale}]}` | 3 档 list | 复查规则MD + snapshot 后验 | — |
+> | `x_addons.json` | `[{risk_source,risk_level_tag(danger/warning/info),risk_level_label,method,interval,price_range,clinical_value}]` | ≥1 行 | 异常复查MD + pricing JSON | `assemble_package` 求 price |
+> | `package_tiers.json` | `[{name,price_range,includes[],note,recommended}]` 恒 3 档，**recommended 每档必填 bool**，仅 1 档 true | 3 档 | 套餐三档MD + pricing JSON | **`assemble_package.py` Σmid 求和** |
+> | `liquid_biopsy_perf.json` | `{sensitivity,specificity,market_price_range,clinical_hint,negative_risk_reduction}` | **sens/spec 留空**（脚本兜底 81.9%/99.0%） | voi_ranking + 05液检MD | build_report_json 兜底 |
+> | `long_term_intervention.json` | `{genetic_management[](仅brca positive),lifestyle[]}` | lifestyle≥1 | 07预防MD | — |
+>
+> **P1 [REDUNDANT-1] 注**：CP4 fills 的 5 个 `.html`（abnormal/disease/advice/lab/conclusion）是 `@` 引用的中间产物（写入 health_summary_structured_summary.json），**temp 模版不直接读 health_summary.blocks**，可简化为最小占位 HTML。
+
+每 section 严格偶联数据库（PUA，不编造）。**文案类 LLM 读 MD 产（不查 JSON 表、数值不编造）；specificity 留空由 build_report_json 脚本从 voi_ranking 吉早安行兜底 0.990→99.0%（数值脚本算，真实数据源）**：
 - `timeline_tiers.json`（时间轴三级）schema `{priority/important/maintain:[{item_name,rationale}]}` ↔ `癌症风险分层与复查规则.md`「时间轴三档规则」+ snapshot 后验(>1%/0.5%-1%) + 健康总结严重度 + `异常指标复查推荐.md`（priority=高风险紧急, important=中等, maintain=缺口；均匀机制=双优先级排序均分）
 - `x_addons.json` schema `[{risk_source,risk_level_tag(danger/warning/info),risk_level_label,method,interval,price_range,clinical_value}]` ↔ `异常指标复查推荐.md` + `pricing/md/08`（interval/price 须 MD 字面）
 - `package_tiers.json`（恒 3 档）schema `[{name,price_range,includes[],note,recommended}]`（**每档必填 recommended(bool)，仅 1 档 true，漏字段 StrictUndefined 报错**；档3 吉早安替换/弥补两策略各一卡或合并）↔ `套餐三档与风险驱动.md`（档1风险靶向聚合≥5项 / 档2全面覆盖 / 档3吉早安替换+弥补）+ `pricing/md/08`（price 须 pricing 字面）

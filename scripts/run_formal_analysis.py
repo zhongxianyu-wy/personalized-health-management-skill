@@ -4,10 +4,17 @@ from __future__ import annotations
 import argparse
 import dataclasses
 import json
+import os
 import subprocess
 import sys
 from datetime import datetime
 from pathlib import Path
+
+# P2 [BLOCKER-1/ERROR-2] Windows 环境自检：清除 PYTHONHOME/PYTHONPATH 污染 + UTF-8 输出
+os.environ.pop("PYTHONHOME", None)
+os.environ.pop("PYTHONPATH", None)
+if hasattr(sys.stdout, "reconfigure"):
+    sys.stdout.reconfigure(encoding="utf-8")
 
 import yaml
 
