@@ -13,7 +13,7 @@ import yaml
 
 SKILL_ROOT = Path(__file__).resolve().parent.parent
 ONCORAG_DEFAULT = "/Volumes/exp/geneplu_work/1.skill_tijian/28.project_tijian/oncoRAG"
-ARCHIVES_DEFAULT = str(SKILL_ROOT / "docudatabase")
+ARCHIVES_DEFAULT = str(SKILL_ROOT / "output")
 EVIDENCE_STORE = SKILL_ROOT / "references" / "database" / "cancerrisk" / "json"
 PERSON_ID_DEFAULT = "test-person-001"
 CONFIG_DEFAULT = str(SKILL_ROOT / "config" / "formal.yaml")
@@ -1188,7 +1188,7 @@ def main():
     if args.stop_after == "archive-proposal":
         print(
             "[stop-after=archive-proposal] archive_update_proposal.json written and "
-            "auto-applied to docudatabase."
+            "auto-applied to output."
         )
         return
 
