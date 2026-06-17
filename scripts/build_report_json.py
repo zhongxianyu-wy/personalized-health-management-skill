@@ -29,6 +29,7 @@ from __future__ import annotations
 
 import json
 import os
+import sys
 from datetime import datetime
 from pathlib import Path
 from typing import Any
@@ -260,8 +261,31 @@ def assemble_report_json(
         "evidence_version": evidence_version,
     }
 
+    _check_section_artifacts(report)
     _atomic_write_json(artifacts / "report.json", report)
     return report
+
+
+def _check_section_artifacts(report: dict[str, Any]) -> None:
+    """检测 5 section artifact 是否全空（agent 跳过 report-artifacts 步骤 → 空壳报告）。
+    全空 → stderr 警告 + 标记 sections_incomplete=true，避免空壳静默交付。
+    低危案例 artifact 内容少但非全空（如 package_tiers 恒 3 档），不会误报。"""
+    tt = report.get("timeline_tiers") or {}
+    timeline_empty = all(len(tt.get(k, [])) == 0 for k in ("priority", "important", "maintain"))
+    x_empty = len(report.get("x_addons") or []) == 0
+    pkg_empty = len(report.get("package_tiers") or []) == 0
+    lti = report.get("long_term_intervention") or {}
+    lti_empty = len(lti.get("genetic_management", [])) == 0 and len(lti.get("lifestyle", [])) == 0
+    all_empty = timeline_empty and x_empty and pkg_empty and lti_empty
+    report["sections_incomplete"] = all_empty
+    if all_empty:
+        print(
+            "[report] ⚠️ 5 section artifact 全空（timeline_tiers/x_addons/package_tiers/"
+            "long_term_intervention 均空）→ 报告核心 section 为空壳。"
+            "请完成 SKILL.md Minimal Workflow 第10步（--stop-after report-artifacts）"
+            "产出 5 JSON 后重跑，否则 report.html 无实质内容。",
+            file=sys.stderr,
+        )
 
 
 def _atomic_write_json(path: Path, obj: dict[str, Any]) -> None:

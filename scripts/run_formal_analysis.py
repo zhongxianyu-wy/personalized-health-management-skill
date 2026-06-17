@@ -1236,6 +1236,13 @@ def main():
         report, SKILL_ROOT / "templates" / "integrated_report_temp.html", disclaimer, out
     )
     print(f"[report] report.html rendered -> {report_html_path}")
+    if report.get("sections_incomplete"):
+        print(
+            "[report] ⚠️ HALT 警告：报告核心 section 空（5 section artifact 未产）。"
+            "report.html 已生成但为空壳——请完成 SKILL.md 第10步 report-artifacts "
+            "（--stop-after report-artifacts 产 5 JSON）后重跑。",
+            file=sys.stderr,
+        )
 
     (out / "module_audits" / "task_p1_report.md").write_text(
         "# P1 Report\n\n"

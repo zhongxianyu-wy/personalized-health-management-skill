@@ -108,7 +108,7 @@ def _assemble(artifacts: Path, answers_path: Path | None, **over) -> dict:
 def test_full_schema_keys_present(artifacts: Path, answers_path: Path) -> None:
     result = _assemble(artifacts, answers_path)
     expected_keys = {
-        "schema_version", "run_id", "generated_at", "generated_at_display", "person",
+        "schema_version", "run_id", "generated_at", "generated_at_display", "sections_incomplete", "person",
         "jizaoan_result", "jizaoan_top_cancers", "brca_status",
         "brca_detail", "checkup_window",
         "timeline_tiers", "x_addons", "package_tiers", "liquid_biopsy_perf", "long_term_intervention",
