@@ -75,7 +75,7 @@ uv run --python 3.11 --with PyYAML --with jsonschema --with jinja2 --with reques
 | 2 | MinerU OCR | `mineru_client.py` | —（远程 MinerU） | 脚本+远程 | — |
 | 3 | **精炼建档** | _(agent 写 `refined.md`)_ | `cancerrisk/md/` 参考 | LLM | **CP1** |
 | 4 | 人口学 | `demographics.py` | — | 脚本 | — |
-| 5 | **苏格拉底问诊+缺口确认** | `interactive_completion.py` | `cancerrisk/json/interaction_question_templates.json` + `screening_general/md/居民常见恶性肿瘤筛查和预防推荐（2025版）.md` | 脚本生成问卷→LLM 问诊（风险因子 + 缺口项目逐项确认）| **CP2** |
+| 5 | **苏格拉底问诊+缺口确认** | `interactive_completion.py` | `cancerrisk/json/interaction_question_templates.json` + `screening_general/md/居民常见恶性肿瘤筛查和预防推荐（2025版）.md` | 脚本生成问卷→LLM 问诊（风险因子 + 缺口项目逐项确认）。⚠ 筛查行为题(PSA/肠镜/乳腺/宫颈)**走报告提取不交互**(v7 设计，被 SCREENING_FACTOR_IDS 过滤)| **CP2** |
 | 6 | 健康总结 API | `render_health_summary.py` | —（金百森远程） | 脚本+远程 | — |
 | 7 | **健康总结结构化** | `finalize_structured_summary.py` | — | LLM+脚本 | **CP4** |
 | 8 | **证据填充+审计** | `build_assertion_fill_template.py`+`master_scan.py` | `cancerrisk/json/`(cancers/risk_factors/assertions/observables/synonyms/imaging) | LLM 填闭合词表→脚本 gate | **CP3/3.1** |
@@ -138,7 +138,7 @@ uv run --python 3.11 --with PyYAML --with jsonschema --with jinja2 --with reques
    ```bash
    ... scripts/finalize_structured_summary.py --analysis-output <out> --fills <fills.json>
    ```
-   健康总结是展示专用，不得用 snapshot 概率/ontology OR-LR/筛查逻辑。
+   **fills.json 的 @ 引用格式**：大 HTML 片段用 `@/absolute/path` 或 `@relative/path`（@ 后**直接跟路径**，**不带 `file:`**，否则 finalize 解析失败）。健康总结展示专用，不得用 snapshot 概率/ontology OR-LR/筛查逻辑。
 
 10. 跑最终 pipeline（snapshot+VoI+筛查推荐+报告+自动归档）：
     ```bash

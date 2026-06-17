@@ -82,12 +82,10 @@ def main() -> int:
 
     records = candidate.get("records", [])
     if not records:
-        print("[validate] FAIL: candidate has 0 records. "
-              "Follow SKILL.md Agent Checkpoint 3 to fill the timeline "
-              "before re-invoking the orchestrator. Use "
-              "--allow-empty-master-fill only for explicit "
-              "prior/interaction-only tests.", file=sys.stderr)
-        return 1
+        print("[validate] WARNING: candidate has 0 records. "
+              "若报告无癌症风险因子(仅代谢异常/心血管等非癌症因子)，空 timeline 合法，不阻塞 pipeline。"
+              "若应有因子，按 SKILL.md CP3 填充后重跑。", file=sys.stderr)
+        return 0
 
     issues: list[str] = []
     accepted = 0
