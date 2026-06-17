@@ -10,7 +10,7 @@ mineru:
   html_model_version: MinerU-HTML
   use_demo_token_by_default: true
   token_source: demo
-  demo_token: ""  # 不在仓库硬编码 token。真实 MinerU token 请配置 config/local.yaml::mineru.user_token（gitignored）。
+  demo_token: "eyJ0eXBlIjoiSldUIiwiYWxnIjoiSFM1MTIifQ.eyJqdGkiOiI3MzAwMDAyMyIsInJvbCI6IlJPTEVfUkVHSVNURVIiLCJpc3MiOiJPcGVuWExhYiIsImlhdCI6MTc3ODY2MDkxNywiY2xpZW50SWQiOiJsa3pkeDU3bnZ5MjJqa3BxOXgydyIsInBob25lIjoiIiwib3BlbklkIjpudWxsLCJ1dWlkIjoiZWRlNGE2OTYtZjRlNC00MDUzLWIyZTAtNTkzOTUyOTA4NGU5IiwiZW1haWwiOiIiLCJleHAiOjE3ODY0MzY5MTd9.DALpsSGuF_pLON0OwbLBrl7t5WCbHeAN0tN9y7i-oK_O26wlGZtOjzLH44ttmKxT2PUYX3-_WWtLMcU9I1cMKw"  # 默认 OpenXLab 公共试用 token(开箱即用); 生产环境请用 config/local.yaml::mineru.user_token 覆盖
   max_file_size_mb: 200
   max_pages_per_file: 200
   max_batch_files: 200
