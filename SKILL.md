@@ -156,16 +156,24 @@ uv run --python 3.11 --with PyYAML --with jsonschema --with jinja2 --with reques
 
 - **癌症展示**：仅纳入**中等风险及以上**后验（来自 `snapshot_risk.json`）；若超过 3 个，仅选**风险因素 top3**。展示后验概率/PPV；若有遗传突变基因（CP3 tumor_markers），提示遗传基因相关证据。
 - **其他异常**：从健康总结 API 反馈的异常部分总结，**剔除已展现的癌症相关异常避免重复**。
-- **复查项目三级**（LLM 按 `screening_personalized/md/癌症风险分层与复查规则.md` + `异常指标复查推荐.md`（异常→复查项目+价格偶联）+ 疾病严重程度划分，三档尽量均匀）：①**优先执行**（最多 3-5 项）；②**重要检查**（过多则右侧续排，不排成大长列）；③**持续管理**。
-- **缺口补充推荐（筛查第三部分）**：按 `screening_general/md/居民常见恶性肿瘤筛查和预防推荐（2025版）.md` 时间表 + 档案已检项目对照，检测「应做未做 / 超期」缺口；CP2 挨个问用户做过吗/异常吗（**做过且无异常→排除**该推荐，其他→纳入推荐）。详见 `references/缺口筛查与交互确认.md`。
+- **复查项目三级（时间轴，LLM 按 `癌症风险分层与复查规则.md`「时间轴三档规则」+ `异常指标复查推荐.md` + snapshot 后验 + 健康总结严重度）**：
+  - ①**优先执行 priority（1-2 周内）**：高风险紧急项 = 健康总结评估较严重 **或** 癌症后验 >1%
+  - ②**重要检查 important（1 个月内）**：中等项 = 健康总结中等风险 **或** 癌症后验 0.5%-1%
+  - ③**持续管理 maintain（3-6 个月内）**：筛查缺口（按指南应到时间限但未检测，参 `缺口筛查与交互确认.md`）
+  - **均匀机制**：若 priority 与 important 极不平衡（某档过载、某档空），LLM 按双优先级重排——**优先级 1=高风险紧急程度，优先级 2=复查时间对疾病进展的影响程度**——适当均分，避免单档堆积。
+- **缺口补充推荐（筛查第三部分）**：按 `居民常见恶性肿瘤筛查和预防推荐（2025版）.md` 时间表（**注意：报告检查日期至今须已满足参考年限，才判定为缺口**）+ 档案已检项目对照，LLM 分析「应做未做 / 超期」缺口；对缺口**两步苏格拉底交互**：①依次问「是否在筛查指南年限内做过 [检查]？」②若做过→追问「结果正常还是异常？」；最终**只保留未做过 或 近期检查异常**的指标（做过且正常→排除）。详见 `references/缺口筛查与交互确认.md`。
 - **液体活检（吉早安）专项**：阳性按模版展示信号癌种；阴性按「可降低目前高风险癌症多少风险评级」展示（原版阴性降级逻辑，LR⁻ 路径）。
-- **组合套餐（三档·风险驱动）**：基于 `snapshot_risk.json` 风险分级推荐 **基础精准 / 进阶全面 / 深度早筛** 三档（详见 `screening_personalized/md/套餐三档与风险驱动.md`）；吉早安作无标准筛查癌种的**平替补充**（阳性升档+溯源影像，阴性按 LR⁻ 降风险评级）；价格区间参考 `pricing/md/08`；附长期健康干预+专科建议。
+- **组合套餐（三档·风险驱动，参 `套餐三档与风险驱动.md`）**：
+  - **档1·风险靶向聚合档**：包含**所有高风险项目**；不足 5 项用**中等风险项目**补齐至 5 项；仍不足用第三档（缺口）项目按优先级补齐。
+  - **档2·全面覆盖档（推荐）**：**全面型**，覆盖全部三档风险（高+中+缺口）。
+  - **档3·吉早安替换/弥补档**：两价格策略——①**替换型**：将吉早安目标癌症（肺/结直肠/胃/肝/食管/胰腺/乳腺/卵巢）涉及的专项筛查**替换为吉早安**（便捷，一管血替代多项目）；②**弥补型**：档2 基础上**额外加吉早安**（全面深入，标准筛查+多癌早筛双覆盖）。
+  - 价格区间复合自 `pricing/md/08`；吉早安性能引用 `detection_performance.json`（不编造）；附长期健康干预+专科建议。
 
 **报告 section artifact（temp 模版，报告前 LLM 产出 → build_report_json 透传 → render 渲染）**：5 artifact 落 `<out>/artifacts/`，文件名/字段名与模版 Jinja 变量严格一致，每 section 严格偶联数据库（PUA，不编造）。**文案类 LLM 读 MD 产（不查 JSON 表、数值不编造）；specificity 留空由 build_report_json 脚本从 voi_ranking 吉早安行兜底 0.990→99.0%（数值脚本算，真实数据源）**：
-- `timeline_tiers.json`（复查三级）schema `{priority/important/maintain:[{item_name,rationale}]}` ↔ `癌症风险分层与复查规则.md` + snapshot 后验 + `异常指标复查推荐.md`（priority≤3-5，三档均匀）
+- `timeline_tiers.json`（时间轴三级）schema `{priority/important/maintain:[{item_name,rationale}]}` ↔ `癌症风险分层与复查规则.md`「时间轴三档规则」+ snapshot 后验(>1%/0.5%-1%) + 健康总结严重度 + `异常指标复查推荐.md`（priority=高风险紧急, important=中等, maintain=缺口；均匀机制=双优先级排序均分）
 - `x_addons.json` schema `[{risk_source,risk_level_tag(danger/warning/info),risk_level_label,method,interval,price_range,clinical_value}]` ↔ `异常指标复查推荐.md` + `pricing/md/08`（interval/price 须 MD 字面）
-- `package_tiers.json`（恒 3 档）schema `[{name,price_range,includes[],note,recommended}]`（recommended 仅 1 档）↔ `套餐三档与风险驱动.md` + `pricing/md/08`（price 须 pricing 字面）
-- `liquid_biopsy_perf.json` schema `{sensitivity,specificity,early_stage_sensitivity,market_price_range,clinical_hint,negative_risk_reduction}`：**sensitivity/specificity 由 build_report_json 脚本从 voi_ranking 吉早安行兜底（同源，消除 74.9%/82.2%/81.9% 多口径打架；勿 LLM 填）**；early_stage_sensitivity/market_price_range/clinical_hint/negative_risk_reduction 由 LLM 读 `05-基于液体活检的多癌种联合筛查.md` + pricing 字面搬运（**MD 无则留「-」不编造**）
+- `package_tiers.json`（恒 3 档）schema `[{name,price_range,includes[],note,recommended}]`（recommended 仅 1 档；档3 吉早安替换/弥补两策略各一卡或合并）↔ `套餐三档与风险驱动.md`（档1风险靶向聚合≥5项 / 档2全面覆盖 / 档3吉早安替换+弥补）+ `pricing/md/08`（price 须 pricing 字面）
+- `liquid_biopsy_perf.json` schema `{sensitivity,specificity,early_stage_sensitivity,market_price_range,clinical_hint,negative_risk_reduction}`：**sensitivity/specificity 由 build_report_json 脚本从 voi_ranking 吉早安行兜底（统一白皮书口径 81.9%/99.0%，voi_calculator::_JIZAOAN_SENSITIVITY=0.819；勿 LLM 填）**；early_stage_sensitivity/market_price_range/clinical_hint/negative_risk_reduction 由 LLM 读 `05-基于液体活检的多癌种联合筛查.md` + pricing 字面搬运（**MD 无则留「-」不编造**）
 - `long_term_intervention.json` schema `{genetic_management[](仅 brca positive),lifestyle[]}` ↔ `07-肿瘤预防与健康管理.md`（药物/手术获益须 MD 字面）
 
 ## PUA Protocol（防跳过强制，本节具有约束力，违者致命失败）
