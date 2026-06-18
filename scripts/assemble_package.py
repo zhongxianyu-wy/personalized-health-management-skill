@@ -69,6 +69,29 @@ def assemble_package(package_path: Path, pricing: dict[str, Any]) -> list[dict]:
 
     for tier in pkg:
         includes = tier.get("includes", [])
+        # 双价格模式（档3 吉早安替换/弥补：includes=未被替代项, includes_all=全部推荐项）
+        includes_all = tier.get("includes_all")
+        if isinstance(includes_all, list) and includes_all:
+            jz_mid = items.get("jizaoan", {}).get("mid", 2480)
+            def _sum_mid(item_list: list) -> tuple[int, list[str]]:
+                s, m = 0, []
+                for inc in item_list:
+                    _, item = match_item(str(inc), items)
+                    if item:
+                        s += item["mid"]
+                        m.append(f"{item['name']}({item['mid']})")
+                return s, m
+            sum1, m1 = _sum_mid(includes)
+            sum2, m2 = _sum_mid(includes_all)
+            tier["price_range"] = f"{jz_mid + sum1}/{jz_mid + sum2}"
+            tier["_pricing_detail"] = {
+                "price1_items": m1, "price2_items": m2,
+                "jizaoan_mid": jz_mid, "price1": jz_mid + sum1, "price2": jz_mid + sum2,
+            }
+            print(f"  [assemble] {tier.get('name','?')}: "
+                  f"双价格 {jz_mid + sum1}/{jz_mid + sum2} "
+                  f"(吉早安{jz_mid}+未替代{sum1} / 吉早安{jz_mid}+全部{sum2})")
+            continue
         total_mid = 0
         matched: list[str] = []
         unmatched: list[str] = []
