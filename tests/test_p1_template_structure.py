@@ -48,6 +48,8 @@ def _base_context() -> dict:
                                "market_price_range": "-", "clinical_hint": "",
                                "negative_risk_reduction": ""},
         "long_term_intervention": {"genetic_management": [], "lifestyle": []},
+        "health_summary": {"blocks": {"risk_level": None, "overall_assessment": None}},
+        "snapshot": {"cancers": [], "section4_screening": [], "uncertainties_summary": {}},
         "evidence_version": "v14.0.0",
         "disclaimer": "本报告仅供参考，不构成诊断。",
     }
