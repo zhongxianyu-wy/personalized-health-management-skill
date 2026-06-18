@@ -298,7 +298,7 @@
         {% for x in x_addons %}
             <tr>
                 <td>{{ x.risk_source | default('—') | safe }}
-                {% if x.cancer_name and x.posterior_probability %}
+                {% if x.cancer_name is defined and x.cancer_name and x.posterior_probability is defined and x.posterior_probability %}
                 <div style="font-size:12px;color:#718096;margin-top:3px;">→ {{ x.cancer_name }}后验 <b style="color:{{ '#e53e3e' if x.posterior_probability > 0.02 else ('#ed8936' if x.posterior_probability > 0.005 else '#38a169') }};">{{ (x.posterior_probability * 100) | round(2) }}%</b></div>
                 {% endif %}
                 </td>
