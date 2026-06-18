@@ -144,6 +144,44 @@ def _checkup_window(snapshot: dict[str, Any], brca_status: str, health_risk_leve
             .get(top, "参照下方时间轴"))
 
 
+# 癌种关键词 → cancer_id 映射（用于 x_addons risk_source 匹配贝叶斯后验）
+_CANCER_KEYWORDS: dict[str, str] = {
+    "甲状腺": "thyroid_cancer", "肺": "lung_cancer", "LDCT": "lung_cancer",
+    "乳腺": "breast_cancer", "肠": "colorectal_cancer", "结肠": "colorectal_cancer",
+    "直肠": "colorectal_cancer", "肝": "liver_cancer", "胃": "gastric_cancer",
+    "食管": "esophageal_cancer", "胰腺": "pancreatic_cancer", "前列腺": "prostate_cancer",
+    "宫颈": "cervical_cancer", "卵巢": "ovarian_cancer", "膀胱": "bladder_cancer",
+    "肾": "kidney_cancer", "鼻咽": "head_neck_cancer", "头颈": "head_neck_cancer",
+    "胆道": "biliary_tract_cancer",
+}
+
+
+def _enrich_x_addons(x_addons: list[Any], snapshot: dict[str, Any]) -> list[Any]:
+    """给 x_addons 每行补充 cancer_name + posterior_probability（贝叶斯后验），
+    通过 risk_source 文本匹配 snapshot.cancers 的 cancer_id。
+    匹配规则：risk_source 含癌种关键词 → 对应 cancer_id → 查 cancers 后验。
+    未匹配的行不受影响（保持原样，不展示概率）。"""
+    if not isinstance(x_addons, list):
+        return x_addons
+    cancers = snapshot.get("cancers", []) if isinstance(snapshot, dict) else []
+    cancer_map: dict[str, Any] = {}
+    for c in cancers:
+        if isinstance(c, dict) and c.get("posterior_probability"):
+            cancer_map[c.get("cancer_id", "")] = c
+
+    for x in x_addons:
+        if not isinstance(x, dict):
+            continue
+        source = str(x.get("risk_source", ""))
+        for keyword, cancer_id in _CANCER_KEYWORDS.items():
+            if keyword in source and cancer_id in cancer_map:
+                c = cancer_map[cancer_id]
+                x["cancer_name"] = c.get("cancer_name_zh", c.get("cancer_id", ""))
+                x["posterior_probability"] = c.get("posterior_probability")
+                break
+    return x_addons
+
+
 def _format_cn_date(dt: datetime) -> str:
     """ISO datetime → 「YYYY年M月D日」供报告右上角展示。"""
     return f"{dt.year}年{dt.month}月{dt.day}日"
@@ -251,7 +289,7 @@ def assemble_report_json(
         "brca_detail": _brca_detail(answers, brca_status),
         "checkup_window": _checkup_window(snapshot, brca_status, assessment.get("risk_level")),
         "timeline_tiers": _read_json(artifacts / "timeline_tiers.json", {"priority": [], "important": [], "maintain": []}),
-        "x_addons": _read_json(artifacts / "x_addons.json", []),
+        "x_addons": _enrich_x_addons(_read_json(artifacts / "x_addons.json", []), snapshot),
         "package_tiers": _read_json(artifacts / "package_tiers.json", []),
         "liquid_biopsy_perf": _liquid_biopsy_perf(artifacts, voi),
         "long_term_intervention": _read_json(artifacts / "long_term_intervention.json", {"genetic_management": [], "lifestyle": []}),

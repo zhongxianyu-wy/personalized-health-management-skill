@@ -252,27 +252,6 @@
     </div>
     {% endif %}
 
-    <!-- 00. 癌症风险概览（贝叶斯后验，中风险以上展示） -->
-    {% if snapshot.cancers %}
-    {% set ns = namespace(has_risk=false) %}
-    {% for c in snapshot.cancers %}{% if c.posterior_probability and c.posterior_probability > 0.005 %}{% set ns.has_risk = true %}{% endif %}{% endfor %}
-    {% if ns.has_risk %}
-    <h2 class="sec-title">🎯 癌症风险概览（贝叶斯后验）</h2>
-    <div style="display:flex;gap:12px;flex-wrap:wrap;margin-bottom:25px;">
-    {% for c in snapshot.cancers %}
-    {% if c.posterior_probability and c.posterior_probability > 0.005 %}
-    {% set tier_color = '#e53e3e' if c.risk_tier in ['high','very_high','pathology_confirmed','urgent_workup'] else ('#ed8936' if c.risk_tier in ['medium','moderate_workup','high_workup'] else '#38a169') %}
-    <div style="border:1px solid {{ tier_color }};border-left:4px solid {{ tier_color }};border-radius:8px;padding:12px 16px;background:#fff;min-width:150px;">
-      <div style="font-weight:bold;font-size:15px;color:{{ tier_color }};">{{ c.cancer_name_zh | default(c.cancer_id) }}</div>
-      <div style="font-size:24px;color:{{ tier_color }};font-weight:bold;margin:4px 0;">{{ (c.posterior_probability * 100) | round(2) }}%</div>
-      <div style="font-size:12px;color:#718096;">后验概率 · {{ c.risk_tier | default('—') }}</div>
-    </div>
-    {% endif %}
-    {% endfor %}
-    </div>
-    {% endif %}
-    {% endif %}
-
     <!-- 01. 落地执行清单：核心建议执行时间轴（三档 grid） -->
     <h2 class="sec-title" style="margin-top: 0;">⏱️ 核心建议执行时间轴{% if brca_status == 'positive' %} (遗传高危靶向就诊清单){% endif %}</h2>
     <div class="timeline-container">
@@ -318,7 +297,11 @@
         <tbody>
         {% for x in x_addons %}
             <tr>
-                <td>{{ x.risk_source | default('—') | safe }}</td>
+                <td>{{ x.risk_source | default('—') | safe }}
+                {% if x.cancer_name and x.posterior_probability %}
+                <div style="font-size:12px;color:#718096;margin-top:3px;">→ {{ x.cancer_name }}后验 <b style="color:{{ '#e53e3e' if x.posterior_probability > 0.02 else ('#ed8936' if x.posterior_probability > 0.005 else '#38a169') }};">{{ (x.posterior_probability * 100) | round(2) }}%</b></div>
+                {% endif %}
+                </td>
                 <td><span class="tag tag-{{ x.risk_level_tag | default('info') }}">{{ x.risk_level_label | default(x.risk_level_tag) | default('—') }}</span></td>
                 <td><strong>{{ x.method | default('—') }}</strong></td>
                 <td>{{ x.interval | default('—') }}</td>
