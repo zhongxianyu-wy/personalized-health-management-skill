@@ -624,11 +624,20 @@ def main():
     import master_scan
     import interactive_completion as interactive
 
+    # v0.1.1 提前解析 evidence_version（缓存键需要，原在 L1097 才解析）
+    _ev = None
+    try:
+        _ev = json.loads(
+            (EVIDENCE_STORE / "evidence_version.json").read_text(encoding="utf-8")
+        ).get("version")
+    except (FileNotFoundError, json.JSONDecodeError):
+        pass
+
     # v0.1.1 优化：subprocess → 直接 import；确定性输出 skip-if-exists（输入 sex+age+evidence_version
     # 未变则复用 artifacts 缓存，省 build_assertion_fill_template + build_master 每轮重算）
     assertion_template_path = artifacts / "risk_factor_assertion_template.json"
     master_path = artifacts / "risk_factor_master.json"
-    _master_cache_key = f"{t4_sex}_{int(t4_age)}_{evidence_version}"
+    _master_cache_key = f"{t4_sex}_{int(t4_age)}_{_ev}"
     _master_cache_sentinel = artifacts / ".master_cache_key"
     _cache_valid = (
         _master_cache_sentinel.is_file()
