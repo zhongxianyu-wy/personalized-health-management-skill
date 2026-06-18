@@ -366,8 +366,14 @@
         <div class="package-card" style="{% if p.recommended %}border-top: 3px solid var(--primary); background: var(--primary-light);{% else %}border-top: 3px solid #718096;{% endif %}">
             <div class="pkg-name">{{ p.name | default('—') }}{% if p.recommended %} (推荐){% endif %}</div>
             <div class="pkg-price">{{ p.price_range | default('—') }}</div>
+            {% if p.includes_all is defined and p.includes_all %}
+            <p style="font-size: 12px; color: #4a5568;"><b>全部检测项 + 吉早安®：</b>{{ p.includes_all | join(' + ') }} + 吉早安®</p>
+            <p style="font-size: 11px; color: #718096;">📋 吉早安®可替代其中 8 癌专项（LDCT/肠镜/胃镜/腹部超声/食管内镜/EUS/乳腺超声/阴道超声→1 管血）；价格1=吉早安+未被替代项，价格2=吉早安+全部项</p>
+            {% if p.note %}<p style="font-size: 11px; color: #718096;">🎯 {{ p.note }}</p>{% endif %}
+            {% else %}
             <p style="font-size: 12px; color: #4a5568;"><b>包含：</b>{{ p.includes | join(' + ') }}</p>
             <p style="font-size: 11px; color: #718096;">🎯 {{ p.note | default('') }}</p>
+            {% endif %}
         </div>
         {% endfor %}
     </div>
