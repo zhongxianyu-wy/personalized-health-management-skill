@@ -282,7 +282,7 @@
     </div>
 
     <!-- 02. 循证“X”个性化精准加项清单（宽表，带价格/周期/级别 tag） -->
-    <h2 class="sec-title">🧱 循证“X”个性化精准加项清单</h2>
+    <h2 class="sec-title">🧱 循证“X”个性化精准加项清单{% if health_summary.blocks.risk_level %}{% set rl = health_summary.blocks.risk_level %}{% set adr_color = '#e53e3e' if ('严重' in rl or '🔴' in rl) else ('#ed8936' if ('高' in rl or '🟠' in rl) else ('#ecc94b' if ('潜在' in rl or '🟡' in rl) else '#38a169')) %} <span style="color: {{ adr_color }}; font-size: 14px; padding: 2px 10px; border-radius: 4px; background: #fff; border: 1px solid {{ adr_color }}; font-weight: bold;">{{ health_summary.blocks.overall_assessment | default(rl) }}</span>{% endif %}</h2>
     <table class="data-table">
         <thead>
             <tr>
