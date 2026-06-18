@@ -85,7 +85,9 @@ uv run --python 3.11 --with PyYAML --with jsonschema --with jinja2 --with reques
 > 行 3/5/7/8 需 agent 行动；其余在 `run_formal_analysis.py` 内自动。需求流程里"癌症证据内置初次提取+第二次审核"= CP3 + CP3.1；"苏格拉底式高危因素收集"= CP2。
 > **执行顺序注**：demographics(行4)读 `content.md`/CLI 性别年龄，与 CP1(行3)独立；代码执行顺序 demographics→CP1 refine gate，但 CP1 产物 `refined.md` 是 CP3 证据填充的输入（逻辑上 CP1 先于 CP3，二者不冲突）。
 
-## Minimal Workflow
+## Minimal Workflow（v0.1.1 优化：7步→4步，减少 3 轮 uv run + 前置重跑）
+
+> **优化原理**：每轮 `uv run` 从头重跑 config→mineru[cache]→demographics→...→stop 点，即使 MinerU 有缓存仍 ~3-5s/轮。合并相邻的 agent 介入点（CP3 填 candidate + CP3.1 审计一轮做；CP4 结构化 + report-artifacts 产 5 JSON 一轮做），从 7 轮降到 4 轮，省 ~10-15s 纯开销。
 
 1. 环境检测 + OCR，停：
    ```bash
@@ -95,7 +97,7 @@ uv run --python 3.11 --with PyYAML --with jsonschema --with jinja2 --with reques
 
 2. 🔴 **CP1 精炼建档**（agent）。对每个 `artifacts/mineru/<data_id>/content.md` 先做质量门：少于 20 行或不含 {检查,化验,报告,结果,项目} → 停并报错；否则写同目录 `refined.md`，保留人口学/异常行/肿瘤标志物（含正常值）/影像结论/阳性体征/**胃肠镜等内镜检查记录（含息肉/病理/切除/Boston 评分——若有必抽全段；漏抽会致"已做"误判为"未做过"，如肠镜+息肉切除被误判为缺口）**。不得概括掉值/单位/参考范围/日期（字面校验需要）。详见 `references/runtime_workflow.md`。
 
-3. 跑到问诊：
+3. 跑到问诊（含 demographics + interactive 一轮）：
    ```bash
    ... scripts/run_formal_analysis.py ... --stop-after interactive
    ```
@@ -105,51 +107,42 @@ uv run --python 3.11 --with PyYAML --with jsonschema --with jinja2 --with reques
    - **4b 苏格拉底三铁律**：①每次只问一题（Claude Code 用 `AskUserQuestion`；其他 runtime 用等效交互机制）；②触发即解决（trigger 题答完→进下一无关题前走完跟进链）；③不完整→按完整度标准重问。
      - `conditional_on` 检查：题有 `conditional_on`，查已答值≠`conditional_on.value` 则跳过。
      - label↔value 映射：用户选 label（「阳性」）→ 记 option 的 `value`（`positive`），绝不记原 label。
-     - 触发：`q_family_history_cancer=yes`→立即问 `q_family_history_detail`（须含具体癌种+亲属人数，缺一不可）；`q_jizaoan_result=positive`→问 top1/top2 癌种。
-   - **4c** 写 `<out>/answers.json`：`{"answers": {<qid>: <value>}}`，仅含本会话已问的题，`text_fill` 逐字原话，未触发 key 省略。
-   - **4d** 校验：`... scripts/validate_answers.py --questionnaire <out>/artifacts/interactive_questionnaire.json --answers <out>/answers.json`（exit 0 继续，1 修答案，2 文件缺失）。
+     - 触发：`q_family_history_cancer=yes`→立即问 `q_family_history_detail`；`q_jizaoan_result=positive`→问 top1/top2 癌种。
+   - **4c** 写 `<out>/answers.json`：`{"answers": {<qid>: <value>}}`。
+   - **4d** 校验：`... scripts/validate_answers.py --questionnaire <out>/artifacts/interactive_questionnaire.json --answers <out>/answers.json`。
 
-5. 跑到证据模板：
+5. 🔴 **CP3 证据填充 + CP3.1 审计**（agent，一轮完成）。先跑到 master-template（生成 candidate scaffold），agent 填 candidate + 审计：
    ```bash
    ... scripts/run_formal_analysis.py ... --stop-after master-template
    ```
-
-6. 🔴 **CP3 证据填充**（agent，提取者角色）。用合并模板（`merge_filled_template.py` 产出）填 `structured_risk_factors_timeline.candidate.json` + `tumor_markers.candidate.json` + `imaging_findings.candidate.json`，**只用闭合词表**（factor_key 来自 `risk_factor_master.json`；test_id 来自 `detection_performance_derived.json` 排除 `jizaoan_multi_cancer_screening`；finding_id 来自 `imaging_findings.json`）。校验：
+   填 `structured_risk_factors_timeline.candidate.json` + `tumor_markers.candidate.json`，校验后写 `cp3_audit_result.json`，再：
+   ```bash
+   ... scripts/run_formal_analysis.py ... --stop-after cp3-verify
+   ```
+   > **v0.1.1 合并提示**：master-template 与 cp3-verify 之间无远程调用（纯本地 JSON），agent 可在一轮内完成填 candidate → 校验 → 审计 → 写 audit_result（认知重置独立做审计），无需分两轮跑。校验：
    ```bash
    ... scripts/validate_timeline_candidate.py --candidate <out>/artifacts/structured_risk_factors_timeline.candidate.json
    ... scripts/validate_tumor_markers.py --candidate <out>/artifacts/tumor_markers.candidate.json
-   ... scripts/validate_imaging_findings.py --candidate <out>/artifacts/imaging_findings.candidate.json
    ```
-   再 `... --stop-after cp3-verify`。
 
-7. 🔴 **CP3.1 审计**（agent，独立审计员角色，认知重置）。独立重读每个 `refined.md`，找遗漏：未入卷的发现查 `risk_factor_master.json` 匹配 `factor_key`，匹配且文档支撑→加 `exists=true`；明确否定→`exists=false`；无匹配→不强塞（自动进「证据库外异常提示」）。写 `<out>/artifacts/cp3_audit_result.json`（缺则 exit 9）：
-   ```json
-   {"no_omissions": true}
-   ```
-   或 `{"no_omissions": false, "added_factor_keys": [...], "unmatched_findings": [{"finding_text":"<报告字面引文>","reason":"<一句话>","related_cancer":"<可选>"}]}`。
-
-8. 跑到健康总结 API：
+6. 🔴 **CP4 健康总结结构化 + 报告前 5 section artifact**（agent，一轮完成）。先跑到健康总结 API：
    ```bash
    ... scripts/run_formal_analysis.py ... --stop-after health-summary-api
    ```
-
-9. 🔴 **CP4 健康总结结构化**（agent）。把 API markdown 转 `health_summary_structured_summary.json`，**必须用 `finalize_structured_summary.py`**（直写 JSON 会被 runtime 截断）：
+   agent 用 `finalize_structured_summary.py` 结构化健康总结，再跑到 report-artifacts（snapshot/VoI/归档自动完成）：
    ```bash
-   ... scripts/finalize_structured_summary.py --analysis-output <out> --fills <fills.json>
+   ... scripts/run_formal_analysis.py ... --person-id <id> --stop-after report-artifacts
    ```
-   **fills.json 的 @ 引用格式**：大 HTML 片段用 `@/absolute/path` 或 `@relative/path`（@ 后**直接跟路径**，**不带 `file:`**，否则 finalize 解析失败）。健康总结展示专用，不得用 snapshot 概率/ontology OR-LR/筛查逻辑。
+   agent 产 5 JSON（`timeline_tiers.json` / `x_addons.json` / `package_tiers.json` / `liquid_biopsy_perf.json` / `long_term_intervention.json`），跑 `assemble_package.py` 求和套餐价格：
+   ```bash
+   ... scripts/assemble_package.py --package <out>/artifacts/package_tiers.json --skill-root <skill_root>
+   ```
 
-10. 🔴 **报告前产 5 section artifact**（agent）。跑到 report-artifacts（snapshot/VoI/筛查/归档完成）：
-    ```bash
-    ... scripts/run_formal_analysis.py ... --person-id <id> --stop-after report-artifacts
-    ```
-    exit 0 → 按「报告 section artifact」配方读对应 MD/JSON 产 5 JSON 到 `<out>/artifacts/`：`timeline_tiers.json` / `x_addons.json` / `package_tiers.json` / `liquid_biopsy_perf.json` / `long_term_intervention.json`。**这些 artifact 无任何脚本产出，跳过则报告 5 个核心 section 渲染空**——`build_report_json` 会检测 5 artifact 全空并标 `sections_incomplete=true` + stderr 警告，`run_formal_analysis` 渲染后 HALT 警告（report.html 虽生成但为**空壳=无效交付**，必须回本步产 5 JSON 非空后重跑第11步）。（specificity 留空由 build_report_json 兜底，勿 LLM 填）。
-
-11. 跑最终报告+归档（不带 stop-after）：
-    ```bash
-    ... scripts/run_formal_analysis.py ... --person-id <id>
-    ```
-    exit 0 → `report.html` 就绪（temp 模版，用户交付物）；snapshot 已自动 dedup 合入 `output/<person_id>/`。
+7. 跑最终报告+归档（不带 stop-after）：
+   ```bash
+   ... scripts/run_formal_analysis.py ... --person-id <id>
+   ```
+   exit 0 → `report.html` 就绪（temp 模版，用户交付物）。
 
 ## 单一报告偶联规则（需求 7）
 

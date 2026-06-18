@@ -624,22 +624,32 @@ def main():
     import master_scan
     import interactive_completion as interactive
 
+    # v0.1.1 优化：subprocess → 直接 import；确定性输出 skip-if-exists（输入 sex+age+evidence_version
+    # 未变则复用 artifacts 缓存，省 build_assertion_fill_template + build_master 每轮重算）
     assertion_template_path = artifacts / "risk_factor_assertion_template.json"
-    run([
-        sys.executable, str(scripts / "build_assertion_fill_template.py"),
-        "--evidence-store", str(EVIDENCE_STORE),
-        "--sex", str(t4_sex),
-        "--age", str(int(t4_age)),
-        "--output", str(assertion_template_path),
-    ])
-    assertion_template = json.loads(assertion_template_path.read_text(encoding="utf-8"))
-    derived_assertions = json.loads(
-        (EVIDENCE_STORE / "risk_assertions_derived.json").read_text(encoding="utf-8")
-    ) if (EVIDENCE_STORE / "risk_assertions_derived.json").is_file() else {"derived_assertions": []}
-    master = master_scan.build_master_from_assertion_template(assertion_template, derived_assertions)
     master_path = artifacts / "risk_factor_master.json"
-    master_scan.write_json(master_path, master)
-    print(f"[task4] risk_factor_master.json factors={master['counts']['factors']}")
+    _master_cache_key = f"{t4_sex}_{int(t4_age)}_{evidence_version}"
+    _master_cache_sentinel = artifacts / ".master_cache_key"
+    _cache_valid = (
+        _master_cache_sentinel.is_file()
+        and _master_cache_sentinel.read_text(encoding="utf-8").strip() == _master_cache_key
+        and master_path.is_file()
+    )
+    if _cache_valid:
+        print(f"[task4] cache hit: risk_factor_master.json (key={_master_cache_key})")
+        master = json.loads(master_path.read_text(encoding="utf-8"))
+    else:
+        import build_assertion_fill_template as baft
+        assertion_template = baft.build_assertion_fill_template(
+            EVIDENCE_STORE, str(t4_sex), int(t4_age), None)
+        write_json(assertion_template_path, assertion_template)
+        derived_assertions = json.loads(
+            (EVIDENCE_STORE / "risk_assertions_derived.json").read_text(encoding="utf-8")
+        ) if (EVIDENCE_STORE / "risk_assertions_derived.json").is_file() else {"derived_assertions": []}
+        master = master_scan.build_master_from_assertion_template(assertion_template, derived_assertions)
+        master_scan.write_json(master_path, master)
+        _master_cache_sentinel.write_text(_master_cache_key, encoding="utf-8")
+        print(f"[task4] risk_factor_master.json factors={master['counts']['factors']} (cached key={_master_cache_key})")
 
     # --- v4 Task 5 (interactive) — yaml-driven, BEFORE Task4 fill -------
     answers_payload_raw = (
