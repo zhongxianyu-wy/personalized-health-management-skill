@@ -24,10 +24,18 @@ from __future__ import annotations
 import argparse
 import importlib.metadata
 import json
+import os
 import shutil
 import subprocess
 import sys
 from pathlib import Path
+
+# 跨 runtime 环境自检：清除 PYTHONHOME/PYTHONPATH 污染 + UTF-8 输出
+# （CoPaw/Windows 等环境系统 PYTHONHOME 指向 3.12 会污染 uv 管理的 3.11）
+os.environ.pop("PYTHONHOME", None)
+os.environ.pop("PYTHONPATH", None)
+if hasattr(sys.stdout, "reconfigure"):
+    sys.stdout.reconfigure(encoding="utf-8")
 
 V3_REQUIRED_DEPS = ("PyYAML", "jsonschema", "jinja2", "requests")
 V3_MIN_PYTHON = (3, 10)

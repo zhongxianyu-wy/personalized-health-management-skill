@@ -43,6 +43,20 @@ uv run --python 3.11 --with PyYAML --with jsonschema --with jinja2 --with reques
 
 **Refuse/redirect**：疾病诊断、治疗方案、用药剂量、紧急分诊、单症状临床问答。
 
+## 跨 Runtime 环境自检（v0.1.1）
+
+**问题**：CoPaw/Windows 等环境系统 `PYTHONHOME` 指向 Python 3.12，污染 uv 管理的 3.11，导致 `SRE module mismatch` / `ModuleNotFoundError`；GBK 编码导致中文 `UnicodeEncodeError`。
+
+**解决方案**：所有 CLI 入口脚本（`run_formal_analysis.py` / `env_check.py` / `validate_*.py` / `finalize_structured_summary.py` / `assemble_package.py` / `render_report.py` 等）在 `from __future__` 后 **第一个 import** 就是 `_env_bootstrap`：
+```python
+import sys as _sys
+_sys.path.insert(0, str(__import__("pathlib").Path(__file__).resolve().parent))
+import _env_bootstrap  # noqa: F401 — 跨runtime环境自检(PYTHONHOME/UTF-8)
+```
+`scripts/_env_bootstrap.py` 在任何其他 import 之前：①清除 `PYTHONHOME`/`PYTHONPATH`；②`sys.stdout.reconfigure(encoding="utf-8")`。
+
+**agent 无需手动前置** `set PYTHONHOME=` 等命令——脚本自检覆盖。但若 runtime shell 在 Python 启动**之前**就因 PYTHONHOME 崩溃（极少见），agent 可在命令前加 `PYTHONHOME= python ...`（POSIX）或 `set "PYTHONHOME=" && python ...`（Windows）。
+
 ## Non-Negotiables
 
 - LLM/agent 只能从原文或用户答案填**事实字段**，不得编造 factor ID、cancer ID、概率、OR/RR/HR、LR、灵敏度、特异度、筛查周期、建议。

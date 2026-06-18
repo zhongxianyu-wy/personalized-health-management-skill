@@ -22,6 +22,10 @@ Usage:
 
 from __future__ import annotations
 
+import sys as _sys
+_sys.path.insert(0, str(__import__("pathlib").Path(__file__).resolve().parent))
+import _env_bootstrap  # noqa: F401 — 跨runtime环境自检(PYTHONHOME/UTF-8)
+
 import argparse
 import json
 import sys
