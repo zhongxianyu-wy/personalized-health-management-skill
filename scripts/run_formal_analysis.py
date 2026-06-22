@@ -5,6 +5,7 @@ import argparse
 import dataclasses
 import json
 import os
+import re
 import subprocess
 import sys
 from datetime import datetime
@@ -924,6 +925,24 @@ def main():
         f"rejected={len(timeline['rejected_records'])}"
     )
 
+    # H5: warn when gated timeline is empty yet refined.md carries abnormal
+    # findings — a strong signal CP3 fill was skipped/incomplete for real
+    # abnormalities. Pure-metabolic normal reports legitimately have an empty
+    # timeline, so this is a warning, not a halt.
+    if not timeline.get("records"):
+        abnormal_re = re.compile(r"结节|息肉|肿块|阳性|↑|异常|占位|病变")
+        hit_files = [
+            str(p)
+            for p in refined_paths.values()
+            if p.is_file() and abnormal_re.search(p.read_text(encoding="utf-8"))
+        ]
+        if hit_files:
+            print(
+                "[task4] ⚠ timeline 空但 refined.md 含异常发现，可能漏填 CP3："
+                + "; ".join(hit_files),
+                file=sys.stderr,
+            )
+
     # v7: imaging findings are now gated together with timeline records
     # inside gate_timeline_candidate (factor_type == "imaging_finding").
 
@@ -1264,11 +1283,12 @@ def main():
     print(f"[report] report.html rendered -> {report_html_path}")
     if report.get("sections_incomplete"):
         print(
-            "[report] ⚠️ HALT 警告：报告核心 section 空（5 section artifact 未产）。"
-            "report.html 已生成但为空壳——请完成 SKILL.md 第10步 report-artifacts "
+            "[report] HALT(exit 10): 报告核心 section 空（5 section artifact 未产）。"
+            "report.html 已生成但为空壳——请完成 SKILL.md 第6步 report-artifacts "
             "（--stop-after report-artifacts 产 5 JSON）后重跑。",
             file=sys.stderr,
         )
+        sys.exit(10)
 
     (out / "module_audits" / "task_p1_report.md").write_text(
         "# P1 Report\n\n"

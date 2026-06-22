@@ -1,5 +1,5 @@
 ---
-name: 个性化健康管理
+name: personalized-health-management
 description: |
   Use when user sends or references a health checkup report (体检报告, 体检, 体检结果,
   medical checkup, 癌症风险, cancer risk, 健康报告, 体检报告解读, 肿瘤标志物, 筛查推荐,
@@ -18,7 +18,7 @@ allowed-tools:
   - Edit
   - Bash
   - AskUserQuestion  # CP2 苏格拉底问诊；其他 runtime（openclaw/codex 等）用等效交互机制
-version: "0.1.0"
+version: "0.1.2"
 ---
 
 # 个性化健康管理 Skill
@@ -123,7 +123,7 @@ import _env_bootstrap  # noqa: F401 — 跨runtime环境自检(PYTHONHOME/UTF-8)
      - label↔value 映射：用户选 label（「阳性」）→ 记 option 的 `value`（`positive`），绝不记原 label。
      - 触发：`q_family_history_cancer=yes`→立即问 `q_family_history_detail`；`q_jizaoan_result=positive`→问 top1/top2 癌种。
    - **4c** 写 `<out>/answers.json`：`{"answers": {<qid>: <value>}}`。
-   - **4d** 校验：`... scripts/validate_answers.py --questionnaire <out>/artifacts/interactive_questionnaire.json --answers <out>/answers.json`。
+   - **4d** 校验：`... scripts/validate_answers.py --questionnaire <out>/artifacts/interactive_questionnaire.json --answers <out>/answers.json --strict-no-inference`（`--strict-no-inference` 拒收 agent 编造/推断的答案，真实运行必加）。
 
 5. 🔴 **CP3 证据填充 + CP3.1 审计**（agent，一轮完成）。先跑到 master-template（生成 candidate scaffold），agent 填 candidate + 审计：
    ```bash
@@ -182,7 +182,7 @@ import _env_bootstrap  # noqa: F401 — 跨runtime环境自检(PYTHONHOME/UTF-8)
 
 **报告 section artifact（temp 模版，报告前 LLM 产出 → build_report_json 透传 → render 渲染）**：5 artifact 落 `<out>/artifacts/`，文件名/字段名与模版 Jinja 变量严格一致。
 
-> **[BLOCKER-6 修复] 5 schema 集中表**（LLM 产 artifact 时对照此表，无需交叉读 3 处源码）：
+> **5 schema 集中表**（LLM 产 artifact 时对照此表，无需交叉读 3 处源码）：
 >
 > | artifact | schema | 必填 | 数据源 | 脚本辅助 |
 > |---|---|---|---|---|
@@ -192,14 +192,9 @@ import _env_bootstrap  # noqa: F401 — 跨runtime环境自检(PYTHONHOME/UTF-8)
 > | `liquid_biopsy_perf.json` | `{sensitivity,specificity,market_price_range,clinical_hint,negative_risk_reduction}` | **sens/spec 留空**（脚本兜底 81.9%/99.0%） | voi_ranking + 05液检MD | build_report_json 兜底 |
 > | `long_term_intervention.json` | `{genetic_management[](仅brca positive),lifestyle[]}` | lifestyle≥1 | 07预防MD | — |
 >
-> **P1 [REDUNDANT-1] 注**：CP4 fills 的 5 个 `.html`（abnormal/disease/advice/lab/conclusion）是 `@` 引用的中间产物（写入 health_summary_structured_summary.json），**temp 模版不直接读 health_summary.blocks**，可简化为最小占位 HTML。
+> **CP4 结构化注**：temp 模版 X加项标题读取 `health_summary.blocks.overall_assessment`（ADR 徽章文字）+ `blocks.risk_level`（徽章着色）。CP4 fills 的 5 个 `.html`（abnormal/disease/advice/lab/conclusion）经 `@` 引用写入 `health_summary_structured_summary.json`，须产出有效的 `risk_level`/`overall_assessment` 值——不可简化为空占位，否则 ADR 徽章渲染为空。
 
-每 section 严格偶联数据库（PUA，不编造）。**文案类 LLM 读 MD 产（不查 JSON 表、数值不编造）；specificity 留空由 build_report_json 脚本从 voi_ranking 吉早安行兜底 0.990→99.0%（数值脚本算，真实数据源）**：
-- `timeline_tiers.json`（时间轴三级）schema `{priority/important/maintain:[{item_name,rationale}]}` ↔ `癌症风险分层与复查规则.md`「时间轴三档规则」+ snapshot 后验(>1%/0.5%-1%) + 健康总结严重度 + `异常指标复查推荐.md`（priority=高风险紧急, important=中等, maintain=缺口；均匀机制=双优先级排序均分）
-- `x_addons.json` schema `[{risk_source,risk_level_tag(danger/warning/info),risk_level_label,method,interval,price_range,clinical_value}]` ↔ `异常指标复查推荐.md` + `pricing/md/08`（interval/price 须 MD 字面）
-- `package_tiers.json`（恒 3 档）schema `[{name,price_range,includes[],note,recommended}]`（**每档必填 recommended(bool)，仅 1 档 true，漏字段 StrictUndefined 报错**；档3 吉早安替换/弥补两策略各一卡或合并）↔ `套餐三档与风险驱动.md`（档1风险靶向聚合≥5项 / 档2全面覆盖 / 档3吉早安替换+弥补）+ `pricing/md/08`（price 须 pricing 字面）
-- `liquid_biopsy_perf.json` schema `{sensitivity,specificity,market_price_range,clinical_hint,negative_risk_reduction}`：**sensitivity/specificity 由 build_report_json 脚本从 voi_ranking 吉早安行兜底（统一白皮书口径 81.9%/99.0%，voi_calculator::_JIZAOAN_SENSITIVITY=0.819；勿 LLM 填）**；market_price_range/clinical_hint/negative_risk_reduction 由 LLM 读 `05-基于液体活检的多癌种联合筛查.md` + pricing 字面搬运（**MD 无则留「-」不编造**）
-- `long_term_intervention.json` schema `{genetic_management[](仅 brca positive),lifestyle[]}` ↔ `07-肿瘤预防与健康管理.md`（药物/手术获益须 MD 字面）
+每 section 严格偶联数据库（PUA，不编造）：文案类 LLM 读 MD 产（不查 JSON 表、数值不编造）；数值类（sens/spec/价格）脚本算（`build_report_json` 兜底 81.9%/99.0%，`assemble_package` Σmid 求和）；MD 无对应字面则留「-」，不编造。逐项 schema 见上表；timeline 三档阈值与均匀机制见「单一报告偶联规则」。
 
 ## PUA Protocol（防跳过强制，本节具有约束力，违者致命失败）
 
@@ -237,6 +232,7 @@ agent 须在回复中确认：①运行的脚本命令（带全 flag）；②收
 | 7 | 归档 | person_id 需用户确认 | 展示 `archive_person_id_prompt.json`，把 `person_id_choice` 加进 `--answers` |
 | 8 | CP2 | 问诊答案空 | 完成 CP2，带 `--answers` 重跑 |
 | 9 | CP3.1 | `cp3_audit_result.json` 缺失 | 完成 CP3.1 审计、写结果文件、重跑 |
+| 10 | report | `sections_incomplete=true`（5 section artifact 未产，空壳报告） | 产 5 section artifact（`--stop-after report-artifacts`），重跑出报告 |
 
 任何其他非零退出码 = **不可恢复**：打印 stderr 原文并 halt。
 

@@ -74,17 +74,13 @@
 
 ---
 
-## 第 6 步：H7 — demo token 移出入库（HIGH）
+## 第 6 步：H7 — demo token 移出入库（HIGH）— ⚠ 用户决策：不改
 
 **问题**：`config/formal.yaml:13` demo_token 是完整 JWT（含 phone/uuid/exp），clone 仓库即可盗用。
 
-**修复文件**：`config/formal.yaml`
-**修复内容**：
-- L13 `demo_token:` 值清空 → `demo_token: ""`
-- 新增注释：`# demo token 请通过 config/local.yaml::mineru.user_token 覆盖；空值时 use_demo_token_by_default 生效但需用户提供`
-- 确认 `config/local.yaml` 已在 `.gitignore`
+**用户决策（2026-06-22）**：维持开箱即用原则，demo_token 保留不动。该 token 是 OpenXLab **公共试用 token**（phone/email 为空、无 PII，任何人可在 mineru.net 免费注册），非私钥；skill 供内部工作人员使用，需要便捷性。**H7 跳过，formal.yaml 不改。**（先前的「内置默认 mineru api-key」明确指令优先于本计划项。）
 
-**验证**：grep formal.yaml demo_token → 值为空
+> 说明：真正风险仅为公共 token 的共享配额耗尽，非凭据泄露。若将来改为公开发布，再重新评估。
 
 ---
 
