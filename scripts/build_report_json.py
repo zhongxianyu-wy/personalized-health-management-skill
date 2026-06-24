@@ -173,12 +173,26 @@ def _enrich_x_addons(x_addons: list[Any], snapshot: dict[str, Any]) -> list[Any]
         if not isinstance(x, dict):
             continue
         source = str(x.get("risk_source", ""))
+        matched_keyword = False
+        linked = False
         for keyword, cancer_id in _CANCER_KEYWORDS.items():
-            if keyword in source and cancer_id in cancer_map:
-                c = cancer_map[cancer_id]
-                x["cancer_name"] = c.get("cancer_name_zh", c.get("cancer_id", ""))
-                x["posterior_probability"] = c.get("posterior_probability")
-                break
+            if keyword in source:
+                matched_keyword = True
+                if cancer_id in cancer_map:
+                    c = cancer_map[cancer_id]
+                    x["cancer_name"] = c.get("cancer_name_zh", c.get("cancer_id", ""))
+                    x["posterior_probability"] = c.get("posterior_probability")
+                    linked = True
+                    break
+        if source and cancer_map and not linked:
+            # Coupling gap visible (PUA: 每条结论须偶联出处). Distinguish the two
+            # causes: risk_source lacks any cancer keyword vs. the named cancer
+            # has no posterior in the snapshot.
+            reason = "该癌种在 snapshot 无后验概率" if matched_keyword else "risk_source 未含癌种关键词"
+            print(
+                f"[report] ⚠ x_addons 行 risk_source「{source}」未展示后验概率（{reason}）。",
+                file=sys.stderr,
+            )
     return x_addons
 
 
@@ -270,6 +284,18 @@ def assemble_report_json(
     if person_name == "未提供":
         person_name = person_id
 
+    # CP4 ADR badge reads health_summary.blocks.risk_level/overall_assessment
+    # (temp 模版 L285). If CP4 left risk_level empty the ADR badge silently
+    # disappears — warn so the agent re-runs finalize_structured_summary.
+    health_status = health.get("status") if isinstance(health, dict) else None
+    if health_status == "ready_for_render" and not assessment.get("risk_level"):
+        print(
+            "[report] ⚠ health_summary.assessment_result.risk_level 为空 → "
+            "X加项 ADR 风险徽章不会渲染。请用 finalize_structured_summary.py 重新"
+            "结构化健康总结（CP4），补齐 risk_level/overall_assessment。",
+            file=sys.stderr,
+        )
+
     now = datetime.now()
     report = {
         "schema_version": SCHEMA_VERSION,
@@ -319,23 +345,35 @@ def assemble_report_json(
 
 
 def _check_section_artifacts(report: dict[str, Any]) -> None:
-    """检测 5 section artifact 是否全空（agent 跳过 report-artifacts 步骤 → 空壳报告）。
-    全空 → stderr 警告 + 标记 sections_incomplete=true，避免空壳静默交付。
-    低危案例 artifact 内容少但非全空（如 package_tiers 恒 3 档），不会误报。"""
+    """检测 5 section artifact 是否有空缺（任一核心 section 空 → sections_incomplete）。
+    v0.1.3 由「全空才报」改为「逐 section 判空」：agent 漏产 1 个 artifact（如仅缺
+    long_term_intervention）会致对应 section 静默渲染空，原逻辑仅拦全空 → 残缺报告 exit 0。
+    任一核心 section 空即标记 sections_incomplete=true，编排器据此 exit 10 halt。
+    注：genetic_management 仅 BRCA 阳性有值，对非 BRCA 报告可空，故 lti 判空只看 lifestyle。"""
     tt = report.get("timeline_tiers") or {}
     timeline_empty = all(len(tt.get(k, [])) == 0 for k in ("priority", "important", "maintain"))
     x_empty = len(report.get("x_addons") or []) == 0
     pkg_empty = len(report.get("package_tiers") or []) == 0
     lti = report.get("long_term_intervention") or {}
-    lti_empty = len(lti.get("genetic_management", [])) == 0 and len(lti.get("lifestyle", [])) == 0
-    all_empty = timeline_empty and x_empty and pkg_empty and lti_empty
-    report["sections_incomplete"] = all_empty
-    if all_empty:
+    lifestyle_empty = len(lti.get("lifestyle", [])) == 0  # genetic_management 仅 BRCA，可空
+
+    empty_sections = []
+    if timeline_empty:
+        empty_sections.append("timeline_tiers(三级全空)")
+    if x_empty:
+        empty_sections.append("x_addons(无行)")
+    if pkg_empty:
+        empty_sections.append("package_tiers(无档)")
+    if lifestyle_empty:
+        empty_sections.append("long_term_intervention.lifestyle(无条目)")
+
+    report["sections_incomplete"] = bool(empty_sections)
+    if empty_sections:
         print(
-            "[report] ⚠️ 5 section artifact 全空（timeline_tiers/x_addons/package_tiers/"
-            "long_term_intervention 均空）→ 报告核心 section 为空壳。"
-            "请完成 SKILL.md Minimal Workflow 第10步（--stop-after report-artifacts）"
-            "产出 5 JSON 后重跑，否则 report.html 无实质内容。",
+            "[report] ⚠️ 核心 section 空缺：" + ", ".join(empty_sections)
+            + " → 对应 section 渲染空。请补齐 SKILL.md Minimal Workflow 第6步"
+            "（--stop-after report-artifacts 产 5 JSON）的空缺 section 后重跑"
+            "（编排器见 sections_incomplete=true 会 exit 10 halt）。",
             file=sys.stderr,
         )
 

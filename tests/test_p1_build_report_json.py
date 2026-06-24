@@ -32,8 +32,8 @@ def _snapshot() -> dict:
     return {
         "schema_version": "snapshot-risk-v1",
         "person_context": {"sex": "male", "age": 68},
-        "cancers": [{"cancer_id": "lung", "posterior_probability": 0.02}],
-        "section4_screening": [{"cancer_id": "lung", "test_id": "ldct"}],
+        "cancers": [{"cancer_id": "lung_cancer", "posterior_probability": 0.02}],
+        "section4_screening": [{"cancer_id": "lung_cancer", "test_id": "ldct"}],
         "uncertainties_summary": {"cancers_missing_prior": 1},
     }
 
@@ -160,6 +160,70 @@ def test_missing_optional_files_degrade(tmp_path: Path) -> None:
     assert result["brca_status"] == "unknown"
     assert result["person"]["sex"] is None
     assert result["person"]["age"] is None
+
+
+# ---------------------------------------------------------------------------
+# Test 2b — partial section emptiness (v0.1.3 F2: any-empty, not all-empty)
+# ---------------------------------------------------------------------------
+
+
+def test_partial_section_empty_flags_incomplete(artifacts: Path, answers_path: Path) -> None:
+    """A single missing section (here long_term_intervention.lifestyle) must
+    still flag sections_incomplete=True — previously only ALL-empty was caught,
+    letting an agent skip one artifact and deliver a report with an empty section."""
+    _write(
+        artifacts / "timeline_tiers.json",
+        {"priority": [{"item_name": "肺CT", "rationale": "结节"}], "important": [], "maintain": []},
+    )
+    _write(artifacts / "x_addons.json", [{"risk_source": "肺结节", "method": "LDCT"}])
+    _write(
+        artifacts / "package_tiers.json",
+        [{"name": "档1", "price_range": "500", "includes": ["LDCT"], "recommended": True}],
+    )
+    # long_term_intervention.json absent → lifestyle empty → Section 05 empty
+    result = _assemble(artifacts, answers_path)
+    assert result["sections_incomplete"] is True
+
+
+def test_all_sections_filled_not_incomplete(artifacts: Path, answers_path: Path) -> None:
+    """When all four section-groups carry content, sections_incomplete=False."""
+    _write(
+        artifacts / "timeline_tiers.json",
+        {"priority": [{"item_name": "肺CT", "rationale": "r"}], "important": [], "maintain": []},
+    )
+    _write(artifacts / "x_addons.json", [{"risk_source": "肺结节", "method": "LDCT"}])
+    _write(
+        artifacts / "package_tiers.json",
+        [{"name": "档1", "includes": ["LDCT"], "recommended": True}],
+    )
+    _write(
+        artifacts / "long_term_intervention.json",
+        {"genetic_management": [], "lifestyle": [{"text": "戒烟"}]},
+    )
+    result = _assemble(artifacts, answers_path)
+    assert result["sections_incomplete"] is False
+
+
+def test_x_addons_enrichment_links_cancer(artifacts: Path, answers_path: Path) -> None:
+    """X加项 risk_source 含癌种关键词 → 该行注入 cancer_name + posterior_probability
+    （单一报告偶联规则：每条结论偶联数据出处）。锁死 _enrich_x_addons happy path。"""
+    _write(
+        artifacts / "timeline_tiers.json",
+        {"priority": [{"item_name": "肺CT", "rationale": "r"}], "important": [], "maintain": []},
+    )
+    _write(
+        artifacts / "x_addons.json",
+        [{"risk_source": "肺结节（LDCT 建议复查）", "method": "LDCT", "risk_level_tag": "danger"}],
+    )
+    _write(
+        artifacts / "package_tiers.json",
+        [{"name": "档1", "includes": ["LDCT"], "recommended": True}],
+    )
+    _write(artifacts / "long_term_intervention.json", {"genetic_management": [], "lifestyle": [{"t": "戒烟"}]})
+    result = _assemble(artifacts, answers_path)
+    row = result["x_addons"][0]
+    assert row["cancer_name"]  # linked to lung_cancer
+    assert row["posterior_probability"] == 0.02  # from snapshot fixture
 
 
 # ---------------------------------------------------------------------------

@@ -124,6 +124,7 @@ import _env_bootstrap  # noqa: F401 — 跨runtime环境自检(PYTHONHOME/UTF-8)
      - 触发：`q_family_history_cancer=yes`→立即问 `q_family_history_detail`；`q_jizaoan_result=positive`→问 top1/top2 癌种。
    - **4c** 写 `<out>/answers.json`：`{"answers": {<qid>: <value>}}`。
    - **4d** 校验：`... scripts/validate_answers.py --questionnaire <out>/artifacts/interactive_questionnaire.json --answers <out>/answers.json --strict-no-inference`（`--strict-no-inference` 拒收 agent 编造/推断的答案，真实运行必加）。
+   - **4e 缺口筛查两步交互**（CP2 内完成，报告第三部分来源）：对按指南应到年限但未检的项目做两步苏格拉底交互（①是否在筛查指南年限内做过 ②做过则追问正常/异常），最终只保留「未做过」或「近期异常」项（做过且正常→排除）。配方参 `references/缺口筛查与交互确认.md`，结果并入 `answers.json`，喂 `timeline_tiers.json` 的 maintain 档。
 
 5. 🔴 **CP3 证据填充 + CP3.1 审计**（agent，一轮完成）。先跑到 master-template（生成 candidate scaffold），agent 填 candidate + 审计：
    ```bash
@@ -133,7 +134,7 @@ import _env_bootstrap  # noqa: F401 — 跨runtime环境自检(PYTHONHOME/UTF-8)
    ```bash
    ... scripts/run_formal_analysis.py ... --stop-after cp3-verify
    ```
-   > **v0.1.1 合并提示**：master-template 与 cp3-verify 之间无远程调用（纯本地 JSON），agent 可在一轮内完成填 candidate → 校验 → 审计 → 写 audit_result（认知重置独立做审计），无需分两轮跑。校验：
+   > **v0.1.1 合并提示**：master-template 与 cp3-verify 之间无远程调用（纯本地 JSON），agent 可在一轮内完成填 candidate → 校验 → 审计 → 写 audit_result，无需分两轮跑。**但审计须独立**：不要回头确认自己刚填的记录，要**重新通读 `refined.md`** 找出 candidate 漏掉的异常发现（漏抽胃肠镜全段、漏建 evidence_text 等），否则审计形同虚设。填与审是同一会话内的两个独立动作，不是同一次确认。校验：
    ```bash
    ... scripts/validate_timeline_candidate.py --candidate <out>/artifacts/structured_risk_factors_timeline.candidate.json
    ... scripts/validate_tumor_markers.py --candidate <out>/artifacts/tumor_markers.candidate.json

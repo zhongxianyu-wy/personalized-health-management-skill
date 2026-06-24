@@ -1262,6 +1262,33 @@ def main():
     import render_report
     import write_manifest
 
+    # v0.1.3: deterministically compute package prices (Σmid) BEFORE assembling
+    # the report. assemble_package.py was previously an agent-only manual step
+    # (never invoked by the orchestrator), so skipping it left
+    # package_tiers[].price_range as unreliable LLM-hand-filled values — a PUA
+    # hole. Wired in so prices are always script-derived and reproducible.
+    import assemble_package
+    package_pricing = assemble_package.load_pricing(SKILL_ROOT)
+    package_tiers_path = artifacts / "package_tiers.json"
+    if package_pricing is not None and package_tiers_path.is_file():
+        try:
+            pkg_tiers = assemble_package.assemble_package(package_tiers_path, package_pricing)
+            print(f"[report] package prices assembled (Σmid) -> {package_tiers_path.name}")
+            if isinstance(pkg_tiers, list):
+                rec_count = sum(1 for t in pkg_tiers if t.get("recommended") is True)
+                if len(pkg_tiers) != 3:
+                    print(
+                        f"[report] ⚠ package_tiers {len(pkg_tiers)} 档（temp 模版期望恒 3 档）",
+                        file=sys.stderr,
+                    )
+                if rec_count != 1:
+                    print(
+                        f"[report] ⚠ package_tiers recommended=True {rec_count} 档（期望恰好 1 档推荐）",
+                        file=sys.stderr,
+                    )
+        except Exception as exc:  # price calc must never block an otherwise-valid report
+            print(f"[report] ⚠ assemble_package skipped ({exc})", file=sys.stderr)
+
     run_id = datetime.now().strftime("run-%Y%m%d-%H%M%S")
     report = build_report_json.assemble_report_json(
         artifacts=artifacts,
