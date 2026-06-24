@@ -749,10 +749,16 @@ def run_snapshot_stage(
     risk_cfg = config.get("risk_prediction", {}) if isinstance(config, dict) else {}
 
     merged = _read_json(artifacts / "merged_risk_factors.json")
-    priors_payload = _read_json(Path(risk_cfg.get(
-        "priors_file",
-        evidence_store / "cancer_age_sex_priors.json",
-    )))
+    # Resolve priors_file relative to SKILL_ROOT (cwd-independent) so the skill
+    # runs from any working directory (sandbox portability). Absolute paths
+    # pass through; absence falls back to the evidence store.
+    priors_file = risk_cfg.get("priors_file")
+    if priors_file:
+        _pf = Path(priors_file)
+        priors_path = _pf if _pf.is_absolute() else SKILL_ROOT / _pf
+    else:
+        priors_path = evidence_store / "cancer_age_sex_priors.json"
+    priors_payload = _read_json(priors_path)
     derived_assertions = _read_json(evidence_store / "risk_assertions_derived.json")
     detection_derived = _read_json(evidence_store / "detection_performance_derived.json")
     cancers_ontology = _read_json(evidence_store / "cancers.json")

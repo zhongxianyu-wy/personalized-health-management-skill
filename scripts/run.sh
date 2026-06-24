@@ -1,14 +1,13 @@
 #!/usr/bin/env bash
-# 通用 launcher —— 跨 runtime 沙箱适配（v0.1.4）。
+# 通用 launcher —— 跨 runtime 沙箱适配（v0.1.4 起，v0.1.5 精简）。
 #
-# 解决 WorkBuddy/QwenPaw 沙箱可能无 uv 的问题：uv 优先，无 uv 则 python3 + pip 兜底。
-# SKILL.md 所有入口命令统一走 `bash scripts/run.sh <script.py> [args...]`，
-# 由本 launcher 决定运行时与依赖安装方式，调用方无需关心。
+# uv 优先，无 uv 则 python3 + pip 兜底。**仅承载生产运行时依赖**
+# （PyYAML/jsonschema/jinja2/requests），不含测试依赖——pytest 是 dev-only，
+# 开发者自行 `uv run --with pytest python -m pytest`，不经过本 launcher。
 #
 # 用法:
 #   bash scripts/run.sh scripts/run_formal_analysis.py --input <pdf> --analysis-output <out> ...
 #   bash scripts/run.sh scripts/env_check.py --json
-#   bash scripts/run.sh -m pytest tests/ -q          # 模块模式：第一个参数以 - 开头则直接交给 python -m
 #
 # 行为:
 #   1. 有 uv  → uv run --python 3.11 --with PyYAML --with jsonschema --with jinja2 --with requests
@@ -24,31 +23,17 @@ SKILL_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
 DEPS="PyYAML jsonschema jinja2 requests"
 
 if [ "$#" -lt 1 ]; then
-  echo "用法: bash scripts/run.sh <script.py|模块模式> [args...]" >&2
+  echo "用法: bash scripts/run.sh <script.py> [args...]" >&2
   exit 2
 fi
 
-# 模块模式：第一个参数以 - 开头（如 -m pytest）→ 交给 python -m
-MODULE_MODE=0
-if [[ "$1" == -* ]]; then
-  MODULE_MODE=1
-fi
-
-# 解析目标脚本路径：相对调用方 cwd（SKILL_ROOT）传入的 scripts/X.py 优先；
+# 解析目标脚本：相对调用方 cwd（SKILL_ROOT）传入的 scripts/X.py 优先；
 # 不在 cwd 则回退到 SKILL_ROOT 下（支持从任意目录调用）。
-if [ "$MODULE_MODE" = "0" ]; then
-  TARGET="$1"
-  [ -f "$TARGET" ] || TARGET="$SKILL_ROOT/$1"
-fi
+TARGET="$1"
+[ -f "$TARGET" ] || TARGET="$SKILL_ROOT/$1"
 
 # ---------- 1. uv 优先 ----------
 if command -v uv >/dev/null 2>&1; then
-  if [ "$MODULE_MODE" = "1" ]; then
-    cd "$SKILL_ROOT"
-    exec uv run --python 3.11 \
-      --with PyYAML --with jsonschema --with jinja2 --with requests \
-      python "$@"
-  fi
   exec uv run --python 3.11 \
     --with PyYAML --with jsonschema --with jinja2 --with requests \
     python "$TARGET" "${@:2}"
@@ -75,14 +60,9 @@ done
 if [ "$NEED_INSTALL" = "1" ]; then
   echo "[run.sh] 无 uv，用 pip --user 安装依赖 ($DEPS) 到 ~/.local" >&2
   "$PY" -m pip install --user --quiet $DEPS >/dev/null 2>&1 || {
-    echo "[run.sh] pip install 失败（沙箱可能禁网或无 pip）。请用 uv，或预装依赖。" >&2
+    echo "[run.sh] pip install 失败（沙箱可能禁网或无 pip）。请用 uv，或预装依赖。见 references/deployment.md §5。" >&2
     exit 1
   }
 fi
 
-# ---------- 3. 执行 ----------
-if [ "$MODULE_MODE" = "1" ]; then
-  cd "$SKILL_ROOT"
-  exec "$PY" "$@"
-fi
 exec "$PY" "$TARGET" "${@:2}"

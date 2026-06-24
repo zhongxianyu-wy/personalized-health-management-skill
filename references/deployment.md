@@ -35,8 +35,9 @@
 ```bash
 bash scripts/run.sh scripts/run_formal_analysis.py --input <pdf> --analysis-output <out> --person-id <id> [其他flag]
 bash scripts/run.sh scripts/env_check.py --json                       # 环境探测
-bash scripts/run.sh -m pytest tests/ -q                               # 模块模式跑测试
 ```
+
+> 测试（pytest）是 **dev-only**，不经过生产 launcher：开发者自行 `uv run --python 3.11 --with pytest python -m pytest -q`。launcher 只携生产运行时依赖（PyYAML/jsonschema/jinja2/requests）。
 
 launcher 行为：
 1. **有 uv**（dev 机 / 装了 uv 的沙箱）→ `uv run --python 3.11 --with PyYAML --with jsonschema --with jinja2 --with requests python <script>`
@@ -89,7 +90,7 @@ bash scripts/run.sh scripts/env_check.py --json                 # 环境探测�
 bash scripts/run.sh scripts/run_formal_analysis.py --help       # 入口可用
 bash scripts/run.sh scripts/run_formal_analysis.py \
   --input <pdf> --analysis-output <out> --person-id <id> --stop-after mineru   # OCR 冒烟
-bash scripts/run.sh -m pytest tests/ -q                          # 全量测试（应 71 passed / 1 skipped）
+# 测试是 dev-only（不经过生产 launcher）：uv run --python 3.11 --with pytest python -m pytest -q
 ```
 
 ## 10. 已知不在本批范围
