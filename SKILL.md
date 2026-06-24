@@ -17,8 +17,20 @@ allowed-tools:
   - Write
   - Edit
   - Bash
-  - AskUserQuestion  # CP2 苏格拉底问诊；其他 runtime（openclaw/codex 等）用等效交互机制
-version: "0.1.2"
+version: "0.1.4"
+metadata:
+  runtime-compat:
+    primary: workbuddy       # 腾讯 WorkBuddy，OpenClaw 兼容（主要使用平台）
+    secondary: qwenpaw       # AgentScope/阿里，原生读 metadata.requires
+  requires:
+    # 扁平列表（QwenPaw 官方 schema 解析 bins/env 扁平列表，透出为 require_bins/require_envs）
+    bins: [python3, curl]    # python3 ≥3.10（推荐 3.11）；curl 取金百森健康总结 API token
+    env: [CANCERRISK_OUTPUT_DIR]  # 沙箱只读环境显式指定可写输出根（可选）
+    # 不声明 uv 为 required bin：launcher scripts/run.sh 运行时探测，无 uv 走 python3+pip 兜底。
+    # token 保持 config/formal.yaml 内置，不走 env（开箱即用）。
+  network:
+    domains: [mineru.net, ydai.jinbaisen.com, jiyinjia.jinbaisen.com]
+    # WorkBuddy/QwenPaw 沙箱出口白名单须放行这 3 域名（OCR + 健康总结 API）。
 ---
 
 # 个性化健康管理 Skill
@@ -26,12 +38,11 @@ version: "0.1.2"
 本 skill 是薄操作手册，按当前阶段按需加载 reference。单一入口为编排器：
 
 ```bash
-uv run --python 3.11 --with PyYAML --with jsonschema --with jinja2 --with requests \
-  python scripts/run_formal_analysis.py \
+bash scripts/run.sh scripts/run_formal_analysis.py \
   --input <file-or-folder> --analysis-output <out> --person-id <stable_id>
 ```
 
-> **命令约定**：下文 `uv run ... python scripts/X.py` 简记为 `scripts/X.py`；步骤间 `...` 表示继承首步的 `--input/--analysis-output/--person-id`，从 CP2 起加 `--answers <file>`，不得丢旗。归档默认落 `output/<person_id>/`（与 SKILL.md 同级）。
+> **命令约定**：`scripts/run.sh` 是跨 runtime 通用 launcher（uv 优先，无 uv 沙箱走 python3+pip 兜底，见 `references/deployment.md`）。下文 `bash scripts/run.sh scripts/X.py` 简记为 `scripts/X.py`；步骤间 `...` 表示继承首步的 `--input/--analysis-output/--person-id`，从 CP2 起加 `--answers <file>`，不得丢旗。归档默认落 `<cwd>/output/<person_id>/`（沙箱友好；可用 `--archives-root` 或环境变量 `CANCERRISK_OUTPUT_DIR` 覆盖）。
 
 ## 对话语气（功能性，非人设）
 
@@ -105,8 +116,7 @@ import _env_bootstrap  # noqa: F401 — 跨runtime环境自检(PYTHONHOME/UTF-8)
 
 1. 环境检测 + OCR，停：
    ```bash
-   uv run --python 3.11 --with PyYAML --with jsonschema --with jinja2 --with requests \
-     python scripts/run_formal_analysis.py --input <input> --analysis-output <out> --stop-after mineru
+   bash scripts/run.sh scripts/run_formal_analysis.py --input <input> --analysis-output <out> --stop-after mineru
    ```
 
 2. 🔴 **CP1 精炼建档**（agent）。对每个 `artifacts/mineru/<data_id>/content.md` 先做质量门：少于 20 行或不含 {检查,化验,报告,结果,项目} → 停并报错；否则写同目录 `refined.md`，保留人口学/异常行/肿瘤标志物（含正常值）/影像结论/阳性体征/**胃肠镜等内镜检查记录（含息肉/病理/切除/Boston 评分——若有必抽全段；漏抽会致"已做"误判为"未做过"，如肠镜+息肉切除被误判为缺口）**。不得概括掉值/单位/参考范围/日期（字面校验需要）。详见 `references/runtime_workflow.md`。
@@ -245,9 +255,9 @@ agent 须在回复中确认：①运行的脚本命令（带全 flag）；②收
 
 ## Archive Contract
 
-snapshot 后自动 dedup 合入 `output/<person_id>/`（仅存分析结果，不做趋势对比）：
+snapshot 后自动 dedup 合入 `<archive_root>/<person_id>/`（仅存分析结果，不做趋势对比）。`archive_root` 默认 = `<cwd>/output`（沙箱友好，不写只读 skill 包），可用 `--archives-root` 或环境变量 `CANCERRISK_OUTPUT_DIR` 覆盖：
 ```
-output/
+<archive_root>/
 ├── person_index.json
 └── <姓名-脱敏ID>/
     ├── factor_timeline.json
@@ -279,4 +289,4 @@ output/
 
 - 报告是决策辅助，非诊断。ontology 外的癌种不影响概率。性别不匹配的癌种 `posterior_probability: null`。提取失败在概率计算前 halt。
 - 生产 MinerU/金百森 token 用 `config/local.yaml`，仓库不硬编码。
-- 验证：`uv run --python 3.11 --with PyYAML --with jsonschema --with jinja2 --with requests python -m pytest -q`（测试位于 `tests/`，阶段3 迁移）。
+- 验证：`bash scripts/run.sh -m pytest -q`（launcher 的模块模式；测试位于 `tests/`）。

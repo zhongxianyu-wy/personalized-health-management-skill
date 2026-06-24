@@ -299,6 +299,10 @@ def main() -> None:
                     f"  {_UV_RUN_PREFIX} \\\n"
                     "    python cancerrisk-skill/scripts/run_formal_analysis.py --help"
                 )
+                print(
+                    "\n或用跨 runtime launcher（uv 优先，无 uv 沙箱自动走 python3+pip 兜底）：\n"
+                    "  bash cancerrisk-skill/scripts/run.sh scripts/run_formal_analysis.py --help"
+                )
             else:
                 print("\nEnvironment OK — ready to run.")
 

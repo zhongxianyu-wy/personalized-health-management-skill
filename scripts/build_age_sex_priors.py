@@ -25,13 +25,20 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 from pathlib import Path
 from typing import Any
 
 SCHEMA_VERSION = "cancer-prior-v1"
 
+# maintainer-only knowledge-base prep tool (not in pipeline 12 stages).
+# /Volumes/... default kept for the original maintainer's machine; env override
+# lets other maintainers point at their own oncoRAG checkout.
 ONCORAG_INCIDENCE_DEFAULT = Path(
-    "/Volumes/exp/geneplu_work/1.skill_tijian/28.project_tijian/oncoRAG/ontology/references/incidence_rates.json"
+    os.environ.get(
+        "ONCORAG_INCIDENCE_PATH",
+        "/Volumes/exp/geneplu_work/1.skill_tijian/28.project_tijian/oncoRAG/ontology/references/incidence_rates.json",
+    )
 )
 SKILL_ROOT = Path(__file__).resolve().parent.parent
 EVIDENCE_STORE_DEFAULT = SKILL_ROOT / "references" / "database" / "cancerrisk" / "json"

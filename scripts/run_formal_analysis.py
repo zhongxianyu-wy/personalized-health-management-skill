@@ -20,8 +20,7 @@ if hasattr(sys.stdout, "reconfigure"):
 import yaml
 
 SKILL_ROOT = Path(__file__).resolve().parent.parent
-ONCORAG_DEFAULT = "/Volumes/exp/geneplu_work/1.skill_tijian/28.project_tijian/oncoRAG"
-ARCHIVES_DEFAULT = str(SKILL_ROOT / "output")
+ARCHIVES_DEFAULT = None  # v0.1.4: resolved at runtime → cwd/output or CANCERRISK_OUTPUT_DIR env (sandbox-friendly; not the read-only skill package)
 EVIDENCE_STORE = SKILL_ROOT / "references" / "database" / "cancerrisk" / "json"
 PERSON_ID_DEFAULT = "test-person-001"
 CONFIG_DEFAULT = str(SKILL_ROOT / "config" / "formal.yaml")
@@ -48,11 +47,6 @@ STOP_AFTER_CHOICES = [
 ]
 
 
-def run(cmd):
-    print("[run]", " ".join(cmd))
-    subprocess.run(cmd, check=True)
-
-
 def write_json(path: Path, payload: dict):
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(json.dumps(payload, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
@@ -70,6 +64,19 @@ def _supported_input_names(input_path: Path) -> set[str]:
             and p.suffix.lower() in SUPPORTED_INPUT_EXTENSIONS
         }
     return set()
+
+
+def _resolve_archives_root(args_archives_root: str | None) -> str:
+    """v0.1.4: sandbox-friendly archive root. Default to cwd/output (NOT the
+    read-only skill package) so WorkBuddy/QwenPaw sandboxes can write; the
+    CANCERRISK_OUTPUT_DIR env var overrides (platform-injected). Explicit
+    --archives-root always wins."""
+    if args_archives_root:
+        return args_archives_root
+    env_out = os.environ.get("CANCERRISK_OUTPUT_DIR")
+    if env_out:
+        return str(Path(env_out).expanduser().resolve())
+    return str(Path.cwd() / "output")
 
 
 def _manifest_matches_input(manifest: dict, input_path: Path) -> bool:
@@ -368,7 +375,6 @@ def main():
     parser.add_argument("--analysis-output", dest="output_dir")
     parser.add_argument("--config", default=CONFIG_DEFAULT)
     parser.add_argument("--stop-after", choices=STOP_AFTER_CHOICES, default=None)
-    parser.add_argument("--evidence-source", default=ONCORAG_DEFAULT)
     parser.add_argument("--archives-root", default=ARCHIVES_DEFAULT)
     parser.add_argument("--person-id", default=PERSON_ID_DEFAULT)
     parser.add_argument("--answers", default=None)
@@ -392,14 +398,21 @@ def main():
     if not args.output_dir:
         parser.error("either --output-dir or --analysis-output is required")
 
+    # v0.1.4: sandbox-friendly archive root resolution. Default to cwd/output
+    # (NOT the read-only skill package) so WorkBuddy/QwenPaw sandboxes can write.
+    # CANCERRISK_OUTPUT_DIR env overrides (platform-injected). Explicit
+    # --archives-root always wins.
+    archives_root_explicit = bool(args.archives_root)
+    args.archives_root = _resolve_archives_root(args.archives_root)
+
     # Production-safety warnings on default values. We don't block here so
     # tests / smoke runs stay frictionless, but the operator and audit log
     # both see the warning before downstream stages write archive entries.
-    if args.archives_root == ARCHIVES_DEFAULT:
+    if not archives_root_explicit:
         print(
             f"[orchestrator] WARNING: --archives-root not provided; defaulting to "
-            f"'{ARCHIVES_DEFAULT}' next to SKILL.md. Use --archives-root "
-            f"only for explicit test fixtures.",
+            f"'{args.archives_root}' (cwd-relative for sandbox portability). "
+            f"Pass --archives-root or set CANCERRISK_OUTPUT_DIR for explicit control.",
             file=sys.stderr,
         )
     if args.person_id == PERSON_ID_DEFAULT:
