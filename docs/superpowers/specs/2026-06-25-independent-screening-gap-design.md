@@ -8,7 +8,7 @@
 
 本功能遵循项目既定的“脚本与 LLM 分工”：
 
-- **脚本确定性计算**：仅用于贝叶斯后验概率、VoI、价格等已有数值计算。
+- **脚本确定性计算**：仅用于贝叶斯后验概率、检测性能读取、价格等已有数值处理。
 - **LLM + 知识库判断**：用于异常解读、筛查推荐、缺口识别、时间周期判断、检查项目归并和去重、患者面向文案。
 - **脚本 PUA 门控**：用于检查阶段是否执行、输入输出是否齐全、schema 是否正确、知识库证据能否追溯、交互回答是否完整、最终结果是否违反已确认规则。
 
@@ -49,13 +49,13 @@ A 癌症风险筛查 > B 其他异常复查 > C 周期性筛查管理
 
 ## 3. 独立推荐筛查检查点
 
-新增 **CP5 推荐筛查分析与缺口确认**。CP5 位于健康总结结构化、快照式癌症风险和 VoI 完成之后，最终报告 section artifact 生成之前，不与 CP2 合并。
+新增 **CP5 推荐筛查分析与缺口确认**。CP5 位于健康总结结构化和快照式癌症风险完成之后，最终报告 section artifact 生成之前，不与 CP2 合并。
 
 ```text
 CP2 风险因素问诊
   → CP3 证据填充与审计
   → CP4 健康总结结构化
-  → snapshot + VoI
+  → snapshot
   → CP5A LLM 生成 A/B，并分析周期性筛查缺口
   → CP5A LLM 去重，生成独立缺口问卷
   → 用户逐项回答
@@ -70,7 +70,7 @@ CP2 风险因素问诊
 --stop-after screening-gap
 ```
 
-运行到该 stop point 后，pipeline 必须已经产出健康总结、snapshot、VoI、人口学和可用档案上下文。agent 随后执行 CP5A，而不是由脚本直接生成缺口候选。
+运行到该 stop point 后，pipeline 必须已经产出健康总结、snapshot、人口学和可用档案上下文。agent 随后执行 CP5A，而不是由脚本直接生成缺口候选。
 
 ## 4. CP5A：LLM 分析与生成独立问题
 
@@ -324,7 +324,21 @@ CP5 最终结果作为这些 artifact 的上游约束：
 
 不新增用于自动计算推荐的常规筛查 JSON 规则库。
 
-## 10. 测试与评估
+## 10. VoI 功能剔除
+
+当前权威模板 `templates/integrated_report_temp.html` 不消费 VoI 排名、分数、首选建议或评估方法数。VoI 也不参与 A/B/C 推荐和套餐生成，因此完整移除：
+
+- pipeline 不再调用 `voi_calculator.py`，不再产出 `voi_ranking.json`；
+- `report.json` 删除 `voi` 字段；
+- `build_report_json.py` 不再读取 VoI；
+- 液体活检综合敏感性和特异性改从 `references/database/cancerrisk/json/detection_performance.json` 的 `jizaoan_multi_cancer_screening_overall` 权威记录读取；
+- 删除 `scripts/voi_calculator.py`、`references/database/cancerrisk/json/voi_parameters.json` 及对应索引；
+- 删除已停用且仍消费 VoI 的 `templates/integrated_report_v14.html` 及其专属测试；
+- 从 `SKILL.md`、runtime reference、risk reference、产物清单和审计文本中删除 VoI。
+
+VoI 移除不得改变贝叶斯后验、吉早安 LR 路径、液体活检性能展示或套餐价格计算。
+
+## 11. 测试与评估
 
 测试重点是 PUA 是否阻止 LLM 跳步或输出不一致，而不是测试脚本能否代替 LLM 推荐：
 
@@ -343,6 +357,10 @@ CP5 最终结果作为这些 artifact 的上游约束：
 13. `timeline_tiers.maintain` 与 CP5 最终 C 不一致时阻断。
 14. 无候选时仍需存在空问卷和空最终 C。
 15. 现有全量测试无回归。
+16. pipeline 不再导入或执行 VoI。
+17. `report.json` 不包含 `voi`。
+18. 液体活检性能从 `detection_performance.json` 回填 81.9% / 99.0%。
+19. 仓库生产代码、权威模板和运行文档无 VoI 残余引用。
 
 技能效果评估使用接近真实档案的测试提示，至少覆盖：
 
