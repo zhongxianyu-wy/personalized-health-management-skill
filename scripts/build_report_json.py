@@ -339,9 +339,46 @@ def assemble_report_json(
         "evidence_version": evidence_version,
     }
 
+    # v2.0.0: 剥离 scaffolder 的 _scaffold/_pending/_imbalance_flag 标记（不进 report.json），
+    # 并汇总未补文案提示（agent 漏补 rationale/note/clinical_value 时 stderr 警告，非阻断）。
+    _all_pending: list[str] = []
+    for _k in ("timeline_tiers", "x_addons", "package_tiers", "liquid_biopsy_perf", "long_term_intervention"):
+        report[_k], _notes = _strip_scaffold_markers(report[_k])
+        _all_pending += [f"{_k}: {n}" for n in _notes]
+    if _all_pending:
+        print(
+            "[report] ⚠ 部分 section artifact 仍带 _pending（agent 未补文案）："
+            + "; ".join(_all_pending[:6]),
+            file=sys.stderr,
+        )
+
     _check_section_artifacts(report)
     _atomic_write_json(artifacts / "report.json", report)
     return report
+
+
+def _strip_scaffold_markers(obj: Any) -> tuple[Any, list[str]]:
+    """v2.0.0: 剥离 scaffolder 的 ``_`` 前缀标记（_scaffold/_pending/_imbalance_flag 等），
+    使其不进 report.json（模板不消费它们，留着只是噪音）。返回 (cleaned_obj, pending_notes)：
+    pending_notes 汇总 ``_pending`` 内容，供上层警告「agent 未补文案」。"""
+    notes: list[str] = []
+
+    def _clean(o: Any) -> Any:
+        if isinstance(o, dict):
+            out: dict[str, Any] = {}
+            for k, v in o.items():
+                if k == "_pending" and v:
+                    notes.extend(v if isinstance(v, list) else [str(v)])
+                elif k.startswith("_"):
+                    continue
+                else:
+                    out[k] = _clean(v)
+            return out
+        if isinstance(o, list):
+            return [_clean(i) for i in o]
+        return o
+
+    return _clean(obj), notes
 
 
 def _check_section_artifacts(report: dict[str, Any]) -> None:

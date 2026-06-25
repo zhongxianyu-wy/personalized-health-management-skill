@@ -1256,17 +1256,26 @@ def main():
         return
 
     if args.stop_after == "report-artifacts":
+        # v2.0.0: 先跑确定性骨架生成器，产 5 section artifact 骨架（数值/分类/结构脚本算，
+        # 文案留空 _pending）。agent 只补 rationale/note/clinical_hint 文案，不再从零产。
+        try:
+            import build_section_artifacts as scaf
+            scaf.run(
+                artifacts=artifacts,
+                answers_path=Path(args.answers) if args.answers else None,
+                skill_root=SKILL_ROOT,
+            )
+        except Exception as exc:  # 骨架生成不得阻断 report-artifacts
+            print(f"[report-artifacts] ⚠ scaffolder skipped ({exc})", file=sys.stderr)
         print(
-            "[stop-after=report-artifacts] snapshot/VoI/archive done. The skill "
-            "agent must now produce the 5 section artifacts per SKILL.md "
-            "'报告 section artifact (temp 模版)' recipe, then re-run WITHOUT "
-            "--stop-after to render report.html:\n"
-            "  timeline_tiers.json / x_addons.json / package_tiers.json / "
-            "liquid_biopsy_perf.json / long_term_intervention.json\n"
-            "  (into <out>/artifacts/). These are NOT produced by any script — "
-            "without them the temp template's 5 core sections render empty."
+            "[stop-after=report-artifacts] snapshot/VoI/archive done + 5 section "
+            "artifact 骨架已生成（build_section_artifacts.py，数值/分类脚本填好）。"
+            "agent 现在只需补各 artifact 里 _pending 标记的文案字段（rationale / note / "
+            "clinical_value），并按需调整结构（如 timeline 均衡、package 档3 替换标注），"
+            "然后不带 --stop-after 重跑渲染 report.html。"
         )
         return
+
 
     # --- P1 Task 9: single integrated report ----------------------------
     # tumor_markers.json is already materialized above (master_scan.gate_tumor_markers

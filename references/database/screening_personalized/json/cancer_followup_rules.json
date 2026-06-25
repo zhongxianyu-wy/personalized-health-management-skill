@@ -1,0 +1,280 @@
+{
+  "schema_version": "cancer-followup-rules-v1",
+  "source": "references/database/screening_personalized/md/癌症风险分层与复查规则.md",
+  "source_version": "2.0.0 (2026-04-09)",
+  "last_updated": "2026-06-25",
+  "note": "从源 MD 机械编译的确定性查表（cancer_id × risk_tier → 复查周期+方法；可疑发现代号 → 复查；阳性 → MDT）。v2.0.0 build_section_artifacts.py 用它生成 timeline_tiers 骨架。文案/措辞留 LLM，本表只含数值与结构。",
+
+  "risk_tiers": {
+    "very_low":  {"label": "极低风险", "max_posterior": 0.001},
+    "low":       {"label": "低风险",   "max_posterior": 0.005},
+    "medium":    {"label": "中等风险", "max_posterior": 0.02},
+    "high":      {"label": "高风险",   "max_posterior": 0.05},
+    "very_high": {"label": "极高风险", "max_posterior": 1.0}
+  },
+
+  "timeline_thresholds": {
+    "priority":  {"window": "1-2 周内",  "min_posterior": 0.01,  "condition": "health_summary 较严重 OR 癌症后验 > 1%"},
+    "important": {"window": "1 个月内",  "min_posterior": 0.005, "max_posterior": 0.01, "condition": "health_summary 中等风险 OR 癌症后验 0.5%-1%"},
+    "maintain":  {"window": "3-6 个月内", "condition": "筛查缺口（指南应到年限但未检测）"}
+  },
+
+  "cancers": {
+    "lung_cancer": {
+      "screening_age": [50, 75],
+      "tier_followup": {
+        "very_low":  {"months": 36, "method": "年度体检"},
+        "low":       {"months": 24, "method": "LDCT"},
+        "medium":    {"months": 12, "method": "LDCT"},
+        "high":      {"months": 6,  "method": "LDCT"},
+        "very_high": {"months": 3,  "method": "LDCT+增强CT"}
+      },
+      "finding_followup": {
+        "nodule_lt_5mm":   {"months": 12, "method": "LDCT随访"},
+        "nodule_5_8mm":    {"months": 6,  "method": "LDCT随访，必要时增强CT"},
+        "nodule_gt_8mm":   {"months": 3,  "method": "增强CT/PET-CT，考虑活检"},
+        "nodule_growing":  {"months": 1,  "method": "增强CT，建议穿刺活检"}
+      },
+      "positive": {"months": 1, "method": "多学科会诊(MDT)，手术/放化疗评估"}
+    },
+
+    "liver_cancer": {
+      "screening_age": [35, 75],
+      "tier_followup": {
+        "very_low":  {"months": 24, "method": "年度体检"},
+        "low":       {"months": 12, "method": "腹部超声+AFP"},
+        "medium":    {"months": 6,  "method": "腹部超声+AFP"},
+        "high":      {"months": 6,  "method": "腹部超声+AFP，每年增强CT/MRI"},
+        "very_high": {"months": 3,  "method": "腹部超声+AFP+增强MRI"}
+      },
+      "finding_followup": {
+        "afp_elevated":    {"months": 3, "method": "增强CT/MRI"},
+        "us_suspicious":   {"months": 1, "method": "增强MRI(Gd-EOB-DTPA)"},
+        "both_abnormal":   {"months": 1, "method": "增强MRI+肝穿刺活检"}
+      },
+      "positive": {"months": 1, "method": "MDT，手术/介入治疗评估"}
+    },
+
+    "gastric_cancer": {
+      "screening_age": [40, 75],
+      "tier_followup": {
+        "very_low":  {"months": 60, "method": "无需常规胃镜"},
+        "low":       {"months": 36, "method": "胃镜"},
+        "medium":    {"months": 24, "method": "胃镜"},
+        "high":      {"months": 12, "method": "胃镜+活检"},
+        "very_high": {"months": 6,  "method": "胃镜+放大内镜"}
+      },
+      "finding_followup": {
+        "atrophic_gastritis":      {"months": 12, "method": "胃镜+活检随访"},
+        "intestinal_metaplasia":   {"months": 12, "method": "胃镜+放大+活检"},
+        "low_grade_dysplasia":     {"months": 6,  "method": "胃镜+活检，考虑ESD"},
+        "high_grade_dysplasia":    {"months": 1,  "method": "ESD/外科切除"}
+      },
+      "positive": {"months": 1, "method": "MDT，ESD/手术评估"}
+    },
+
+    "esophageal_cancer": {
+      "screening_age": [40, 75],
+      "tier_followup": {
+        "very_low":  {"months": 60, "method": "无需常规内镜"},
+        "low":       {"months": 36, "method": "食管内镜"},
+        "medium":    {"months": 24, "method": "食管内镜+碘染色"},
+        "high":      {"months": 12, "method": "食管内镜+碘染色"},
+        "very_high": {"months": 6,  "method": "食管内镜+碘染色+活检"}
+      },
+      "finding_followup": {
+        "mild_dysplasia":     {"months": 12, "method": "内镜+活检随访"},
+        "moderate_dysplasia": {"months": 6,  "method": "内镜+活检，考虑ESD"},
+        "severe_dysplasia":   {"months": 1,  "method": "ESD/外科切除"}
+      },
+      "positive": {"months": 1, "method": "MDT，ESD/手术评估"}
+    },
+
+    "colorectal_cancer": {
+      "screening_age": [40, 75],
+      "tier_followup": {
+        "very_low":  {"months": 120, "method": "10年后复查肠镜"},
+        "low":       {"months": 60,  "method": "5年后复查肠镜"},
+        "medium":    {"months": 36,  "method": "3年后复查肠镜"},
+        "high":      {"months": 12,  "method": "每年肠镜"},
+        "very_high": {"months": 6,   "method": "每半年肠镜"}
+      },
+      "finding_followup": {
+        "hyperplastic_polyp":     {"months": 60, "method": "5年后复查肠镜"},
+        "small_adenoma_1_2":      {"months": 36, "method": "3年后复查肠镜"},
+        "advanced_adenoma":       {"months": 12, "method": "1年后复查肠镜"},
+        "high_grade_dysplasia":   {"months": 3,  "method": "EMR/ESD切除后3月复查"}
+      },
+      "positive": {"months": 1, "method": "MDT，手术评估"}
+    },
+
+    "breast_cancer": {
+      "screening_age": [35, 75],
+      "tier_followup": {
+        "very_low":  {"months": 24, "method": "乳腺超声"},
+        "low":       {"months": 12, "method": "乳腺超声"},
+        "medium":    {"months": 12, "method": "乳腺超声+钼靶"},
+        "high":      {"months": 6,  "method": "乳腺超声+钼靶，考虑MRI"},
+        "very_high": {"months": 6,  "method": "乳腺超声+钼靶+MRI"}
+      },
+      "finding_followup": {
+        "birads_3":      {"months": 6,   "method": "短期随访超声"},
+        "birads_4a":     {"months": 1,   "method": "穿刺活检"},
+        "birads_4b_4c":  {"months": 1,   "method": "穿刺活检"},
+        "birads_5":      {"months": 0.5, "method": "立即穿刺活检"}
+      },
+      "positive": {"months": 1, "method": "MDT，手术评估"}
+    },
+
+    "cervical_cancer": {
+      "screening_age": [25, 65],
+      "tier_followup": {
+        "very_low":  {"months": 60, "method": "5年后TCT+HPV联合筛查"},
+        "low":       {"months": 36, "method": "3年后TCT+HPV联合筛查"},
+        "medium":    {"months": 12, "method": "每年TCT+HPV"},
+        "high":      {"months": 12, "method": "每年TCT+HPV，考虑阴道镜"},
+        "very_high": {"months": 6,  "method": "每半年TCT+HPV+阴道镜"}
+      },
+      "finding_followup": {
+        "ascus_hpv_neg": {"months": 12, "method": "1年后复查TCT+HPV"},
+        "ascus_hpv_pos": {"months": 3,  "method": "阴道镜+活检"},
+        "lsil":          {"months": 6,  "method": "阴道镜+活检"},
+        "hsil":          {"months": 1,  "method": "阴道镜+活检+ECC"}
+      },
+      "positive": {"months": 1, "method": "锥切/LEEP，MDT评估"}
+    },
+
+    "prostate_cancer": {
+      "screening_age": [50, 75],
+      "tier_followup": {
+        "very_low":  {"months": 48, "method": "每4年PSA"},
+        "low":       {"months": 24, "method": "每2年PSA"},
+        "medium":    {"months": 12, "method": "每年PSA+DRE"},
+        "high":      {"months": 6,  "method": "每半年PSA+f-PSA"},
+        "very_high": {"months": 3,  "method": "PSA+MRI"}
+      },
+      "finding_followup": {
+        "psa_4_10":   {"months": 3, "method": "f-PSA比值+前列腺MRI"},
+        "psa_gt_10":  {"months": 1, "method": "前列腺MRI+穿刺活检"},
+        "pirads_3":   {"months": 3, "method": "MRI随访或穿刺活检"},
+        "pirads_4_5": {"months": 1, "method": "经直肠/经会阴穿刺活检"}
+      },
+      "positive": {"months": 1, "method": "MDT，手术/放疗评估"}
+    },
+
+    "bladder_cancer": {
+      "screening_age": [40, 75],
+      "tier_followup": {
+        "very_low":  {"months": 36, "method": "年度体检"},
+        "low":       {"months": 24, "method": "尿常规+超声"},
+        "medium":    {"months": 12, "method": "尿常规+超声+尿细胞学"},
+        "high":      {"months": 6,  "method": "尿细胞学+超声"},
+        "very_high": {"months": 6,  "method": "膀胱镜+尿细胞学"}
+      },
+      "finding_followup": {
+        "microscopic_hematuria": {"months": 6, "method": "尿细胞学+超声复查"},
+        "gross_hematuria":       {"months": 1, "method": "膀胱镜+CTU"},
+        "cytology_abnormal":     {"months": 1, "method": "膀胱镜+活检"}
+      },
+      "positive": {"months": 1, "method": "TURBT+MDT评估"}
+    },
+
+    "ovarian_cancer": {
+      "screening_age": [35, 75],
+      "tier_followup": {
+        "very_low":  {"months": 24, "method": "年度妇科检查"},
+        "low":       {"months": 12, "method": "经阴道超声+CA125"},
+        "medium":    {"months": 12, "method": "经阴道超声+CA125"},
+        "high":      {"months": 6,  "method": "经阴道超声+CA125+HE4"},
+        "very_high": {"months": 6,  "method": "经阴道超声+CA125+HE4+盆腔MRI"}
+      },
+      "finding_followup": {
+        "ca125_elevated":       {"months": 3,   "method": "经阴道超声+CA125+HE4复查"},
+        "adnexal_mass_simple":  {"months": 6,   "method": "超声随访"},
+        "adnexal_mass_complex": {"months": 1,   "method": "盆腔MRI+ROMA评估"},
+        "ascites":              {"months": 0.5, "method": "紧急评估，腹腔镜探查"}
+      },
+      "positive": {"months": 1, "method": "MDT，手术分期评估"}
+    },
+
+    "kidney_cancer": {
+      "screening_age": [40, 75],
+      "tier_followup": {
+        "very_low":  {"months": 36, "method": "年度体检"},
+        "low":       {"months": 24, "method": "腹部超声"},
+        "medium":    {"months": 12, "method": "腹部超声"},
+        "high":      {"months": 12, "method": "腹部超声+增强CT"},
+        "very_high": {"months": 6,  "method": "增强CT/MRI"}
+      },
+      "finding_followup": {
+        "small_mass_lt_1cm": {"months": 12, "method": "超声随访"},
+        "mass_1_4cm":        {"months": 3,  "method": "增强CT/MRI评估"},
+        "mass_gt_4cm":       {"months": 1,  "method": "增强CT+MDT"}
+      },
+      "positive": {"months": 1, "method": "MDT，手术评估"}
+    },
+
+    "head_neck_cancer": {
+      "screening_age": [30, 75],
+      "tier_followup": {
+        "very_low":  {"months": 36, "method": "年度体检"},
+        "low":       {"months": 24, "method": "鼻咽镜+EBV-DNA"},
+        "medium":    {"months": 12, "method": "鼻咽镜+EBV-DNA"},
+        "high":      {"months": 6,  "method": "鼻咽镜+EBV-DNA+增强MRI"},
+        "very_high": {"months": 6,  "method": "鼻咽镜+EBV-DNA+增强MRI"}
+      },
+      "finding_followup": {
+        "ebv_elevated":          {"months": 3, "method": "鼻咽镜+EBV-DNA复查"},
+        "nasopharyngeal_lesion": {"months": 1, "method": "活检+增强MRI"}
+      },
+      "positive": {"months": 1, "method": "MDT，放化疗评估"}
+    },
+
+    "biliary_tract_cancer": {
+      "screening_age": [40, 75],
+      "tier_followup": {
+        "very_low":  {"months": 24, "method": "年度体检"},
+        "low":       {"months": 12, "method": "腹部超声+CA19-9"},
+        "medium":    {"months": 12, "method": "腹部超声+CA19-9"},
+        "high":      {"months": 6,  "method": "超声+CA19-9+MRCP"},
+        "very_high": {"months": 6,  "method": "MRCP+增强CT/MRI"}
+      },
+      "finding_followup": {
+        "ca199_elevated":     {"months": 3, "method": "增强CT/MRI+MRCP"},
+        "bile_duct_dilation": {"months": 1, "method": "MRCP+考虑ERCP"},
+        "gallbladder_mass":   {"months": 1, "method": "增强CT+MDT评估"}
+      },
+      "positive": {"months": 1, "method": "MDT，手术评估"}
+    },
+
+    "pancreatic_cancer": {
+      "screening_age": [40, 75],
+      "tier_followup": {
+        "very_low":  {"months": 24, "method": "年度体检"},
+        "low":       {"months": 12, "method": "腹部超声+CA19-9"},
+        "medium":    {"months": 12, "method": "腹部超声+CA19-9"},
+        "high":      {"months": 6,  "method": "EUS/增强CT+CA19-9"},
+        "very_high": {"months": 6,  "method": "EUS+增强CT+CA19-9"}
+      },
+      "finding_followup": {
+        "ca199_elevated": {"months": 3, "method": "胰腺增强CT+EUS"},
+        "pancreas_cyst":  {"months": 6, "method": "EUS随访，必要时EUS-FNA"},
+        "pancreas_mass":  {"months": 1, "method": "增强CT+EUS-FNA"}
+      },
+      "positive": {"months": 1, "method": "MDT，手术评估(可切除性)"}
+    },
+
+    "thyroid_cancer": {
+      "screening_age": [30, 75],
+      "tier_followup_note": "甲状腺按 TI-RADS 分级驱动，非 5 档风险表；见 finding_followup。",
+      "tier_followup": {},
+      "finding_followup": {
+        "thyroid_tirads_3":     {"months": 12, "method": "甲状腺超声随访"},
+        "thyroid_tirads_4a":    {"months": 3,  "method": "FNA穿刺活检"},
+        "thyroid_tirads_4b_4c": {"months": 1,  "method": "FNA+手术评估"},
+        "thyroid_tirads_5":     {"months": 1,  "method": "手术切除"}
+      },
+      "positive": {"months": 1, "method": "MDT，手术评估（甲状腺切除+淋巴结清扫）"}
+    }
+  }
+}
