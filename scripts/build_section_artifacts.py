@@ -109,9 +109,12 @@ def build_timeline(snapshot: dict, answers: dict, health: dict, rules: dict) -> 
         months = followup.get("months")
         interval = f"{months}月内" if months else "按指南复查"
         item = {"item_name": f"{method}（{name}）", "interval": interval, "rationale": "", "cancer_id": cid}
-        if (post is not None and post > 0.01) or severe == "severe":
+        # 癌种项按后验阈值分档（priority>1% / important 0.5%-1%）。
+        # 注：health 严重/中等维度驱动的是「健康异常发现项」（需 abnormal_followup_map，P2），
+        # 不应套到每个癌种——否则 medium 会把低后验癌全推进 important（误分）。
+        if post is not None and post > 0.01:
             priority.append(item)
-        elif post is not None and post >= 0.005 or severe == "medium":
+        elif post is not None and 0.005 <= post <= 0.01:
             important.append(item)
 
     # maintain: 筛查缺口（问诊答「未做过」的筛查项）
@@ -201,15 +204,17 @@ def build_package(snapshot: dict, answers: dict, person: dict, pricing: dict, ru
     tier3_includes = [m for m in tier2_includes]  # 简化：未被替代项 = tier2（agent 标注哪些被吉早安替代）
     tier3_includes_all = list(tier2_includes)
 
-    # recommended（套餐 MD 风险驱动）：任一 high/遗传/吉早安阳性→档3；任一 medium/≥45/家族/异常→档2；否则档1
+    # recommended：档2（全面覆盖）是默认推荐；档3（吉早安档）仅在吉早安阳性时推荐
+    # （否则推荐一个用户未做的吉早安档不合理）；全低风险+年轻+无家族史→档1。
+    # agent 可按个体在 note 里改推荐（scaffold 只给确定性默认）。
     age = person.get("age")
-    genetic = brca_positive = str(answers.get("q_has_genetic_mutation", "")).lower() == "yes"
+    genetic = str(answers.get("q_has_genetic_mutation", "")).lower() == "yes"
     family = str(answers.get("q_family_history_cancer", "")).lower() == "yes"
     jizaoan_pos = str(answers.get("q_jizaoan_result", "")).lower() == "positive"
-    if any_high or genetic or jizaoan_pos:
-        rec = 2  # 档3（index 2）
-    elif med_methods or (age and age >= 45) or family or gaps:
-        rec = 1  # 档2
+    if jizaoan_pos:
+        rec = 2  # 档3（吉早安阳性→吉早安档）
+    elif med_methods or any_high or (age and age >= 45) or family or gaps or genetic:
+        rec = 1  # 档2（默认推荐，覆盖多数中/高风险）
     else:
         rec = 0  # 档1
 
@@ -237,9 +242,10 @@ def build_x_addons(snapshot: dict, health: dict, pricing: dict, rules: dict) -> 
         name = s.get("cancer_name_zh", cid)
         t5 = _risk_tier_5(post, rules)
         fu = (rules.get("cancers", {}).get(cid, {}) or {}).get("tier_followup", {}).get(t5) or {}
-        if post > 0.01 or severe == "severe":
+        # tag 按后验阈值（>1% danger / 0.5-1% warning / 余 info）。health 严重度驱动健康异常项（P2）。
+        if post > 0.01:
             tag, label = "danger", "高风险"
-        elif post >= 0.005 or severe == "medium":
+        elif 0.005 <= post <= 0.01:
             tag, label = "warning", "中等风险"
         else:
             tag, label = "info", "关注"
