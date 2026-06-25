@@ -27,11 +27,11 @@ def _section(text: str, header: str) -> str:
 
 
 def test_output_contract_is_single_report():
-    contract = _section(_text(), "Output Contract")
+    contract = _section(_text(), "产物")
     assert "report.html" in contract
     assert "report.json" in contract
     for old in OLD_HTML:
-        assert old not in contract, f"retired deliverable {old} still in Output Contract"
+        assert old not in contract, f"retired deliverable {old} still in 产物"
 
 
 def test_no_retired_html_anywhere():
@@ -41,7 +41,8 @@ def test_no_retired_html_anywhere():
 
 
 def test_pipeline_stages_lists_integrated_report():
-    stages = _section(_text(), "Pipeline Stages")
+    # Minimal Workflow 末步产出 report.html（单一综合报告，非退役多 HTML）
+    stages = _section(_text(), "Minimal Workflow")
     assert "report.html" in stages
 
 
