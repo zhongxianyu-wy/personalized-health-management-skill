@@ -24,11 +24,13 @@ import _env_bootstrap  # noqa: F401 — 跨runtime环境自检(PYTHONHOME/UTF-8)
 
 import argparse
 import json
+import re
 from pathlib import Path
 from typing import Any
 
 SKILL_ROOT = Path(__file__).resolve().parent.parent
 RULES_PATH = SKILL_ROOT / "references" / "database" / "screening_personalized" / "json" / "cancer_followup_rules.json"
+ABNORMAL_MAP_PATH = SKILL_ROOT / "references" / "database" / "screening_personalized" / "json" / "abnormal_followup_map.json"
 PRICING_PATH = SKILL_ROOT / "references" / "database" / "pricing" / "json" / "08_pricing.json"
 
 # 筛查缺口题 → 屏幕展示项名（maintain 档来源）
@@ -89,16 +91,88 @@ def _health_severe(health: dict) -> str:
     return "none"
 
 
+def _rating_to_tier(rating: str, abnormal_map: dict) -> str:
+    """风险评级文案（高风险/中度/低/🟠...）→ timeline 三档（priority/important/maintain）。"""
+    r2t = abnormal_map.get("risk_rating_to_tier", {})
+    for k, v in r2t.items():
+        if k in rating:
+            return v
+    return ""
+
+
+def _match_abnormal(text: str, abnormal_map: dict) -> dict | None:
+    """文本关键词匹配 abnormal_followup_map.mappings → 命中的映射（含 followup/price）。"""
+    low = text.lower()
+    for m in abnormal_map.get("mappings", []):
+        if any(kw.lower() in low for kw in m.get("keywords", [])):
+            return m
+    return None
+
+
+def _extract_abnormals(health: dict, abnormal_map: dict) -> list[dict]:
+    """从 health_summary 抽取异常项 + 风险评级，关键词匹配 abnormal_followup_map。
+    数据源：abnormal_table（HTML 表，最结构化）+ core_risk_factors（文本兜底）。
+    返回 [{indicator, tier, followup, price_hint, matched}]——finding-driven 骨架来源，
+    让「异常驱动」画像（无癌后验）也能拿到非空 timeline/x_addons。"""
+    if not isinstance(health, dict) or not abnormal_map:
+        return []
+    ar = health.get("assessment_result") or {}
+    out: list[dict] = []
+    seen: set[str] = set()
+
+    def _add(indicator: str, rating: str, matched: dict | None) -> None:
+        # 去重键：命中 map 则用 map 的 indicator（让 table 与 core_risk_factors 的同一异常合并），
+        # 否则用原始 indicator 文本。
+        key = (matched["indicator"] if matched else indicator).strip()
+        if not key or key in seen:
+            return
+        seen.add(key)
+        display = (matched["indicator"] if matched else indicator).strip()
+        tier = _rating_to_tier(rating, abnormal_map) or (matched.get("default_tier") if matched else "") or "important"
+        out.append({
+            "indicator": display, "tier": tier, "rating": rating,
+            "followup": matched.get("followup", "") if matched else "",
+            "price_hint": matched.get("price_hint", "") if matched else "",
+            "matched": bool(matched),
+        })
+
+    # 1. abnormal_table HTML 行（指标/结果/范围/偏离/风险评级）
+    html = str(ar.get("abnormal_table") or "")
+    for row in re.findall(r"<tr[^>]*>(.*?)</tr>", html, re.S):
+        cells = [re.sub(r"<[^>]+>", "", c).strip() for c in re.findall(r"<td[^>]*>(.*?)</td>", row, re.S)]
+        if not cells:
+            continue
+        indicator = cells[0]
+        rating = cells[4] if len(cells) >= 5 else ""
+        _add(indicator, rating, _match_abnormal(indicator + " " + " ".join(cells), abnormal_map))
+
+    # 2. core_risk_factors 文本兜底（table 没覆盖的异常）
+    for seg in re.split(r"[；;。\n]", str(ar.get("core_risk_factors") or "")):
+        seg = seg.strip()
+        if not seg:
+            continue
+        rating = "高风险" if "高风险" in seg else ("中度风险" if "中度" in seg else ("低风险" if "低风险" in seg else ""))
+        matched = _match_abnormal(seg, abnormal_map)
+        ind = matched["indicator"] if matched else (seg.split("（")[0][:14] or seg[:14])
+        _add(ind, rating, matched)
+
+    return out
+
+
+_TIER_INTERVAL = {"priority": "1-2 周内", "important": "1 个月内", "maintain": "3-6 个月内"}
+_TIER_TAG = {"priority": ("danger", "高风险"), "important": ("warning", "中等风险"), "maintain": ("info", "关注")}
+
+
 # ---------- 5 artifact 骨架 ----------
 
-def build_timeline(snapshot: dict, answers: dict, health: dict, rules: dict) -> dict:
-    """timeline_tiers 骨架：癌后验→三档（priority/important/maintain）+ method/interval。
-    rationale 留空（LLM）。均匀机制：标 _imbalance_flag，agent 决定是否重排。"""
-    cancers = {c["cancer_id"]: c for c in snapshot.get("cancers", []) if isinstance(c, dict) and c.get("cancer_id")}
+def build_timeline(snapshot: dict, answers: dict, health: dict, rules: dict, abnormal_map: dict | None = None) -> dict:
+    """timeline_tiers 骨架：① 癌后验→三档（priority>1%/important 0.5-1%）+ ② 异常驱动项
+    （health_summary 异常→abnormal_followup_map→复查，让「异常驱动」画像也有非空骨架）+
+    ③ 筛查缺口→maintain。rationale 留空（LLM）。均匀机制：标 _imbalance_flag。"""
     section4 = [s for s in snapshot.get("section4_screening", []) if isinstance(s, dict)]
-    severe = _health_severe(health)
     priority, important = [], []
 
+    # ① 癌后验驱动
     for s in section4:
         cid = s.get("cancer_id")
         post = s.get("posterior_probability")
@@ -109,19 +183,31 @@ def build_timeline(snapshot: dict, answers: dict, health: dict, rules: dict) -> 
         months = followup.get("months")
         interval = f"{months}月内" if months else "按指南复查"
         item = {"item_name": f"{method}（{name}）", "interval": interval, "rationale": "", "cancer_id": cid}
-        # 癌种项按后验阈值分档（priority>1% / important 0.5%-1%）。
-        # 注：health 严重/中等维度驱动的是「健康异常发现项」（需 abnormal_followup_map，P2），
-        # 不应套到每个癌种——否则 medium 会把低后验癌全推进 important（误分）。
         if post is not None and post > 0.01:
             priority.append(item)
         elif post is not None and 0.005 <= post <= 0.01:
             important.append(item)
 
-    # maintain: 筛查缺口（问诊答「未做过」的筛查项）
+    # ② 异常驱动（finding-driven）：health_summary 异常 → 复查项，按风险评级分档
+    abnormals = _extract_abnormals(health, abnormal_map or {})
+    for ab in abnormals:
+        method = ab["followup"] or f"{ab['indicator']}复查"
+        item = {"item_name": method, "interval": _TIER_INTERVAL.get(ab["tier"], "1 个月内"),
+                "rationale": "", "_source": "abnormal"}
+        if ab["tier"] == "priority":
+            priority.append(item)
+        elif ab["tier"] == "important":
+            important.append(item)
+
+    # maintain: 筛查缺口 + 异常驱动的 maintain 档
     maintain = []
     for qid, label in _GAP_QUESTIONS.items():
         if str(answers.get(qid, "")).lower() in ("no", "没做过"):
-            maintain.append({"item_name": label, "interval": "3-6 个月内", "rationale": ""})
+            maintain.append({"item_name": label, "interval": _TIER_INTERVAL["maintain"], "rationale": ""})
+    for ab in abnormals:
+        if ab["tier"] == "maintain":
+            maintain.append({"item_name": ab["followup"] or f"{ab['indicator']}复查",
+                             "interval": _TIER_INTERVAL["maintain"], "rationale": "", "_source": "abnormal"})
 
     imbalance = (len(priority) == 0) != (len(important) == 0) and (priority or important)
     return {
@@ -229,12 +315,10 @@ def build_package(snapshot: dict, answers: dict, person: dict, pricing: dict, ru
     return tiers
 
 
-def build_x_addons(snapshot: dict, health: dict, pricing: dict, rules: dict) -> list:
-    """x_addons 部分骨架：从中风险+ 癌生成行，填 risk_level_tag/method/interval/posterior。
-    method/interval 用 rules tier_followup；clinical_value 留空（LLM）。"""
+def build_x_addons(snapshot: dict, health: dict, pricing: dict, rules: dict, abnormal_map: dict | None = None) -> list:
+    """x_addons 骨架：① 中风险+ 癌生成行（risk_level_tag/method/interval/posterior）+
+    ② 异常驱动行（health_summary 异常→abnormal_followup_map）。clinical_value 留空（LLM）。"""
     rows = []
-    severe = _health_severe(health)
-    cancers = {c["cancer_id"]: c for c in snapshot.get("cancers", []) if isinstance(c, dict) and c.get("cancer_id")}
     for s in snapshot.get("section4_screening", []):
         if not isinstance(s, dict):
             continue
@@ -242,13 +326,7 @@ def build_x_addons(snapshot: dict, health: dict, pricing: dict, rules: dict) -> 
         name = s.get("cancer_name_zh", cid)
         t5 = _risk_tier_5(post, rules)
         fu = (rules.get("cancers", {}).get(cid, {}) or {}).get("tier_followup", {}).get(t5) or {}
-        # tag 按后验阈值（>1% danger / 0.5-1% warning / 余 info）。health 严重度驱动健康异常项（P2）。
-        if post > 0.01:
-            tag, label = "danger", "高风险"
-        elif 0.005 <= post <= 0.01:
-            tag, label = "warning", "中等风险"
-        else:
-            tag, label = "info", "关注"
+        tag, label = _TIER_TAG["priority"] if post > 0.01 else (_TIER_TAG["important"] if 0.005 <= post <= 0.01 else _TIER_TAG["maintain"])
         rows.append({
             "risk_source": f"{name}风险", "risk_level_tag": tag, "risk_level_label": label,
             "method": fu.get("method") or (s.get("standard_screening") or [{}])[0].get("method", ""),
@@ -256,6 +334,15 @@ def build_x_addons(snapshot: dict, health: dict, pricing: dict, rules: dict) -> 
             "price_range": "", "clinical_value": "",
             "cancer_name": name, "posterior_probability": round(post, 6) if post else None,
             "_scaffold": True, "_pending": ["risk_source 措辞细化", "clinical_value 文案", "price_range（assemble_package 求）"],
+        })
+    # ② 异常驱动行
+    for ab in _extract_abnormals(health, abnormal_map or {}):
+        tag, label = _TIER_TAG.get(ab["tier"], _TIER_TAG["important"])
+        rows.append({
+            "risk_source": ab["indicator"], "risk_level_tag": tag, "risk_level_label": label,
+            "method": ab["followup"], "interval": _TIER_INTERVAL.get(ab["tier"], "1 个月内"),
+            "price_range": ab["price_hint"], "clinical_value": "",
+            "_scaffold": True, "_pending": ["risk_source 措辞细化", "clinical_value 文案"],
         })
     return rows
 
@@ -270,6 +357,7 @@ def run(artifacts: Path, answers_path: Path | None, skill_root: Path) -> None:
     ans_src = answers_path if answers_path else (art.parent / "answers.json")
     answers = _unwrap_answers(_load(ans_src, {}))
     rules = _load(RULES_PATH, {})
+    abnormal_map = _load(ABNORMAL_MAP_PATH, {})
     pricing = _load(PRICING_PATH, {})
     person = snapshot.get("person_context", {}) if isinstance(snapshot, dict) else {}
 
@@ -281,11 +369,11 @@ def run(artifacts: Path, answers_path: Path | None, skill_root: Path) -> None:
         brca = answers.get("q_genetic_mutations_brca", [])
         brca_status = "positive" if (isinstance(brca, list) and any(b in ("brca1", "brca2") for b in brca)) else "unknown"
 
-    timeline = build_timeline(snapshot, answers, health, rules)
+    timeline = build_timeline(snapshot, answers, health, rules, abnormal_map)
     liquid = build_liquid_biopsy(snapshot, voi, pricing)
     long_term = build_long_term(answers, brca_status)
     package = build_package(snapshot, answers, person, pricing, rules)
-    x_addons = build_x_addons(snapshot, health, pricing, rules)
+    x_addons = build_x_addons(snapshot, health, pricing, rules, abnormal_map)
 
     def _write(name: str, obj: Any) -> None:
         p = art / name
