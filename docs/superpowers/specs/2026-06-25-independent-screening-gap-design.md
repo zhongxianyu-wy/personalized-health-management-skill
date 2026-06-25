@@ -1,180 +1,168 @@
 # 独立周期性筛查缺口确认设计
 
-**版本目标：** 修复 v2.0.1 中 `references/缺口筛查与交互确认.md` 仅被文档引用、未被 pipeline 实际执行的问题。
+**版本目标：** 修复 v2.0.1 中 `references/缺口筛查与交互确认.md` 仅被引用、未在 pipeline 中形成独立执行检查点的问题。
 
 **确认日期：** 2026-06-25
 
-## 1. 目标与验收口径
+## 1. 设计原则
 
-推荐筛查必须按以下三个来源独立生成：
+本功能遵循项目既定的“脚本与 LLM 分工”：
 
-1. **A：癌症风险筛查**
-   - 输入为 `snapshot_risk.json` 的快照式后验结果。
-   - 仅纳入中等风险及以上癌症；超过三个癌种时沿用现有 TOP3 规则。
-2. **B：其他疾病或异常指标复查**
-   - 输入为健康总结结构化结果。
-   - 排除已经由 A 表达的癌症风险，避免同一风险重复展示。
-3. **C：周期性筛查管理**
-   - 根据年龄、性别和适用的指南条件生成应筛项目。
-   - 同时识别两类候选：档案中从无记录；有记录但已超过指南周期。
-   - 在推荐筛查阶段启动独立问卷，不与 CP2 风险因素问诊合并。
-   - 先剔除已经由 A 或 B 推荐的检查项目，再向用户确认。
-   - 只有用户确认未做、结果异常或不清楚的项目进入 C；指南周期内已做且结果正常的项目不推荐。
+- **脚本确定性计算**：仅用于贝叶斯后验概率、VoI、价格等已有数值计算。
+- **LLM + 知识库判断**：用于异常解读、筛查推荐、缺口识别、时间周期判断、检查项目归并和去重、患者面向文案。
+- **脚本 PUA 门控**：用于检查阶段是否执行、输入输出是否齐全、schema 是否正确、知识库证据能否追溯、交互回答是否完整、最终结果是否违反已确认规则。
 
-验收时必须证明：缺口规则由 pipeline 代码实际执行，而不是依赖 agent 阅读参考文档后临时发挥。
+脚本不得新增年龄/性别筛查规则计算器、日期超期判定器或推荐项目自动去重器。脚本可以发现并拒绝不合规结果，但不能替代 LLM 做医学推荐判断。
 
-## 2. 方案选择
+## 2. 推荐筛查三部分
 
-采用“结构化规则 + 确定性候选检测 + 独立交互检查点 + LLM 生成 A/B 文案”的混合方案。
+推荐筛查由 LLM 在同一推荐阶段综合生成，但结果必须明确分为三类：
 
-未采用的方案：
+### A. 癌症风险筛查
 
-- 仅增强 `SKILL.md`：无法保证缺口检测、动态提问和去重实际发生。
-- 把三部分都交给报告阶段 LLM：无法稳定判断超期、规范项目别名或验证回答完整性。
+- 输入：`snapshot_risk.json` 的快照式后验结果。
+- 仅纳入中等风险及以上癌症。
+- 超过三个癌种时沿用现有 TOP3 规则。
+- 推荐方法和周期来自对应癌种筛查知识库。
 
-确定性逻辑负责年龄/性别适用性、日期周期计算、项目 ID 去重、问卷分支和答案过滤；LLM 只负责从知识库生成 A/B 的医学建议和患者面向文案。
+### B. 其他疾病或异常指标复查
 
-## 3. Pipeline 时序
+- 输入：健康总结结构化结果中的癌症外疾病和异常指标。
+- 剔除已由 A 表达的癌症风险及其重复推荐。
+- 推荐方法和周期来自异常指标、慢病及专科筛查知识库。
 
-新增推荐筛查检查点 **CP5**，位于健康总结结构化、快照式癌症风险和 VoI 完成之后，最终五个报告 artifact 生成之前。
+### C. 周期性筛查管理
+
+- 输入：年龄、性别、当前体检资料、历史档案时间线和常规筛查知识库。
+- LLM 识别：
+  - 档案中没有任何相关检查信息；
+  - 有检查记录，但距今已超过指南周期；
+  - 有检查记录，但日期不完整，无法确认是否仍在指南周期内。
+- C 在提出问题前必须剔除已被 A 或 B 推荐的检查项目。
+- 只有独立交互确认后仍需补充或复查的项目进入最终 C。
+
+优先级固定为：
+
+```text
+A 癌症风险筛查 > B 其他异常复查 > C 周期性筛查管理
+```
+
+## 3. 独立推荐筛查检查点
+
+新增 **CP5 推荐筛查分析与缺口确认**。CP5 位于健康总结结构化、快照式癌症风险和 VoI 完成之后，最终报告 section artifact 生成之前，不与 CP2 合并。
 
 ```text
 CP2 风险因素问诊
   → CP3 证据填充与审计
   → CP4 健康总结结构化
   → snapshot + VoI
-  → CP5A 生成 A/B 基础筛查推荐
-  → 脚本计算周期性筛查候选并按 A/B 去重
-  → CP5B 独立缺口问卷
-  → 脚本应用缺口回答并生成 C
-  → 最终五个 section artifact、套餐和报告
+  → CP5A LLM 生成 A/B，并分析周期性筛查缺口
+  → CP5A LLM 去重，生成独立缺口问卷
+  → 用户逐项回答
+  → CP5B LLM 根据回答更新 C 和最终 A/B/C 推荐
+  → PUA 校验
+  → 生成五个报告 artifact、套餐和报告
 ```
 
-CP5 分两次可恢复执行：
+新增 stop point：
 
-1. `--stop-after screening-base`
-   - pipeline 已完成 snapshot、VoI 和健康总结。
-   - agent 读取知识库，生成并校验 A/B 基础推荐。
-2. `--stop-after screening-gap`
-   - pipeline 读取 A/B，执行缺口检测和去重。
-   - 若存在候选，写出独立问卷并停下等待用户回答。
-   - 若无候选，写出空的确认结果并直接允许进入报告 artifact 阶段。
+```text
+--stop-after screening-gap
+```
 
-用户答案通过独立参数 `--screening-gap-answers <file>` 传入，不写入 CP2 的 `answers.json`。
+运行到该 stop point 后，pipeline 必须已经产出健康总结、snapshot、VoI、人口学和可用档案上下文。agent 随后执行 CP5A，而不是由脚本直接生成缺口候选。
 
-## 4. 数据模型
+## 4. CP5A：LLM 分析与生成独立问题
 
-### 4.1 标准检查项目目录
+### 4.1 必读输入
 
-新增 `references/database/screening_general/json/screening_item_catalog.json`：
+LLM 必须读取：
+
+- `artifacts/demographics.json`
+- `artifacts/snapshot_risk.json`
+- `artifacts/health_summary_structured_summary.json`
+- 当前运行的 `content.md` 与 `refined.md`
+- 当前结构化检查产物
+- 可用的历史 `screening_test_timeline.json`
+- `references/缺口筛查与交互确认.md`
+- `references/database/screening_general/md/` 中与年龄、性别匹配的指南
+- `references/database/screening_personalized/md/` 中与 A/B 推荐相关的指南
+
+LLM 必须先检查资料时间线，再判断某项检查是无记录、已超期还是日期不可确认。不能把“报告未突出显示”直接等同于“从未做过”。
+
+### 4.2 反向全文核验
+
+判定缺口前，LLM 必须全文核查 `content.md`、`refined.md` 和历史筛查时间线中的项目名称、常用别名及结果描述。
+
+例如，判断结肠镜缺口前必须检索肠镜、胃肠镜、结肠镜、息肉、病理、切除和 Boston 评分等表达。若已存在相关检查及阳性发现，不得归为“从未做过”。
+
+### 4.3 A/B/C 草案与 LLM 去重
+
+LLM 写出 `artifacts/screening_recommendations_draft.json`：
 
 ```json
 {
-  "schema_version": "screening-item-catalog-v1",
-  "items": [
-    {
-      "screening_item_id": "colorectal_colonoscopy",
-      "display_name": "结肠镜",
-      "aliases": ["肠镜", "结肠镜", "胃肠镜"],
-      "result_aliases": ["息肉", "病理", "切除", "Boston评分"]
-    }
-  ]
-}
-```
-
-项目 ID 是 A/B/C 去重的唯一主键。显示名称或自然语言相同不作为最终去重依据。
-
-### 4.2 年龄性别周期规则
-
-新增 `references/database/screening_general/json/general_screening_rules.json`，由现有筛查指南机械整理：
-
-```json
-{
-  "schema_version": "general-screening-rules-v1",
-  "rules": [
-    {
-      "rule_id": "crc-colonoscopy-standard",
-      "screening_item_id": "colorectal_colonoscopy",
-      "sex": "all",
-      "min_age": 45,
-      "max_age": null,
-      "interval_min_months": 60,
-      "interval_max_months": 120,
-      "eligibility": [],
-      "guideline_source": "03-居民常见恶性肿瘤筛查推荐2025.md",
-      "evidence_text": "45 岁开始 每年 1 次大便隐血检测（FOBT）, 每 10 年 1 次肠镜检查。"
-    }
-  ]
-}
-```
-
-规则必须保留来源和字面证据。区间型指南同时保存最短和最长周期；“已超期”以最长周期为硬阈值，避免把仍处于允许区间内的检查误判为缺口。仅当人口学和已知风险条件满足时生成候选；不得为获取资格条件而把 CP2 问题重复问一遍。
-
-### 4.3 A/B 基础推荐
-
-CP5A 生成 `artifacts/screening_recommendations_base.json`：
-
-```json
-{
-  "schema_version": "screening-recommendations-base-v1",
+  "schema_version": "screening-recommendations-draft-v1",
   "cancer_risk": [
     {
-      "screening_item_id": "lung_ldct",
+      "dedup_key": "lung_ldct",
       "item_name": "低剂量螺旋 CT",
-      "source_id": "lung_cancer",
-      "interval": "1年内",
-      "rationale": "患者面向说明"
+      "source_name": "肺癌风险",
+      "interval": "每年1次",
+      "rationale": "结合当前肺癌风险，建议按指南进行低剂量螺旋 CT 筛查。",
+      "guideline_source": "肺癌筛查指南.md",
+      "evidence_text": "高危人群：**每年1次** LDCT"
     }
   ],
-  "other_abnormalities": [
+  "other_abnormalities": [],
+  "periodic_candidates": [
     {
-      "screening_item_id": "carotid_ultrasound",
-      "item_name": "颈动脉超声",
-      "source_id": "dyslipidemia",
-      "interval": "3个月内",
-      "rationale": "患者面向说明"
+      "dedup_key": "colorectal_colonoscopy",
+      "item_name": "结肠镜",
+      "gap_status": "overdue",
+      "last_known_exam_date": "2014-06-01",
+      "guideline_interval": "每5-10年1次",
+      "rationale": "最近记录已超过指南周期",
+      "guideline_source": "结直肠癌筛查指南.md",
+      "evidence_text": "每5-10年1次结肠镜",
+      "timeline_evidence": "2014-06-01 结肠镜检查"
+    }
+  ],
+  "dedup_audit": [
+    {
+      "dedup_key": "lung_ldct",
+      "removed_from": "periodic_candidates",
+      "kept_in": "cancer_risk",
+      "reason": "该检查已由中等及以上肺癌风险推荐"
     }
   ]
 }
 ```
 
-`screening_item_id` 必须来自项目目录。新增校验器拒绝未知 ID、重复 ID、缺少来源或空建议。A 与 B 重复时保留 A，B 中删除重复项目。
+要求：
 
-### 4.4 缺口候选
+- `dedup_key` 由 LLM 使用稳定、可审计的英文标识填写。
+- A、B、C 草案中不得存在相同 `dedup_key`。
+- A 与 B 重复时保留 A。
+- C 与 A/B 重复时从 C 删除，不生成该项目的缺口问题。
+- 每次删除都写入 `dedup_audit`，不得静默丢弃。
+- `evidence_text` 必须是指定知识库文件的字面子串。
+- `timeline_evidence` 必须来自当前或历史档案原文；无任何记录时允许为空，并把 `gap_status` 设为 `never_recorded`。
 
-脚本生成 `artifacts/screening_gap_candidates.json`：
+`gap_status` 仅允许：
 
-```json
-{
-  "schema_version": "screening-gap-candidates-v1",
-  "candidates": [
-    {
-      "screening_item_id": "colorectal_colonoscopy",
-      "item_name": "结肠镜",
-      "status": "never_recorded",
-      "last_exam_date": null,
-      "interval_min_months": 60,
-      "interval_max_months": 120,
-      "due_date": null,
-      "guideline_source": "03-居民常见恶性肿瘤筛查推荐2025.md",
-      "evidence_text": "45 岁开始 每年 1 次大便隐血检测（FOBT）, 每 10 年 1 次肠镜检查。"
-    }
-  ],
-  "excluded_by_prior_recommendation": []
-}
-```
+- `never_recorded`
+- `overdue`
+- `unverifiable_date`
 
-`status` 仅允许：
+### 4.4 独立缺口问卷
 
-- `never_recorded`：当前报告和历史筛查时间线均无记录。
-- `overdue`：存在最近检查日期，但运行日期已晚于 `last_exam_date + interval_max_months`。
-- `unverifiable_date`：存在检查记录，但没有可用于周期计算的日期。
+LLM 根据去重后的 `periodic_candidates` 写出 `artifacts/screening_gap_questionnaire.json`。
 
-在候选写出前，脚本按项目 ID 删除 A/B 已推荐项目，并把删除原因记录到 `excluded_by_prior_recommendation` 供审计。
+每个候选两步询问：
 
-### 4.5 独立问卷与回答
-
-`artifacts/screening_gap_questionnaire.json` 对每个候选生成两步问题：
+1. 是否在指南周期内做过该检查；
+2. 仅当回答做过时，追问结果正常、异常或不清楚。
 
 ```json
 {
@@ -182,8 +170,8 @@ CP5A 生成 `artifacts/screening_recommendations_base.json`：
   "questions": [
     {
       "question_id": "gap_colorectal_colonoscopy_done",
-      "screening_item_id": "colorectal_colonoscopy",
-      "prompt": "您是否在最近10年内做过结肠镜？",
+      "dedup_key": "colorectal_colonoscopy",
+      "prompt": "根据您的年龄和现有档案，建议每5-10年进行一次结肠镜。您在最近10年内做过吗？",
       "options": [
         {"label": "做过", "value": "done"},
         {"label": "未做过", "value": "not_done"},
@@ -192,12 +180,12 @@ CP5A 生成 `artifacts/screening_recommendations_base.json`：
     },
     {
       "question_id": "gap_colorectal_colonoscopy_result",
-      "screening_item_id": "colorectal_colonoscopy",
+      "dedup_key": "colorectal_colonoscopy",
       "conditional_on": {
         "question_id": "gap_colorectal_colonoscopy_done",
         "value": "done"
       },
-      "prompt": "该项检查结果如何？",
+      "prompt": "该项检查的结果如何？",
       "options": [
         {"label": "正常", "value": "normal"},
         {"label": "异常", "value": "abnormal"},
@@ -208,7 +196,13 @@ CP5A 生成 `artifacts/screening_recommendations_base.json`：
 }
 ```
 
-用户答案保存为独立的 `screening_gap_answers.json`：
+缺口问题必须逐项新启动，不得混入 CP2 的问卷。用户答案独立保存为：
+
+```text
+<out>/screening_gap_answers.json
+```
+
+内容格式：
 
 ```json
 {
@@ -218,113 +212,146 @@ CP5A 生成 `artifacts/screening_recommendations_base.json`：
 }
 ```
 
-校验器要求所有当前可见问题均已回答，不接受从报告推断或预填。
+## 5. CP5B：LLM 根据回答更新最终推荐
 
-### 4.6 确认结果与 C
-
-脚本生成 `artifacts/screening_gap_confirmed.json`：
+LLM 读取草案、独立问卷和用户回答，写出 `artifacts/screening_recommendations_final.json`：
 
 ```json
 {
-  "schema_version": "screening-gap-confirmed-v1",
-  "recommended": [],
+  "schema_version": "screening-recommendations-final-v1",
+  "cancer_risk": [],
+  "other_abnormalities": [],
+  "periodic_management": [],
   "excluded_done_normal": [],
-  "audit": []
+  "dedup_audit": []
 }
 ```
 
-过滤规则：
+回答处理规则：
 
-| 是否做过 | 结果 | 输出 |
+| 是否做过 | 结果 | LLM 处理 |
 |---|---|---|
-| `not_done` | — | 进入 C |
-| `unknown` | — | 进入 C |
-| `done` | `abnormal` | 进入 C，并标记异常复查 |
-| `done` | `unknown` | 进入 C |
-| `done` | `normal` | 排除，写入审计 |
+| `not_done` | — | 纳入 `periodic_management` |
+| `unknown` | — | 纳入 `periodic_management` |
+| `done` | `abnormal` | 纳入 `periodic_management`，改写为异常后复查建议 |
+| `done` | `unknown` | 纳入 `periodic_management` |
+| `done` | `normal` | 从推荐中排除，写入 `excluded_done_normal` |
 
-最终 `timeline_tiers.json.maintain` 只能从 `screening_gap_confirmed.json.recommended` 生成，不允许 agent 绕过确认结果自行增加周期缺口项目。
+CP5B 必须再次检查 A/B/C 的 `dedup_key`，确保最终推荐没有重复。C 最终仅进入 `timeline_tiers.json.maintain`；A/B 根据风险与严重程度进入 priority 或 important。
 
-## 5. 档案和时间线检测
+## 6. PUA 门控范围
 
-缺口检测按以下优先级寻找最近检查记录：
+新增校验脚本只验证，不生成医学判断。
 
-1. 当前运行的所有 `content.md` 与 `refined.md`。
-2. 当前结构化检查产物，包括肿瘤标志物和已识别检查事件。
-3. `output/<person_id>/screening_test_timeline.json` 的历史记录。
+### 6.1 草案校验
 
-匹配使用项目目录中的别名，不依赖单一中文名称。记录必须包含可解析日期才可用于“是否超期”计算；只有项目记录但日期缺失时，生成 `unverifiable_date` 候选，由用户确认最近指南周期内是否做过。
+校验 `screening_recommendations_draft.json`：
 
-胃肠镜、息肉、病理、切除和 Boston 评分等证据必须映射为已做结肠镜，防止已做且有阳性发现被误判为从未检查。
+- 三类字段和 schema 完整；
+- 癌症部分只引用 snapshot 中中等及以上癌症；
+- 每条建议包含知识库来源；
+- `evidence_text` 是来源文件的字面子串；
+- 周期候选包含 gap 状态和档案核验说明；
+- A/B/C 之间没有重复 `dedup_key`；
+- `dedup_audit` 中被删除项目与保留来源一致。
 
-## 6. 去重规则
+校验器发现重复时应拒绝结果并要求 LLM 重做去重，不能自行删除。
 
-统一优先级：
+### 6.2 问卷与回答校验
+
+- 每个周期候选对应一组问题；
+- 已从 C 去重删除的项目不得出现在问卷中；
+- CP2 `answers.json` 不得包含 CP5 问题；
+- CP5 回答不得写入 CP2 文件；
+- 所有当前可见问题必须由用户真实回答；
+- 条件未触发的问题允许不回答。
+
+### 6.3 最终推荐校验
+
+- `done + normal` 项目不得出现在最终 C；
+- `not_done`、`unknown`、`done + abnormal` 和 `done + unknown` 必须有最终处置记录；
+- A/B/C 最终仍不得存在重复 `dedup_key`；
+- C 与问卷候选、用户回答一一对应；
+- `timeline_tiers.maintain` 不得绕过 `screening_recommendations_final.json` 增加项目。
+
+校验器只报告错误并阻断 pipeline，不修改 LLM 输出。
+
+## 7. Pipeline 恢复与退出
+
+新增独立参数：
 
 ```text
-A 癌症风险筛查 > B 其他异常复查 > C 周期性筛查管理
+--screening-gap-answers <file>
 ```
 
-同一 `screening_item_id` 只允许出现在最高优先级来源中：
+新增退出码：
 
-- A 与 B 重复：保留 A。
-- A/B 与 C 重复：候选问卷生成前剔除 C，不向用户询问该项缺口。
-- 同一来源内部重复：合并 `source_id` 和 rationale，不生成两条检查。
+| Code | 条件 | 动作 |
+|---|---|---|
+| 11 | CP5 草案或问卷缺失/校验失败 | 完成或修正 CP5A 后重跑 |
+| 12 | 有缺口问题但独立回答缺失/不完整 | 逐项询问并提供 `--screening-gap-answers` |
+| 13 | CP5 最终推荐缺失或与回答、去重规则不一致 | 完成或修正 CP5B 后重跑 |
 
-去重只影响检查项目展示，不删除原始癌症风险、异常指标或审计证据。
+无周期性候选时，LLM 仍需写出空问卷和空 `periodic_management`，让门控确认 CP5 已实际执行，不能因“看起来没有缺口”而跳过阶段。
 
-## 7. 错误处理和恢复
+## 8. 报告和现有 artifact
 
-| 条件 | 行为 |
-|---|---|
-| A/B artifact 缺失或校验失败 | 停在 `screening-base`，不生成缺口问卷 |
-| 人口学缺失 | 沿用现有 exit 5，禁止猜测年龄或性别 |
-| 指南规则缺来源证据 | 数据库校验失败，禁止进入生产 pipeline |
-| 无周期性候选 | 写空问卷和空确认结果，继续生成报告 |
-| 有候选但未提供独立回答 | 新退出码 11，提示 `--screening-gap-answers` |
-| 回答缺少条件触发题 | 校验失败，保持在 CP5B |
-| 历史记录日期不可解析 | 不直接判定已按期完成，转为用户确认并记录审计原因 |
-| 未知项目 ID | 拒绝 A/B artifact 或规则文件，不做名称模糊兜底 |
+现有报告模板继续使用：
 
-## 8. 报告与兼容性
+- `timeline_tiers.json`
+- `x_addons.json`
+- `package_tiers.json`
+- `liquid_biopsy_perf.json`
+- `long_term_intervention.json`
 
-现有报告模板继续使用 `timeline_tiers` 和 `x_addons`，避免无关模板重构：
+CP5 最终结果作为这些 artifact 的上游约束：
 
-- A/B 继续进入优先执行或重要检查，并作为 X 加项来源。
-- C 只进入 `timeline_tiers.maintain`。
-- 套餐生成读取去重后的 A/B/C 合集。
-- `report.json` 增加 CP5 审计字段，但旧模板不强制渲染该字段。
+- A/B 进入 timeline 的 priority/important 和 X 加项。
+- C 只进入 timeline 的 maintain。
+- 套餐使用去重后的 A/B/C 检查集合。
+- 报告不重复展示相同 `dedup_key` 的检查。
 
-CP2 的问卷、答案和风险因素时间线保持不变。旧的 `--answers` 参数只负责 CP2；新的 `--screening-gap-answers` 只负责 CP5B。
+脚本不根据 CP5 结果自动生成筛查建议或套餐内容，只校验 LLM 产出的 artifact 是否与 CP5 最终结果一致。
 
-## 9. 测试策略
+## 9. 文档和知识库调整
 
-测试必须先失败再实现，覆盖：
+实现时修改：
 
-1. pipeline 暴露 `screening-base` 和 `screening-gap` stop point。
-2. 年龄或性别不适用时不生成候选。
-3. 从无记录生成 `never_recorded`。
-4. 有记录且未超期不生成候选。
-5. 有记录且超期生成 `overdue`。
-6. 日期缺失记录进入用户确认而非直接排除。
-7. 胃肠镜及病理别名识别为结肠镜记录。
-8. A/B 项目在问卷前从 C 剔除。
-9. 两步问卷条件分支正确。
-10. `done + normal` 排除；其余组合进入 C。
-11. 缺回答时退出码为 11，不能继续生成报告。
-12. CP2 `answers.json` 与 CP5B 回答完全隔离。
-13. 最终 `maintain` 不包含 A/B 重复项。
-14. 现有全量测试无回归。
+- `SKILL.md`：新增 CP5 独立流程、输入输出、PUA 和退出码。
+- `references/runtime_workflow.md`：新增 `screening-gap` stop point 和恢复命令。
+- `references/缺口筛查与交互确认.md`：删除 CP2 扩展表述，改为 CP5 LLM 分析与独立交互。
+- `references/database/index.json`：明确常规筛查 MD 由 CP5 按年龄、性别和时间线按需读取。
 
-至少增加一个接近真实档案的端到端 fixture，包含“已做但超期”“从未记录”“已被癌症风险推荐”“已被异常指标推荐”四类项目。
+不新增用于自动计算推荐的常规筛查 JSON 规则库。
 
-## 10. 文档同步
+## 10. 测试与评估
 
-实现时同步修改：
+测试重点是 PUA 是否阻止 LLM 跳步或输出不一致，而不是测试脚本能否代替 LLM 推荐：
 
-- `SKILL.md`：pipeline 阶段数、Minimal Workflow、独立 CP5、退出码和 artifact。
-- `references/runtime_workflow.md`：新增 stop point 和恢复命令。
-- `references/缺口筛查与交互确认.md`：删除“CP2 扩展”表述，改为 CP5 独立检查点。
-- 数据库索引：登记新 JSON 目录和加载方。
+1. pipeline 暴露独立 `screening-gap` stop point。
+2. CP2 与 CP5 问卷、答案完全隔离。
+3. 缺少 CP5 草案时 pipeline 阻断。
+4. 草案缺少知识库证据或字面证据不匹配时阻断。
+5. A/B/C 存在重复 `dedup_key` 时阻断，校验器不自动去重。
+6. 去重删除项仍出现在问卷时阻断。
+7. 周期候选没有时间线核验说明时阻断。
+8. 问卷缺少两步分支时阻断。
+9. 回答缺失或条件触发题未回答时阻断。
+10. `done + normal` 仍进入 C 时阻断。
+11. 应纳入项目没有最终处置记录时阻断。
+12. 最终 A/B/C 重复时阻断。
+13. `timeline_tiers.maintain` 与 CP5 最终 C 不一致时阻断。
+14. 无候选时仍需存在空问卷和空最终 C。
+15. 现有全量测试无回归。
 
-实现完成后，按仓库宪法运行完整测试，并联合执行 `skill-creator` 与 `darwin-skill` 评估；评估不得代替功能测试。
+技能效果评估使用接近真实档案的测试提示，至少覆盖：
+
+- 从未记录的周期检查；
+- 已做但超过指南周期；
+- 已做且仍在周期内；
+- 日期不完整；
+- 已由癌症风险推荐、应从 C 剔除；
+- 已由其他异常指标推荐、应从 C 剔除；
+- 胃肠镜、息肉、病理等非标准名称记录。
+
+实现完成后联合执行 `skill-creator` 与 `darwin-skill` 评估。功能测试和 PUA 门控测试是发布前置条件，评估不能替代测试。
