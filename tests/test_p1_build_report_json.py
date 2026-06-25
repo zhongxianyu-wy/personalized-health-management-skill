@@ -38,15 +38,6 @@ def _snapshot() -> dict:
     }
 
 
-def _voi() -> dict:
-    return {
-        "schema_version": "voi-ranking-v1",
-        "rankings": [{"method": "ldct", "voi_score": 1.2}],
-        "total_methods_evaluated": 3,
-        "top_recommendation": "ldct",
-    }
-
-
 def _health_summary() -> dict:
     return {
         "status": "ready_for_render",
@@ -74,7 +65,6 @@ def artifacts(tmp_path: Path) -> Path:
     art = tmp_path / "artifacts"
     art.mkdir()
     _write(art / "snapshot_risk.json", _snapshot())
-    _write(art / "voi_ranking.json", _voi())
     _write(art / "health_summary_structured_summary.json", _health_summary())
     _write(art / "tumor_markers.json", _tumor_markers())
     return art
@@ -112,7 +102,7 @@ def test_full_schema_keys_present(artifacts: Path, answers_path: Path) -> None:
         "jizaoan_result", "jizaoan_top_cancers", "brca_status",
         "brca_detail", "checkup_window",
         "timeline_tiers", "x_addons", "package_tiers", "liquid_biopsy_perf", "long_term_intervention",
-        "health_summary", "snapshot", "voi", "tumor_markers",
+        "health_summary", "snapshot", "tumor_markers",
         "evidence_version",
     }
     assert set(result.keys()) == expected_keys
@@ -123,10 +113,7 @@ def test_full_schema_keys_present(artifacts: Path, answers_path: Path) -> None:
     assert result["snapshot"]["cancers"] == _snapshot()["cancers"]
     assert result["snapshot"]["section4_screening"] == _snapshot()["section4_screening"]
     assert result["snapshot"]["uncertainties_summary"] == _snapshot()["uncertainties_summary"]
-    # voi copied
-    assert result["voi"]["top_recommendation"] == "ldct"
-    assert result["voi"]["rankings"] == _voi()["rankings"]
-    assert result["voi"]["total_methods_evaluated"] == 3
+    assert "voi" not in result
     # health summary mapped
     assert result["health_summary"]["status"] == "ready_for_render"
     assert result["health_summary"]["abnormal_non_cancer_count"] == 2
@@ -141,14 +128,11 @@ def test_full_schema_keys_present(artifacts: Path, answers_path: Path) -> None:
 def test_missing_optional_files_degrade(tmp_path: Path) -> None:
     art = tmp_path / "artifacts"
     art.mkdir()
-    # No tumor_markers.json AND no candidate; no health summary; no voi/snapshot.
+    # No tumor_markers.json AND no candidate; no health summary or snapshot.
     result = _assemble(art, None)
     assert result["tumor_markers"] == []
     assert result["snapshot"] == {
         "cancers": [], "section4_screening": [], "uncertainties_summary": {},
-    }
-    assert result["voi"] == {
-        "top_recommendation": None, "rankings": [], "total_methods_evaluated": 0,
     }
     # P1 keys preserved; P2 adds `blocks` (CP4 HTML, None when absent).
     assert result["health_summary"]["status"] is None

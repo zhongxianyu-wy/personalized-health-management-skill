@@ -57,10 +57,6 @@
     "screening_recommendations.json": {
       "records": 15,
       "description": "section4 标准筛查"
-    },
-    "voi_parameters.json": {
-      "records": null,
-      "description": "VoI 数学参数"
     }
   },
   "md_files": {
@@ -87,7 +83,6 @@
   },
   "loaded_by": [
     "snapshot_risk.py",
-    "voi_calculator.py",
     "build_assertion_fill_template.py",
     "interactive_completion.py"
   ],

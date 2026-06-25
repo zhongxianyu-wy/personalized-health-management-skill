@@ -19,9 +19,10 @@
 | `cp3-verify` | 触发 CP3.1 审计任务 | **CP3.1**（agent 独立审计） |
 | `risk-factor-gate` | candidate 校验并 merge 后早退 | 调试 |
 | `health-summary-api` | 上游 API 响应就绪 | **CP4**（agent 结构化健康总结） |
+| `screening-gap` | snapshot 完成，待 LLM 执行 CP5 草案、去重和独立缺口问卷 | **CP5** |
 | `archive-proposal` | 归档 proposal 写出并**自动应用** | 调试 |
 | `archive` | 归档自动应用后 | 调试 |
-| `report-artifacts` | snapshot/VoI/归档完成，待 5 section artifact | **报告前**（agent 产 5 JSON） |
+| `report-artifacts` | CP5 校验、snapshot/归档完成，待 5 section artifact | **报告前**（agent 产 5 JSON） |
 | `report` | 最终报告就绪 | 交付 |
 
 > ⚠ `health-summary` / `snapshot` / `longitudinal` **不是**有效 stop point（早期版本残留，已并入 `health-summary-api` / `risk-factor-gate` / `archive`）。
@@ -123,7 +124,7 @@
 
 健康总结结构化输入：`health_summary_api_response.md` + `refined_content_bundle.md` + summary skeleton JSON。用 `scripts/finalize_structured_summary.py`，不手写 JSON。大 HTML 片段放文件，fills JSON 内用 `@path` 引用。保留 `raw_assessment_markdown` 原文。健康总结是 **display-only**——不掺 snapshot 概率 / ontology / OR/LR / 筛查推荐逻辑。
 
-然后跑到 `report-artifacts`，snapshot/VoI/归档**自动完成**。agent 产 5 section artifact（`timeline_tiers.json` / `x_addons.json` / `package_tiers.json` / `liquid_biopsy_perf.json` / `long_term_intervention.json`，落 `<out>/artifacts/`），跑 `assemble_package.py` 求和套餐价格。5 artifact schema 见 `SKILL.md`「报告 section artifact」集中表。
+健康总结结构化后先跑到 `screening-gap`。agent 依据 `缺口筛查与交互确认.md` 产 CP5 draft + 独立问卷，逐项问用户并保存独立答案，再产 CP5 final。带 `--screening-gap-answers` 跑到 `report-artifacts`，CP5 校验、snapshot/归档自动完成。agent 再产 5 section artifact（`timeline_tiers.json` / `x_addons.json` / `package_tiers.json` / `liquid_biopsy_perf.json` / `long_term_intervention.json`）。
 
 ## 归档（自动，无确认步骤）
 

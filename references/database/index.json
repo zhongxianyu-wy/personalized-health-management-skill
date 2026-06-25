@@ -6,11 +6,10 @@
   "modules": {
     "cancerrisk": {
       "path": "cancerrisk/",
-      "json": 15,
+      "json": 14,
       "md": 5,
       "loaded_by": [
         "snapshot_risk.py",
-        "voi_calculator.py",
         "build_assertion_fill_template.py",
         "interactive_completion.py"
       ],
@@ -21,7 +20,7 @@
       "json": 0,
       "md": 4,
       "loaded_by": [
-        "gap_screening.py"
+        "LLM CP5（脚本仅校验）"
       ],
       "desc": "常规筛查推荐——年龄/性别驱动（LLM 参考）"
     },

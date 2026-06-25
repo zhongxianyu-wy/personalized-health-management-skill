@@ -8,7 +8,7 @@ trend. Open it when working on any script under `scripts/snapshot_risk.py`,
 ## 1. Hard rules
 
 - LLM must never generate a probability, OR, RR, HR, sensitivity,
-  specificity, VoI value, or risk tier.
+  specificity, or risk tier.
 - All numeric updates come from `references/database/cancerrisk/json/`. The orchestrator
   refuses to run snapshot when the evidence store is missing.
 - Cancers not in `references/database/cancerrisk/json/cancers.json` do not appear
@@ -128,19 +128,7 @@ two strategies:
 If a cancer has no entry in the screening catalog, the renderer writes
 "暂无针对性筛查建议" rather than fabricating one.
 
-## 6. VoI ranking
-
-VoI is computed from the current individual snapshot probability:
-
-`VoI = posterior_probability × 100000 × (stage1_5y_os - late_stage_5y_os) × 5 × sensitivity`
-
-Single-cancer deep screening uses the knowledge-base method for that
-cancer. 吉早安 is one convenience-screening entry whose score is the sum
-of covered cancer contributions. Cancers with no posterior probability
-are excluded from VoI and should surface through the PPV/imaging path if
-applicable.
-
-## 7. Longitudinal logic
+## 6. Longitudinal logic
 
 Longitudinal risk reads:
 
@@ -164,7 +152,7 @@ Rules:
 5. `longitudinal_risk.json::analysis_input` records archived/current/
    merged entry counts and `archive_mutated=false`.
 
-## 8. Archive apply / 入档
+## 7. Archive apply / 入档
 
 `archive_update_proposal.json` is generated after longitudinal analysis.
 Only confirmed入档 (`--auto-apply-archive` or equivalent manual apply)

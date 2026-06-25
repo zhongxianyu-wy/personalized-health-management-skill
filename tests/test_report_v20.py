@@ -18,7 +18,6 @@ def _mock_artifacts(tmp, *, brca=False, jizaoan="negative"):
         json.dump(o, open(art / n, "w"), ensure_ascii=False)
 
     w("snapshot_risk.json", {"cancers": [{"cancer_id": "lung_cancer", "risk_tier": "high"}], "section4_screening": [], "person_context": {"sex": "male", "age": 55}, "uncertainties_summary": {}})
-    w("voi_ranking.json", {"rankings": [], "top_recommendation": None, "total_methods_evaluated": 0})
     w("health_summary_structured_summary.json", {"patient_data": {"name": "测试"}, "assessment_result": {}})
     w("timeline_tiers.json", {"priority": [{"item_name": "结肠镜", "rationale": "高危"}], "important": [], "maintain": []})
     w("x_addons.json", [{"risk_source": "ALT高", "risk_level_tag": "warning", "method": "肝超声", "interval": "3月", "price_range": "¥100", "clinical_value": "排查"}])

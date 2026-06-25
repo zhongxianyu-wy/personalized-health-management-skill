@@ -40,6 +40,7 @@ STOP_AFTER_CHOICES = [
     "cp3-verify",
     "risk-factor-gate",
     "health-summary-api",
+    "screening-gap",
     "archive-proposal",
     "archive",
     "report-artifacts",
@@ -50,6 +51,115 @@ STOP_AFTER_CHOICES = [
 def write_json(path: Path, payload: dict):
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(json.dumps(payload, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+
+
+class ScreeningGapGateError(RuntimeError):
+    def __init__(self, code: int, errors: list[str]):
+        self.code = code
+        self.errors = errors
+        super().__init__("; ".join(errors))
+
+
+def _read_required_json(
+    path: Path,
+    *,
+    code: int,
+    expected_type: type = dict,
+):
+    if not path.is_file():
+        raise ScreeningGapGateError(code, [f"missing required CP5 artifact: {path.name}"])
+    try:
+        payload = json.loads(path.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError) as exc:
+        raise ScreeningGapGateError(code, [f"invalid JSON in {path.name}: {exc}"]) from exc
+    if not isinstance(payload, expected_type):
+        label = "object" if expected_type is dict else "array" if expected_type is list else expected_type.__name__
+        raise ScreeningGapGateError(code, [f"{path.name} must contain a JSON {label}"])
+    return payload
+
+
+def _validate_screening_gap_stage(
+    *,
+    artifacts: Path,
+    knowledge_root: Path,
+    screening_gap_answers_path: Path | None,
+) -> dict:
+    scripts_dir = str(Path(__file__).resolve().parent)
+    if scripts_dir not in sys.path:
+        sys.path.insert(0, scripts_dir)
+    import validate_screening_gap as screening_gate
+
+    draft = _read_required_json(
+        artifacts / "screening_recommendations_draft.json",
+        code=11,
+    )
+    questionnaire = _read_required_json(
+        artifacts / "screening_gap_questionnaire.json",
+        code=11,
+    )
+    snapshot = _read_required_json(artifacts / "snapshot_risk.json", code=11)
+
+    errors = screening_gate.validate_draft(
+        draft,
+        snapshot=snapshot,
+        knowledge_root=knowledge_root,
+    )
+    errors.extend(screening_gate.validate_questionnaire(draft, questionnaire))
+    if errors:
+        raise ScreeningGapGateError(11, errors)
+
+    questions = questionnaire.get("questions", [])
+    if screening_gap_answers_path is None:
+        if questions:
+            raise ScreeningGapGateError(
+                12,
+                [
+                    "screening-gap questions require independent user answers; "
+                    "re-run with --screening-gap-answers <file>"
+                ],
+            )
+        answers = {"answers": {}}
+    else:
+        answers = _read_required_json(Path(screening_gap_answers_path), code=12)
+    answer_errors = screening_gate.validate_answers(questionnaire, answers)
+    if answer_errors:
+        raise ScreeningGapGateError(12, answer_errors)
+
+    final = _read_required_json(
+        artifacts / "screening_recommendations_final.json",
+        code=13,
+    )
+    final_errors = screening_gate.validate_final(draft, questionnaire, answers, final)
+    if final_errors:
+        raise ScreeningGapGateError(13, final_errors)
+
+    return {
+        "candidate_count": len(draft.get("periodic_candidates", [])),
+        "question_count": len(questions),
+        "recommended_count": len(final.get("periodic_management", [])),
+        "excluded_done_normal_count": len(final.get("excluded_done_normal", [])),
+    }
+
+
+def _validate_screening_report_artifacts(*, artifacts: Path) -> None:
+    scripts_dir = str(Path(__file__).resolve().parent)
+    if scripts_dir not in sys.path:
+        sys.path.insert(0, scripts_dir)
+    import validate_screening_gap as screening_gate
+
+    final = _read_required_json(
+        artifacts / "screening_recommendations_final.json",
+        code=13,
+    )
+    timeline = _read_required_json(artifacts / "timeline_tiers.json", code=13)
+    package = _read_required_json(
+        artifacts / "package_tiers.json",
+        code=13,
+        expected_type=list,
+    )
+    errors = screening_gate.validate_report_artifacts(final, timeline, package)
+    if errors:
+        raise ScreeningGapGateError(13, errors)
 
 
 def _supported_input_names(input_path: Path) -> set[str]:
@@ -378,6 +488,11 @@ def main():
     parser.add_argument("--archives-root", default=ARCHIVES_DEFAULT)
     parser.add_argument("--person-id", default=PERSON_ID_DEFAULT)
     parser.add_argument("--answers", default=None)
+    parser.add_argument(
+        "--screening-gap-answers",
+        default=None,
+        help="independent CP5 screening-gap answers JSON; never merged into --answers",
+    )
     parser.add_argument("--mineru-token", default=None)
     parser.add_argument("--use-demo-mineru-token", action="store_true")
     parser.add_argument("--save-mineru-token", default=None)
@@ -1120,19 +1235,6 @@ def main():
         person_age=int(t4_age),
     )
 
-    # v6: VoI ranking (uses v4.2 methodology — see scripts/voi_calculator.py).
-    import voi_calculator
-    voi_output = voi_calculator.run_voi_stage(
-        artifacts=artifacts,
-        evidence_store=EVIDENCE_STORE,
-        person_sex=t4_sex,
-        person_age=int(t4_age),
-    )
-    print(
-        f"[task7][voi] rankings={voi_output['total_methods_evaluated']} "
-        f"top={voi_output['top_recommendation']!r}"
-    )
-
     safety_cfg = config.get("safety", {}) if isinstance(config, dict) else {}
     disclaimer = str(safety_cfg.get("disclaimer") or "本报告仅用于健康管理参考。")
     evidence_version = None
@@ -1157,6 +1259,47 @@ def main():
     print(
         f"[task7] snapshot scored={sum(1 for r in snapshot['cancers'] if r['posterior_probability'] is not None)}"
         f" section4={len(snapshot['section4_screening'])}"
+    )
+
+    if args.stop_after == "screening-gap":
+        print(
+            "[stop-after=screening-gap] snapshot and health summary are ready. "
+            "Complete independent CP5 using LLM + knowledge base: write "
+            "artifacts/screening_recommendations_draft.json and "
+            "artifacts/screening_gap_questionnaire.json. Ask these questions "
+            "separately from CP2, save user answers to screening_gap_answers.json, "
+            "then write artifacts/screening_recommendations_final.json and re-run "
+            "with --screening-gap-answers <file>. Scripts validate only; they do "
+            "not generate or deduplicate medical recommendations."
+        )
+        return
+
+    try:
+        screening_gap_summary = _validate_screening_gap_stage(
+            artifacts=artifacts,
+            knowledge_root=SKILL_ROOT / "references" / "database",
+            screening_gap_answers_path=(
+                Path(args.screening_gap_answers)
+                if args.screening_gap_answers
+                else None
+            ),
+        )
+    except ScreeningGapGateError as exc:
+        print(
+            f"[cp5] HALT(exit {exc.code}): " + " | ".join(exc.errors),
+            file=sys.stderr,
+        )
+        sys.exit(exc.code)
+
+    (out / "module_audits" / "task_cp5_screening_gap.md").write_text(
+        "# CP5 Screening Gap Audit\n\n"
+        f"- candidates: {screening_gap_summary['candidate_count']}\n"
+        f"- questions: {screening_gap_summary['question_count']}\n"
+        f"- recommended: {screening_gap_summary['recommended_count']}\n"
+        f"- excluded_done_normal: {screening_gap_summary['excluded_done_normal_count']}\n"
+        "- decision_engine: LLM + knowledge base\n"
+        "- script_role: PUA validation only\n",
+        encoding="utf-8",
     )
 
     # --- v4 Task 8a: archive proposal + baseline snapshot ---------------
@@ -1257,7 +1400,7 @@ def main():
 
     if args.stop_after == "report-artifacts":
         print(
-            "[stop-after=report-artifacts] snapshot/VoI/archive done. The skill "
+            "[stop-after=report-artifacts] CP5/snapshot/archive done. The skill "
             "agent must now produce the 5 section artifacts by 读取干净知识 JSON "
             "(`references/database/screening_personalized/json/cancer_followup_rules.json` "
             "查癌种复查方法/周期) + `异常指标复查推荐.md`(异常→复查，覆盖乳腺/妇科/心电等任意异常) "
@@ -1269,6 +1412,14 @@ def main():
         )
         return
 
+    try:
+        _validate_screening_report_artifacts(artifacts=artifacts)
+    except ScreeningGapGateError as exc:
+        print(
+            f"[cp5-report] HALT(exit {exc.code}): " + " | ".join(exc.errors),
+            file=sys.stderr,
+        )
+        sys.exit(exc.code)
 
     # --- P1 Task 9: single integrated report ----------------------------
     # tumor_markers.json is already materialized above (master_scan.gate_tumor_markers

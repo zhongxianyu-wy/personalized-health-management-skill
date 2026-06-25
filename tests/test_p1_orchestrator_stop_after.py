@@ -9,6 +9,11 @@ def test_old_removed():
     m=_load()
     for r in ("health-summary","snapshot","longitudinal"): assert r not in m.STOP_AFTER_CHOICES
 
+def test_voi_stage_removed_from_orchestrator_source():
+    source = (Path(__file__).parent.parent / "scripts" / "run_formal_analysis.py").read_text(encoding="utf-8")
+    assert "import voi_calculator" not in source
+    assert "run_voi_stage" not in source
+
 def test_archives_default_is_cwd_not_skill_package(monkeypatch, tmp_path):
     """v0.1.4: default archive root must be cwd/output (sandbox-friendly), NOT
     the read-only skill package. Guards against regressions to SKILL_ROOT/output."""
@@ -26,4 +31,3 @@ def test_archives_default_is_cwd_not_skill_package(monkeypatch, tmp_path):
     # Env override wins over cwd default.
     monkeypatch.setenv("CANCERRISK_OUTPUT_DIR", str(tmp_path / "fromenv"))
     assert m._resolve_archives_root(None) == str(tmp_path / "fromenv")
-

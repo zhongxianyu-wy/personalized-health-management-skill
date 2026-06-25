@@ -214,7 +214,6 @@ health_summary:
 
 risk_prediction:
   standardize_rr_hr_as_approximation: true
-  snapshot_template: templates/integrated_report_v14.html
   v42_template_source: ""
   longitudinal_template: ""
   priors_file: references/database/cancerrisk/json/cancer_age_sex_priors.json

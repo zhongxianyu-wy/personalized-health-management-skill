@@ -35,9 +35,8 @@ def _write(path: Path, obj: object) -> None:
     path.write_text(json.dumps(obj, ensure_ascii=False, indent=2), encoding="utf-8")
 
 
-def _build_report(artifacts: Path, *, snapshot: dict, voi: dict) -> dict:
+def _build_report(artifacts: Path, *, snapshot: dict) -> dict:
     _write(artifacts / "snapshot_risk.json", snapshot)
-    _write(artifacts / "voi_ranking.json", voi)
     _write(
         artifacts / "health_summary_structured_summary.json",
         {"status": "ready_for_render", "abnormal_non_cancer_count": 2,
@@ -73,12 +72,6 @@ def negative_report(tmp_path: Path) -> dict:
             "section4_screening": [],
             "uncertainties_summary": {},
         },
-        voi={
-            "schema_version": "voi-ranking-v1",
-            "rankings": [],
-            "total_methods_evaluated": 0,
-            "top_recommendation": None,
-        },
     )
 
 
@@ -94,12 +87,6 @@ def positive_report(tmp_path: Path) -> dict:
             "cancers": [{"cancer_id": "lung", "posterior_probability": 0.02}],
             "section4_screening": [{"cancer_id": "lung", "test_id": "ldct"}],
             "uncertainties_summary": {"cancers_missing_prior": 1},
-        },
-        voi={
-            "schema_version": "voi-ranking-v1",
-            "rankings": [{"method": "ldct", "voi_score": 1.2}],
-            "total_methods_evaluated": 3,
-            "top_recommendation": "ldct",
         },
     )
 
@@ -122,7 +109,7 @@ def test_render_report_positive_case_renders(positive_report: dict) -> None:
     html = render_report.render_report(positive_report, TEMPLATE, DISCLAIMER)
 
     assert DISCLAIMER in html
-    assert "核心建议执行时间轴" in html  # temp 时间轴标题常驻（temp 模版不渲染 voi.rankings）
+    assert "核心建议执行时间轴" in html
 
 
 # ---------------------------------------------------------------------------

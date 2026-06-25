@@ -20,7 +20,7 @@ SKILL_ROOT = Path(__file__).resolve().parent.parent
 TEMPLATE = SKILL_ROOT / "templates" / "integrated_report_temp.html"
 
 
-def _mock(tmp, *, brca=False, jizaoan="unknown", with_voi_jizaoan=False,
+def _mock(tmp, *, brca=False, jizaoan="unknown",
           timeline=None, x_addons=None, packages=None, intervention=None, liquid=None):
     art = tmp / "artifacts"
     art.mkdir(exist_ok=True)
@@ -33,14 +33,6 @@ def _mock(tmp, *, brca=False, jizaoan="unknown", with_voi_jizaoan=False,
         "section4_screening": [], "person_context": {"sex": "female", "age": 45},
         "uncertainties_summary": {},
     })
-    voi_rankings = []
-    if with_voi_jizaoan:
-        voi_rankings.append({
-            "method": "吉早安多癌早筛", "test_id": "jizaoan_multi_cancer_screening",
-            "specificity": 0.990, "sensitivity": 0.729,
-        })
-    w("voi_ranking.json", {"rankings": voi_rankings, "top_recommendation": None,
-                           "total_methods_evaluated": 0})
     w("health_summary_structured_summary.json", {"patient_data": {"name": "魏女士"},
                                                   "assessment_result": {}})
     w("timeline_tiers.json", timeline if timeline is not None else {
@@ -88,7 +80,7 @@ def _render(tmp, **kw):
 
 def test_positive_replays_temp(tmp_path):
     """魏女士双阳性 → 严格复现 temp 阳态 DOM。"""
-    _, html = _render(tmp_path, brca=True, jizaoan="positive", with_voi_jizaoan=True)
+    _, html = _render(tmp_path, brca=True, jizaoan="positive")
     assert 'class="genetic-alert"' in html                      # 紫主题
     assert "先天遗传风险" in html and "后天现症风险" in html      # 双暴露双行
     assert "BRCA1 基因突变致病位点携带者" in html                # brca_detail
@@ -108,7 +100,7 @@ def test_positive_replays_temp(tmp_path):
 
 def test_negative_low_risk(tmp_path):
     """张三低危阴性 → standard 主题 / 双暴露整 box 隐藏 / 液检绿态 / 无遗传管理。"""
-    _, html = _render(tmp_path, brca=False, jizaoan="negative", with_voi_jizaoan=True,
+    _, html = _render(tmp_path, brca=False, jizaoan="negative",
                       timeline={"priority": [{"item_name": "复查血糖", "rationale": "偏高"}],
                                 "important": [], "maintain": []},
                       intervention={"genetic_management": [], "lifestyle": ["控制碳水"]})
@@ -137,18 +129,18 @@ def test_empty_artifacts_no_crash(tmp_path):
         assert marker in html
 
 
-def test_spec_fallback_from_voi(tmp_path):
-    """LLM 缺 specificity → build_report_json 从 voi_ranking 吉早安行兜底 0.990→99.0%（PUA：数值来自数据源）。"""
-    report, _ = _render(tmp_path, brca=False, jizaoan="negative", with_voi_jizaoan=True,
+def test_spec_fallback_from_detection_performance(tmp_path):
+    """LLM 缺 specificity → 从检测性能库综合记录回填 99.0%。"""
+    report, _ = _render(tmp_path, brca=False, jizaoan="negative",
                         liquid={"sensitivity": "81.9%", "market_price_range": "¥1,980-2,980",
                                 "clinical_hint": "提示", "negative_risk_reduction": "降级"})
     assert report["liquid_biopsy_perf"]["specificity"] == "99.0%"
 
 
-def test_sens_spec_always_from_voi(tmp_path):
-    """sens/spec 总从 voi 同源兜底（覆盖 LLM artifact 的多口径值，消除打架）。"""
-    report, _ = _render(tmp_path, brca=False, jizaoan="negative", with_voi_jizaoan=True,
+def test_sens_spec_always_from_detection_performance(tmp_path):
+    """sens/spec 总从检测性能库综合记录覆盖 LLM 多口径值。"""
+    report, _ = _render(tmp_path, brca=False, jizaoan="negative",
                         liquid={"sensitivity": "74.9%", "specificity": "99.5%",
                                 "market_price_range": "¥1,980-2,980"})
-    assert report["liquid_biopsy_perf"]["specificity"] == "99.0%"   # voi 0.990 覆盖 LLM 99.5%
-    assert report["liquid_biopsy_perf"]["sensitivity"] == "72.9%"   # voi 0.729 覆盖 LLM 74.9%
+    assert report["liquid_biopsy_perf"]["specificity"] == "99.0%"
+    assert report["liquid_biopsy_perf"]["sensitivity"] == "81.9%"

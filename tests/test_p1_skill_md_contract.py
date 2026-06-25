@@ -52,3 +52,17 @@ def test_workflow_has_no_manual_archive_confirmation():
     assert "HALT_FOR_USER_CONFIRMATION" not in text
     # The exit-4 manual archive checkpoint is retired under auto-archive.
     assert "awaiting confirmation" not in text
+
+
+def test_workflow_has_independent_cp5_screening_gap():
+    text = _text()
+    assert "--stop-after screening-gap" in text
+    assert "--screening-gap-answers" in text
+    assert "screening_recommendations_final.json" in text
+    assert "不并入 CP2" in text
+
+
+def test_voi_removed_from_skill_contract():
+    text = _text()
+    assert "VoI" not in text
+    assert "voi_ranking.json" not in text

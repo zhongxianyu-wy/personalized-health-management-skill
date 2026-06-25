@@ -24,7 +24,6 @@ def test_blocks_and_name_carried(tmp_path):
         "cancers": [], "section4_screening": [], "uncertainties_summary": {},
         "person_context": {"sex": "male", "age": 68},
     })
-    _write(art / "voi_ranking.json", {})
     _write(art / "health_summary_structured_summary.json", {
         "patient_data": {"name": "张三"},
         "assessment_result": {

@@ -9,8 +9,6 @@ NO math, NO LLM calls, NO network — just read + remap + atomic write.
 Source artifacts (all under ``<out>/artifacts/`` unless noted):
 - ``snapshot_risk.json``  — ``cancers`` / ``section4_screening`` /
   ``uncertainties_summary`` / ``person_context`` (sex, age).
-- ``voi_ranking.json``    — ``top_recommendation`` / ``rankings`` /
-  ``total_methods_evaluated``.
 - ``health_summary_structured_summary.json`` — ``status`` /
   ``abnormal_non_cancer_count`` / ``items`` (degrade if absent).
 - ``tumor_markers.json`` (a dict with a ``tests`` list) with fallback to
@@ -19,10 +17,9 @@ Source artifacts (all under ``<out>/artifacts/`` unless noted):
   and (when positive) ``q_jizaoan_top1`` / ``q_jizaoan_top2``.
 
 ``brca_status`` is derived from ``q_genetic_mutations_brca`` (positive when the
-multi-select contains brca1/brca2). ``liquid_biopsy_perf.specificity`` is
-back-filled from the Jizaoan row in ``voi_ranking.json`` (constant 0.990 →
-99.0%) when the LLM artifact omits it — a deterministic numeric fallback, the
-number is never invented (PUA: values come from script/data, not the model).
+multi-select contains brca1/brca2). Liquid-biopsy sensitivity/specificity are
+back-filled from the authoritative overall Jizaoan row in
+``detection_performance.json``.
 """
 
 from __future__ import annotations
@@ -35,6 +32,10 @@ from pathlib import Path
 from typing import Any
 
 SCHEMA_VERSION = "report-v1"
+EVIDENCE_STORE_DEFAULT = (
+    Path(__file__).resolve().parent.parent
+    / "references" / "database" / "cancerrisk" / "json"
+)
 
 # CP4 health-summary HTML blocks (assessment_result.*) carried verbatim into
 # report.json for the full-fidelity template (P2). API-sourced, rendered | safe.
@@ -238,16 +239,23 @@ def _normalize_long_term(lti: Any) -> dict:
     }
 
 
-def _liquid_biopsy_perf(artifacts: Path, voi: dict[str, Any]) -> dict[str, Any]:
+def _overall_jizaoan_performance(evidence_store: Path) -> tuple[Any, Any]:
+    payload = _read_json(evidence_store / "detection_performance.json", {})
+    rows = payload.get("tests", []) if isinstance(payload, dict) else []
+    for row in rows:
+        if (
+            isinstance(row, dict)
+            and row.get("test_id") == "jizaoan_multi_cancer_screening_overall"
+        ):
+            return row.get("sensitivity"), row.get("specificity")
+    return None, None
+
+
+def _liquid_biopsy_perf(artifacts: Path, evidence_store: Path) -> dict[str, Any]:
     """Liquid-biopsy performance panel for the 液体活检 section.
 
-    Sensitivity / early-stage sensitivity / market price / clinical hints come
-    from the LLM artifact ``liquid_biopsy_perf.json`` (LLM-authored from
-    ``05-基于液体活检的多癌种联合筛查.md`` — the composite sens numbers are NOT in
-    the per-cancer ``detection_performance.json``). ``specificity`` is
-    deterministically back-filled from the Jizaoan row in ``voi_ranking.json``
-    (constant 0.990 → "99.0%") when the LLM omits or malforms it, so the number
-    is never invented.
+    Narrative fields come from the LLM artifact. Sensitivity/specificity always
+    come from the authoritative overall Jizaoan detection-performance record.
     """
     perf = _read_json(artifacts / "liquid_biopsy_perf.json", {})
     if not isinstance(perf, dict):
@@ -259,21 +267,11 @@ def _liquid_biopsy_perf(artifacts: Path, voi: dict[str, Any]) -> dict[str, Any]:
         "clinical_hint": perf.get("clinical_hint", ""),
         "negative_risk_reduction": perf.get("negative_risk_reduction", ""),
     }
-    # sens 与 spec 都从 voi_ranking 吉早安行兜底（脚本确定性，同源）。pricing MD
-    # 自述其 74.9% 不该被引用为性能、05-MD 无综合 sens 数值——统一从 voi 取，
-    # 消除 74.9% / 82.2% / 81.9% 多口径打架。
-    for r in voi.get("rankings", []) if isinstance(voi, dict) else []:
-        if not isinstance(r, dict):
-            continue
-        haystack = str(r.get("method", "")) + str(r.get("test_id", ""))
-        if "jizaoan" in haystack.lower() or "吉早安" in haystack:
-            sens = r.get("sensitivity")
-            spec = r.get("specificity")
-            if isinstance(sens, (int, float)) and 0 <= sens <= 1:
-                result["sensitivity"] = f"{sens * 100:.1f}%"
-            if isinstance(spec, (int, float)) and 0 <= spec <= 1:
-                result["specificity"] = f"{spec * 100:.1f}%"
-            break
+    sens, spec = _overall_jizaoan_performance(evidence_store)
+    if isinstance(sens, (int, float)) and 0 <= sens <= 1:
+        result["sensitivity"] = f"{sens * 100:.1f}%"
+    if isinstance(spec, (int, float)) and 0 <= spec <= 1:
+        result["specificity"] = f"{spec * 100:.1f}%"
     return result
 
 
@@ -285,6 +283,7 @@ def assemble_report_json(
     person_id: str,
     run_id: str,
     evidence_version: Any,
+    evidence_store: Path = EVIDENCE_STORE_DEFAULT,
 ) -> dict[str, Any]:
     """Assemble report.json from internal artifacts and atomically write it.
 
@@ -294,7 +293,6 @@ def assemble_report_json(
     artifacts = Path(artifacts)
 
     snapshot = _read_json(artifacts / "snapshot_risk.json", {})
-    voi = _read_json(artifacts / "voi_ranking.json", {})
     health = _read_json(artifacts / "health_summary_structured_summary.json", {})
     answers = _unwrap_answers(_read_json(answers_path, {}))
 
@@ -342,7 +340,7 @@ def assemble_report_json(
         "timeline_tiers": timeline_tiers,
         "x_addons": _enrich_x_addons(_read_json(artifacts / "x_addons.json", []), snapshot),
         "package_tiers": _read_json(artifacts / "package_tiers.json", []),
-        "liquid_biopsy_perf": _liquid_biopsy_perf(artifacts, voi),
+        "liquid_biopsy_perf": _liquid_biopsy_perf(artifacts, Path(evidence_store)),
         "long_term_intervention": _normalize_long_term(_read_json(artifacts / "long_term_intervention.json", {"genetic_management": [], "lifestyle": []})),
         "health_summary": {
             "status": health.get("status"),
@@ -354,11 +352,6 @@ def assemble_report_json(
             "cancers": snapshot.get("cancers", []),
             "section4_screening": snapshot.get("section4_screening", []),
             "uncertainties_summary": snapshot.get("uncertainties_summary", {}),
-        },
-        "voi": {
-            "top_recommendation": voi.get("top_recommendation"),
-            "rankings": voi.get("rankings", []),
-            "total_methods_evaluated": voi.get("total_methods_evaluated", 0),
         },
         "tumor_markers": _tumor_markers_list(artifacts),
         "evidence_version": evidence_version,
