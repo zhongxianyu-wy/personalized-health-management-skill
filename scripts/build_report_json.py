@@ -143,10 +143,11 @@ _CANCER_KEYWORDS: dict[str, str] = {
 
 
 def _enrich_x_addons(x_addons: list[Any], snapshot: dict[str, Any]) -> list[Any]:
-    """给 x_addons 每行补充 cancer_name + posterior_probability（贝叶斯后验），
-    通过 risk_source 文本匹配 snapshot.cancers 的 cancer_id。
-    匹配规则：risk_source 含癌种关键词 → 对应 cancer_id → 查 cancers 后验。
-    未匹配的行不受影响（保持原样，不展示概率）。"""
+    """后验数值**权威回填**（PUA：数值必须来自脚本/snapshot，不得 LLM 编造）。
+    对每行：① risk_source 含癌种关键词（或 LLM 填了 cancer_id）→ 用 snapshot 的权威后验
+    **覆盖**任何 LLM 填的 posterior_probability；② 未匹配/非癌项 → **清除**任何 LLM 填的
+    posterior_probability + cancer_name（防编造，如把不在 snapshot 的癌种硬填 30%）。
+    匹配规则：risk_source 含癌种关键词 → cancer_id → 查 cancers 后验。"""
     if not isinstance(x_addons, list):
         return x_addons
     cancers = snapshot.get("cancers", []) if isinstance(snapshot, dict) else []
@@ -159,26 +160,33 @@ def _enrich_x_addons(x_addons: list[Any], snapshot: dict[str, Any]) -> list[Any]
         if not isinstance(x, dict):
             continue
         source = str(x.get("risk_source", ""))
+        # 候选 cancer_id：LLM 填的 cancer_id（若有）+ risk_source 关键词匹配
+        candidates = []
+        if x.get("cancer_id"):
+            candidates.append(str(x.get("cancer_id")))
         matched_keyword = False
-        linked = False
         for keyword, cancer_id in _CANCER_KEYWORDS.items():
             if keyword in source:
                 matched_keyword = True
-                if cancer_id in cancer_map:
-                    c = cancer_map[cancer_id]
-                    x["cancer_name"] = c.get("cancer_name_zh", c.get("cancer_id", ""))
-                    x["posterior_probability"] = c.get("posterior_probability")
-                    linked = True
-                    break
-        if source and cancer_map and not linked:
-            # Coupling gap visible (PUA: 每条结论须偶联出处). Distinguish the two
-            # causes: risk_source lacks any cancer keyword vs. the named cancer
-            # has no posterior in the snapshot.
-            reason = "该癌种在 snapshot 无后验概率" if matched_keyword else "risk_source 未含癌种关键词"
-            print(
-                f"[report] ⚠ x_addons 行 risk_source「{source}」未展示后验概率（{reason}）。",
-                file=sys.stderr,
-            )
+                candidates.append(cancer_id)
+        linked = False
+        for cid in candidates:
+            if cid in cancer_map:
+                c = cancer_map[cid]
+                x["cancer_name"] = c.get("cancer_name_zh", c.get("cancer_id", ""))
+                x["posterior_probability"] = c.get("posterior_probability")  # 权威覆盖
+                linked = True
+                break
+        if not linked:
+            # 未匹配/非癌项：清除任何 LLM 填的后验/癌种名（防编造）
+            x.pop("posterior_probability", None)
+            x.pop("cancer_name", None)
+            if source and cancer_map and matched_keyword:
+                reason = "该癌种在 snapshot 无后验概率"
+                print(
+                    f"[report] ⚠ x_addons 行 risk_source「{source}」未展示后验概率（{reason}）。",
+                    file=sys.stderr,
+                )
     return x_addons
 
 
@@ -198,6 +206,36 @@ def _honorific_name(name: Any, sex: Any) -> str:
         if title:
             return f"{first}{title}"
     return name
+
+
+def _normalize_advice_list(items: Any) -> list[str]:
+    """把 lifestyle/genetic_management 归一成 list-of-str（模板只渲染 str）。
+    LLM 可能产 list-of-dict（{category,advice} 等）→ 取 advice/text/content/项值；
+    list-of-str 原样；非 list → []。防 dict 被 str() 成字面量渲染。"""
+    if not isinstance(items, list):
+        return []
+    out: list[str] = []
+    for it in items:
+        if isinstance(it, str):
+            out.append(it)
+        elif isinstance(it, dict):
+            txt = it.get("advice") or it.get("text") or it.get("content") or it.get("item") or it.get("name")
+            out.append(str(txt) if txt else "：".join(str(v) for v in it.values()))
+        else:
+            out.append(str(it))
+    return out
+
+
+def _normalize_long_term(lti: Any) -> dict:
+    """归一 long_term_intervention：genetic_management + lifestyle 都转 list-of-str。
+    丢弃 LLM 自加的 schema 外字段（如 specialist_followup/monitoring_plan——模板不渲染，
+    属 schema 外溢；SKILL.md 已约束只产 genetic_management + lifestyle）。"""
+    if not isinstance(lti, dict):
+        return {"genetic_management": [], "lifestyle": []}
+    return {
+        "genetic_management": _normalize_advice_list(lti.get("genetic_management", [])),
+        "lifestyle": _normalize_advice_list(lti.get("lifestyle", [])),
+    }
 
 
 def _liquid_biopsy_perf(artifacts: Path, voi: dict[str, Any]) -> dict[str, Any]:
@@ -305,7 +343,7 @@ def assemble_report_json(
         "x_addons": _enrich_x_addons(_read_json(artifacts / "x_addons.json", []), snapshot),
         "package_tiers": _read_json(artifacts / "package_tiers.json", []),
         "liquid_biopsy_perf": _liquid_biopsy_perf(artifacts, voi),
-        "long_term_intervention": _read_json(artifacts / "long_term_intervention.json", {"genetic_management": [], "lifestyle": []}),
+        "long_term_intervention": _normalize_long_term(_read_json(artifacts / "long_term_intervention.json", {"genetic_management": [], "lifestyle": []})),
         "health_summary": {
             "status": health.get("status"),
             "abnormal_non_cancer_count": health.get("abnormal_non_cancer_count", 0),

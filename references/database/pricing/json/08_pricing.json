@@ -276,6 +276,57 @@
       "low": 50,
       "high": 150,
       "source": ""
+    },
+    "abdominal_us": {
+      "name": "腹部超声",
+      "aliases": [
+        "腹部彩超",
+        "肝胆胰脾超声",
+        "腹部B超",
+        "肝胆超声"
+      ],
+      "mid": 150,
+      "low": 100,
+      "high": 200,
+      "source": ""
+    },
+    "hepatitis_screen": {
+      "name": "肝炎筛查",
+      "aliases": [
+        "肝炎病毒筛查",
+        "HBsAg",
+        "HCV-Ab",
+        "乙肝五项",
+        "丙肝抗体"
+      ],
+      "mid": 150,
+      "low": 100,
+      "high": 250,
+      "source": ""
+    },
+    "ecg": {
+      "name": "心电图",
+      "aliases": [
+        "ECG",
+        "十二导联心电图",
+        "常规心电图"
+      ],
+      "mid": 50,
+      "low": 30,
+      "high": 80,
+      "source": ""
+    },
+    "thyroglobulin": {
+      "name": "甲状腺球蛋白(Tg)",
+      "aliases": [
+        "Tg",
+        "甲状腺球蛋白",
+        "Tg检测"
+      ],
+      "mid": 80,
+      "low": 50,
+      "high": 120,
+      "source": ""
     }
   }
 }

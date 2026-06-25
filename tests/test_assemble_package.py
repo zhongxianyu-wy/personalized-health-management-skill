@@ -42,7 +42,7 @@ def test_basic_mid_sum_overwrites_price(tmp_path: Path) -> None:
     }])
     assemble_package.assemble_package(p, PRICING)
     out = json.loads(p.read_text(encoding="utf-8"))
-    assert out[0]["price_range"] == "620"  # 500 + 120
+    assert out[0]["price_range"] == "¥620"  # 500 + 120
 
 
 def test_dual_price_includes_all(tmp_path: Path) -> None:
@@ -56,7 +56,7 @@ def test_dual_price_includes_all(tmp_path: Path) -> None:
     assemble_package.assemble_package(p, PRICING)
     out = json.loads(p.read_text(encoding="utf-8"))
     # price1 = 2480 + 120 = 2600; price2 = 2480 + 500 + 120 = 3100
-    assert out[0]["price_range"] == "2600/3100"
+    assert out[0]["price_range"] == "¥2600 / ¥3100"
     assert out[0]["_pricing_detail"]["price1"] == 2600
     assert out[0]["_pricing_detail"]["price2"] == 3100
 
@@ -68,7 +68,7 @@ def test_unmatched_include_warned_not_crash(tmp_path: Path, capsys) -> None:
     }])
     assemble_package.assemble_package(p, PRICING)
     out = json.loads(p.read_text(encoding="utf-8"))
-    assert out[0]["price_range"] == "500"  # only LDCT matched
+    assert out[0]["price_range"] == "¥500"  # only LDCT matched
     assert "未知项目XYZ" in capsys.readouterr().err
 
 

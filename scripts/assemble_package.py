@@ -45,25 +45,46 @@ def _clean(s: str) -> str:
     return s.strip().rstrip("：:，,、 ")
 
 
+def _trigrams(s: str) -> set[str]:
+    """中文 3-gram 片段集合（用于保守模糊匹配；3-gram 比 2-gram 更具区分度，降低误匹配）。"""
+    s = _clean(s)
+    return {s[i:i + 3] for i in range(len(s) - 2)} if len(s) >= 3 else ({s} if s else set())
+
+
 def match_item(include_str: str, items: dict[str, Any]) -> tuple[str | None, dict | None]:
-    """模糊匹配 include → (pricing_key, item)。"""
+    """匹配 include → (pricing_key, item)。三级：①精确 name/alias ②包含 ③保守 3-gram 重叠（兜底，
+    处理 LLM 命名差异如「颈部淋巴结超声」↔「甲状腺及颈部淋巴结彩超」；阈值≥3 重叠防误匹配）。"""
     cleaned = _clean(include_str)
     if not cleaned:
         return None, None
-    # 精确匹配 name/aliases
+    # ① 精确匹配 name/aliases
     for key, item in items.items():
         if cleaned == _clean(item.get("name", "")):
             return key, item
         for alias in item.get("aliases", []):
             if cleaned == _clean(alias):
                 return key, item
-    # 包含匹配（cleaned 含 alias 或 alias 含 cleaned）
+    # ② 包含匹配（cleaned 含 alias 或 alias 含 cleaned）
     for key, item in items.items():
         for alias in item.get("aliases", []):
             a = _clean(alias)
             if a and (a in cleaned or cleaned in a):
                 return key, item
+    # ③ 保守 3-gram 重叠兜底（LLM 命名差异）
+    inc_grams = _trigrams(cleaned)
+    if not inc_grams:
+        return None, None
+    best_key, best_item, best_overlap = None, None, 0
+    for key, item in items.items():
+        candidates = [item.get("name", "")] + item.get("aliases", [])
+        for c in candidates:
+            overlap = len(inc_grams & _trigrams(c))
+            if overlap > best_overlap:
+                best_key, best_item, best_overlap = key, item, overlap
+    if best_overlap >= 3:  # ≥3 个 3-gram 重叠才认（保守，防误匹配）
+        return best_key, best_item
     return None, None
+
 
 
 def assemble_package(package_path: Path, pricing: dict[str, Any]) -> list[dict]:
@@ -87,7 +108,7 @@ def assemble_package(package_path: Path, pricing: dict[str, Any]) -> list[dict]:
                 return s, m
             sum1, m1 = _sum_mid(includes)
             sum2, m2 = _sum_mid(includes_all)
-            tier["price_range"] = f"{jz_mid + sum1}/{jz_mid + sum2}"
+            tier["price_range"] = f"¥{jz_mid + sum1} / ¥{jz_mid + sum2}"
             tier["_pricing_detail"] = {
                 "price1_items": m1, "price2_items": m2,
                 "jizaoan_mid": jz_mid, "price1": jz_mid + sum1, "price2": jz_mid + sum2,
@@ -117,7 +138,7 @@ def assemble_package(package_path: Path, pricing: dict[str, Any]) -> list[dict]:
                 # 双价格档：price_range 已含 LLM 标注的 price1/price2，只附 Σmid 到 note
                 tier["_pricing_sum_mid"] = total_mid
             else:
-                tier["price_range"] = str(total_mid)
+                tier["price_range"] = f"¥{total_mid}"
 
         tier["_pricing_detail"] = {
             "matched": matched, "unmatched": unmatched, "sum_mid": total_mid,
