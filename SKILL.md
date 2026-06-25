@@ -150,11 +150,15 @@ import _env_bootstrap  # noqa: F401 — 跨runtime环境自检(PYTHONHOME/UTF-8)
    ```bash
    ... scripts/run_formal_analysis.py ... --stop-after health-summary-api
    ```
-   agent 用 `finalize_structured_summary.py` 结构化健康总结，再跑到 report-artifacts（snapshot/VoI/归档**自动**完成，且**自动跑 `build_section_artifacts.py` 产 5 artifact 骨架**——v2.0.0 性能优化）：
+   agent 用 `finalize_structured_summary.py` 结构化健康总结，再跑到 report-artifacts（snapshot/VoI/归档**自动**完成）：
    ```bash
    ... scripts/run_formal_analysis.py ... --person-id <id> --stop-after report-artifacts
    ```
-   **v2.0.0 起不再从零产 5 JSON**：`--stop-after report-artifacts` 已自动生成 5 个 section artifact **骨架**（`timeline_tiers`/`x_addons`/`package_tiers`/`liquid_biopsy_perf`/`long_term_intervention`，数值/分类/结构脚本算好、套餐价格已 Σmid 求和）。agent **只补各 artifact 里 `_pending` 标记的文案字段**（`rationale` / `note` / `clinical_value`），并按需调整结构（如 timeline `_imbalance_flag` 触发时重排、package 档3 标注被吉早安替代项）。补完后不带 stop-after 重跑出报告。骨架数据源：snapshot/VoI/pricing/`cancer_followup_rules.json`（编译自复查规则 MD）；文案必须 LLM 产，**脚本不生成医学措辞**（PUA）。
+   agent **产 5 JSON**（`timeline_tiers.json` / `x_addons.json` / `package_tiers.json` / `liquid_biopsy_perf.json` / `long_term_intervention.json`），跑 `assemble_package.py` 求和套餐价格：
+   ```bash
+   ... scripts/assemble_package.py --package <out>/artifacts/package_tiers.json --skill-root <skill_root>
+   ```
+   **原则：LLM + 参考知识库 提取异常 + 推荐筛查**（v2.0.0）。agent 读 **干净编译知识** `references/database/screening_personalized/json/cancer_followup_rules.json`（15 癌×档→复查方法/周期，比 verbose MD 快）+ `异常指标复查推荐.md`（异常→复查，**任意异常含乳腺/妇科/心电**）+ snapshot 后验 + health_summary 异常 + pricing，**自己提取异常 + 推荐筛查 + 写文案**。数值字段（sens/spec/price/posterior）留空，**下游脚本兜底**（build_report_json 兜底 sens/spec、assemble_package Σmid、_enrich_x_addons 配后验）——脚本不算概率/不抢 LLM 的提取/推荐，只兜底纯数值（PUA）。
 
 7. 跑最终报告+归档（不带 stop-after）：
    ```bash
@@ -190,11 +194,11 @@ import _env_bootstrap  # noqa: F401 — 跨runtime环境自检(PYTHONHOME/UTF-8)
 >
 > | artifact | schema | 必填 | 数据源 | 脚本辅助 |
 > |---|---|---|---|---|
-> | `timeline_tiers.json` | `{priority/important/maintain:[{item_name,interval,rationale}]}` | 3 档 list | 复查规则 JSON + snapshot 后验 + health 异常 | **v2.0.0 骨架**：① 癌种项 item_name/interval/分类脚本算（查 `cancer_followup_rules.json`）② 异常项（`_source=abnormal`）按风险评级分档 + interval 脚本填，**复查 item_name + rationale 文案 LLM**（读 `异常指标复查推荐.md`，覆盖任意异常，无固定逻辑约束） |
-> | `x_addons.json` | `[{risk_source,risk_level_tag(danger/warning/info),risk_level_label,method,interval,price_range,clinical_value}]` | ≥1 行 | 异常复查MD + pricing JSON | **v2.0.0 骨架**：tag/label/interval/posterior 脚本算；癌种 method 查 rules，**异常 method/risk_source 措辞/clinical_value/price 一律 LLM**（读异常复查 MD 按异常定，覆盖乳腺/妇科/心电等任意异常） |
-> | `package_tiers.json` | `[{name,price_range,includes[],note,recommended}]` 恒 3 档，**recommended 每档必填 bool**，仅 1 档 true | 3 档 | 套餐三档MD + pricing JSON | **v2.0.0 骨架**：name/includes/price_range/recommended 脚本算（`assemble_package.py` Σmid），**note 文案 LLM** |
-> | `liquid_biopsy_perf.json` | `{sensitivity,specificity,market_price_range,clinical_hint,negative_risk_reduction}` | sens/spec/market_price/nrr 脚本算 | voi_ranking + pricing + snapshot.jizaoan_whatif | **v2.0.0 骨架**：sens 81.9%/spec 99.0%/市场价/阴性降风险数值脚本算，**clinical_hint 文案 LLM** |
-> | `long_term_intervention.json` | `{genetic_management[](仅brca positive),lifestyle[]}` | lifestyle≥1 | 07预防MD | **v2.0.0 骨架**：brca 触发 + genetic 骨架 + lifestyle 通用模板脚本算，**个体化措辞 LLM** |
+> | `timeline_tiers.json` | `{priority/important/maintain:[{item_name,interval,rationale}]}` | 3 档 list | 复查规则 JSON + snapshot 后验 + health 异常 | **LLM 提取+推荐**：读 `cancer_followup_rules.json`（癌种复查）+ `异常指标复查推荐.md`（任意异常→复查）+ snapshot/health_summary，自定三档 + item_name/interval/rationale |
+> | `x_addons.json` | `[{risk_source,risk_level_tag(danger/warning/info),risk_level_label,method,interval,price_range,clinical_value}]` | ≥1 行 | 异常复查MD + pricing JSON | **LLM 提取+推荐**：risk_source/method/interval/tag/clinical_value 全 LLM（任意异常含乳腺/妇科/心电）；posterior 由 `_enrich_x_addons` 下游按 cancer 配 |
+> | `package_tiers.json` | `[{name,price_range,includes[],note,recommended}]` 恒 3 档，**recommended 每档必填 bool**，仅 1 档 true | 3 档 | 套餐三档MD + pricing JSON | **LLM 推荐**：name/includes/note/recommended 全 LLM（读套餐三档MD + pricing）；**price_range 由 `assemble_package.py` Σmid 下游算**（数值，不手填） |
+> | `liquid_biopsy_perf.json` | `{sensitivity,specificity,market_price_range,clinical_hint,negative_risk_reduction}` | clinical_hint/nrr 文案 LLM | voi_ranking + 05液检MD + pricing | **LLM 写文案**（clinical_hint/阴性降风险）；**sens/spec 留空由 build_report_json 兜底 81.9%/99.0%，market_price 下游 pricing**（数值不编造） |
+> | `long_term_intervention.json` | `{genetic_management[](仅brca positive),lifestyle[]}` | lifestyle≥1 | 07预防MD | **LLM 推荐**：genetic_management（仅 BRCA 阳性，读遗传高危证据）+ lifestyle（读 07预防MD）全 LLM |
 >
 > **CP4 结构化注**：temp 模版 X加项标题读取 `health_summary.blocks.overall_assessment`（ADR 徽章文字）+ `blocks.risk_level`（徽章着色）。CP4 fills 的 5 个 `.html`（abnormal/disease/advice/lab/conclusion）经 `@` 引用写入 `health_summary_structured_summary.json`，须产出有效的 `risk_level`/`overall_assessment` 值——不可简化为空占位，否则 ADR 徽章渲染为空。
 
@@ -219,7 +223,7 @@ import _env_bootstrap  # noqa: F401 — 跨runtime环境自检(PYTHONHOME/UTF-8)
 - `conditional_on` 触发时跳过 `text_fill` 跟进——触发匹配即强制立即问。
 - 不查 `conditional_on` 就批量问所有题——每个触发题后须紧跟其门控的 `text_fill`。
 - 只跑完部分阶段就用「全分析已完成」的语言总结。
-- 跳过第 6 步的文案补全（`--stop-after report-artifacts` 已出骨架，但 agent 不补 `_pending` 的 `rationale`/`note`/`clinical_value` 就直接跑最终报告）→ 5 section 数值/结构在但文案空，报告 thin 无效；build_report_json 会 stderr 警告「仍带 _pending」。
+- 跳过第 6 步（产 5 section artifact）直接跑最终报告 → temp 模版 5 个核心 section（复查三级/X加项/套餐/液检性能/长期干预）渲染空，`sections_incomplete=true` → exit 10 halt。
 
 ### 进入下一检查点前的自报三项
 agent 须在回复中确认：①运行的脚本命令（带全 flag）；②收到的退出码；③产出的 artifact（路径+存在性检查）。任一缺失/失败→停并报告用户，不得继续。

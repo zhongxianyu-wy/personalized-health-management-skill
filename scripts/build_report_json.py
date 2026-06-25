@@ -117,31 +117,17 @@ def _brca_detail(answers: dict[str, Any], brca_status: str) -> str:
     return f"{label} 基因突变致病位点携带者"
 
 
-def _checkup_window(snapshot: dict[str, Any], brca_status: str, health_risk_level: Any) -> str:
-    """推荐体检时间窗。联动高危信号（与 timeline priority 档同源，避免报头窗口与首档矛盾）：
-    BRCA阳性 / 任一癌症后验>1% / 健康总结评估较严重 → "1-2 周内"；否则按最高 risk_tier。"""
-    cancers = snapshot.get("cancers", []) if isinstance(snapshot, dict) else []
-    if brca_status == "positive":
+def _checkup_window(timeline_tiers: dict) -> str:
+    """推荐体检时间窗：**从 LLM 产的 timeline 三档派生**（反映 LLM 的紧急度判断，不独立推荐）。
+    v2.0.0 重构：不再用脚本阈值独立推荐窗口（那会抢 LLM 的推荐角色）——改为读 LLM 已分的
+    三档：priority 非空→1-2 周内；important→1 个月内；maintain→3-6 个月内；空→参照下方时间轴。"""
+    if timeline_tiers.get("priority"):
         return "1-2 周内"
-    if any(isinstance(c, dict) and (c.get("posterior_probability") or 0) > 0.01 for c in cancers):
-        return "1-2 周内"
-    rl = str(health_risk_level or "")
-    if any(k in rl for k in ("严重", "🔴", "🟠", "高风险")):
-        return "1-2 周内"
-    # 否则按最高 risk_tier（含 imaging_tier）
-    order = {"pathology_confirmed": 5, "very_high": 4, "urgent_workup": 4,
-             "high": 3, "high_workup": 3, "medium": 2, "moderate_workup": 2, "low": 1}
-    top = ""
-    best = -1
-    for c in cancers:
-        t = c.get("risk_tier", "") if isinstance(c, dict) else ""
-        if order.get(t, 0) > best:
-            best = order.get(t, 0)
-            top = t
-    return ({"pathology_confirmed": "1-2 周内", "very_high": "1-2 周内", "urgent_workup": "1-2 周内",
-             "high": "1 个月内", "high_workup": "1 个月内",
-             "medium": "3 个月内", "moderate_workup": "3 个月内", "low": "6-12 个月内"}
-            .get(top, "参照下方时间轴"))
+    if timeline_tiers.get("important"):
+        return "1 个月内"
+    if timeline_tiers.get("maintain"):
+        return "3-6 个月内"
+    return "参照下方时间轴"
 
 
 # 癌种关键词 → cancer_id 映射（用于 x_addons risk_source 匹配贝叶斯后验）
@@ -297,6 +283,7 @@ def assemble_report_json(
         )
 
     now = datetime.now()
+    timeline_tiers = _read_json(artifacts / "timeline_tiers.json", {"priority": [], "important": [], "maintain": []})
     report = {
         "schema_version": SCHEMA_VERSION,
         "run_id": run_id,
@@ -313,8 +300,8 @@ def assemble_report_json(
         "jizaoan_top_cancers": jizaoan_top_cancers,
         "brca_status": brca_status,
         "brca_detail": _brca_detail(answers, brca_status),
-        "checkup_window": _checkup_window(snapshot, brca_status, assessment.get("risk_level")),
-        "timeline_tiers": _read_json(artifacts / "timeline_tiers.json", {"priority": [], "important": [], "maintain": []}),
+        "checkup_window": _checkup_window(timeline_tiers),
+        "timeline_tiers": timeline_tiers,
         "x_addons": _enrich_x_addons(_read_json(artifacts / "x_addons.json", []), snapshot),
         "package_tiers": _read_json(artifacts / "package_tiers.json", []),
         "liquid_biopsy_perf": _liquid_biopsy_perf(artifacts, voi),
@@ -339,46 +326,9 @@ def assemble_report_json(
         "evidence_version": evidence_version,
     }
 
-    # v2.0.0: 剥离 scaffolder 的 _scaffold/_pending/_imbalance_flag 标记（不进 report.json），
-    # 并汇总未补文案提示（agent 漏补 rationale/note/clinical_value 时 stderr 警告，非阻断）。
-    _all_pending: list[str] = []
-    for _k in ("timeline_tiers", "x_addons", "package_tiers", "liquid_biopsy_perf", "long_term_intervention"):
-        report[_k], _notes = _strip_scaffold_markers(report[_k])
-        _all_pending += [f"{_k}: {n}" for n in _notes]
-    if _all_pending:
-        print(
-            "[report] ⚠ 部分 section artifact 仍带 _pending（agent 未补文案）："
-            + "; ".join(_all_pending[:6]),
-            file=sys.stderr,
-        )
-
     _check_section_artifacts(report)
     _atomic_write_json(artifacts / "report.json", report)
     return report
-
-
-def _strip_scaffold_markers(obj: Any) -> tuple[Any, list[str]]:
-    """v2.0.0: 剥离 scaffolder 的 ``_`` 前缀标记（_scaffold/_pending/_imbalance_flag 等），
-    使其不进 report.json（模板不消费它们，留着只是噪音）。返回 (cleaned_obj, pending_notes)：
-    pending_notes 汇总 ``_pending`` 内容，供上层警告「agent 未补文案」。"""
-    notes: list[str] = []
-
-    def _clean(o: Any) -> Any:
-        if isinstance(o, dict):
-            out: dict[str, Any] = {}
-            for k, v in o.items():
-                if k == "_pending" and v:
-                    notes.extend(v if isinstance(v, list) else [str(v)])
-                elif k.startswith("_"):
-                    continue
-                else:
-                    out[k] = _clean(v)
-            return out
-        if isinstance(o, list):
-            return [_clean(i) for i in o]
-        return o
-
-    return _clean(obj), notes
 
 
 def _check_section_artifacts(report: dict[str, Any]) -> None:
