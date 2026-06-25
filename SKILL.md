@@ -190,8 +190,8 @@ import _env_bootstrap  # noqa: F401 — 跨runtime环境自检(PYTHONHOME/UTF-8)
 >
 > | artifact | schema | 必填 | 数据源 | 脚本辅助 |
 > |---|---|---|---|---|
-> | `timeline_tiers.json` | `{priority/important/maintain:[{item_name,interval,rationale}]}` | 3 档 list | 复查规则 JSON + snapshot 后验 | **v2.0.0 骨架**：item_name/interval/分类脚本算（查 `cancer_followup_rules.json`），**rationale 文案 LLM** |
-> | `x_addons.json` | `[{risk_source,risk_level_tag(danger/warning/info),risk_level_label,method,interval,price_range,clinical_value}]` | ≥1 行 | 异常复查MD + pricing JSON | **v2.0.0 骨架**：tag/label/method/interval/posterior 脚本算，**risk_source 措辞 + clinical_value 文案 LLM** |
+> | `timeline_tiers.json` | `{priority/important/maintain:[{item_name,interval,rationale}]}` | 3 档 list | 复查规则 JSON + snapshot 后验 + health 异常 | **v2.0.0 骨架**：① 癌种项 item_name/interval/分类脚本算（查 `cancer_followup_rules.json`）② 异常项（`_source=abnormal`）按风险评级分档 + interval 脚本填，**复查 item_name + rationale 文案 LLM**（读 `异常指标复查推荐.md`，覆盖任意异常，无固定逻辑约束） |
+> | `x_addons.json` | `[{risk_source,risk_level_tag(danger/warning/info),risk_level_label,method,interval,price_range,clinical_value}]` | ≥1 行 | 异常复查MD + pricing JSON | **v2.0.0 骨架**：tag/label/interval/posterior 脚本算；癌种 method 查 rules，**异常 method/risk_source 措辞/clinical_value/price 一律 LLM**（读异常复查 MD 按异常定，覆盖乳腺/妇科/心电等任意异常） |
 > | `package_tiers.json` | `[{name,price_range,includes[],note,recommended}]` 恒 3 档，**recommended 每档必填 bool**，仅 1 档 true | 3 档 | 套餐三档MD + pricing JSON | **v2.0.0 骨架**：name/includes/price_range/recommended 脚本算（`assemble_package.py` Σmid），**note 文案 LLM** |
 > | `liquid_biopsy_perf.json` | `{sensitivity,specificity,market_price_range,clinical_hint,negative_risk_reduction}` | sens/spec/market_price/nrr 脚本算 | voi_ranking + pricing + snapshot.jizaoan_whatif | **v2.0.0 骨架**：sens 81.9%/spec 99.0%/市场价/阴性降风险数值脚本算，**clinical_hint 文案 LLM** |
 > | `long_term_intervention.json` | `{genetic_management[](仅brca positive),lifestyle[]}` | lifestyle≥1 | 07预防MD | **v2.0.0 骨架**：brca 触发 + genetic 骨架 + lifestyle 通用模板脚本算，**个体化措辞 LLM** |
