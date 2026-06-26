@@ -58,6 +58,21 @@ def test_package_names_are_canonical(tmp_path: Path) -> None:
     assert out[1]["price_range"] == "¥620"
 
 
+def test_pricing_keys_are_rendered_as_chinese_include_names(tmp_path: Path) -> None:
+    """LLM 若直接写 pricing key，报告「包含」应展示中文项目名而不是内部字段。"""
+    p = _write_pkg(tmp_path, [
+        {"name": "档1", "includes": ["ldct", "thyroid_us"], "recommended": False},
+        {"name": "档2", "includes": ["colonoscopy", "thyroid_us"], "recommended": True},
+        {"name": "档3", "includes": [], "recommended": False},
+    ])
+    assemble_package.assemble_package(p, PRICING)
+    out = json.loads(p.read_text(encoding="utf-8"))
+    assert out[0]["includes"] == ["低剂量胸部CT", "甲状腺彩超"]
+    assert out[1]["includes"] == ["无痛肠镜", "甲状腺彩超"]
+    assert out[2]["includes"] == ["无痛肠镜", "甲状腺彩超", "吉早安"]
+    assert "thyroid_us" not in json.dumps(out, ensure_ascii=False)
+
+
 def test_deep_tier_does_not_double_count_jizaoan_when_llm_includes_it(tmp_path: Path) -> None:
     """档3固定按档2 +1999；LLM 在旧字段里写吉早安也不会重复计价。"""
     p = _write_pkg(tmp_path, [
@@ -67,7 +82,7 @@ def test_deep_tier_does_not_double_count_jizaoan_when_llm_includes_it(tmp_path: 
     ])
     assemble_package.assemble_package(p, PRICING)
     out = json.loads(p.read_text(encoding="utf-8"))
-    assert out[2]["includes"] == ["LDCT", "甲状腺彩超", "吉早安"]
+    assert out[2]["includes"] == ["低剂量胸部CT", "甲状腺彩超", "吉早安"]
     assert out[2]["price_range"] == "¥2619"
     assert out[2]["_pricing_detail"]["base_tier_price"] == 620
     assert out[2]["_pricing_detail"]["jizaoan_addon_price"] == 1999
@@ -82,7 +97,7 @@ def test_legacy_includes_all_removed_from_deep_tier(tmp_path: Path) -> None:
     ])
     assemble_package.assemble_package(p, PRICING)
     out = json.loads(p.read_text(encoding="utf-8"))
-    assert out[2]["includes"] == ["LDCT", "肠镜", "甲状腺彩超", "吉早安"]
+    assert out[2]["includes"] == ["低剂量胸部CT", "无痛肠镜", "甲状腺彩超", "吉早安"]
     assert "includes_all" not in out[2]
     assert out[2]["price_range"] == "¥3619"
 
@@ -102,7 +117,7 @@ def test_canonical_package_names_and_deep_tier_adds_jizaoan_to_comprehensive(tmp
     assemble_package.assemble_package(p, PRICING)
     out = json.loads(p.read_text(encoding="utf-8"))
     assert [t["name"] for t in out] == ["核心风险筛查档", "全面覆盖档", "癌症深入筛查档"]
-    assert out[2]["includes"] == ["LDCT", "甲状腺彩超", "吉早安"]
+    assert out[2]["includes"] == ["低剂量胸部CT", "甲状腺彩超", "吉早安"]
     assert "includes_all" not in out[2]
     assert out[1]["price_range"] == "¥620"
     assert out[2]["price_range"] == "¥2619"

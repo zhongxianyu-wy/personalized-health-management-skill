@@ -126,6 +126,19 @@ def assemble_package(package_path: Path, pricing: dict[str, Any]) -> list[dict]:
                 out.append(inc)
         return out
 
+    def _display_include_names(item_list: list) -> list[str]:
+        """模板展示字段：匹配到 pricing 的项目统一写中文 name；未匹配保留原文。"""
+        out: list[str] = []
+        for inc in item_list:
+            key, item = match_item(str(inc), items)
+            if key == JIZAOAN_KEY:
+                out.append(JIZAOAN_DISPLAY_NAME)
+            elif item:
+                out.append(str(item.get("name") or inc))
+            else:
+                out.append(str(inc))
+        return out
+
     def _price_from_tier(tier: dict) -> int:
         detail = tier.get("_pricing_detail", {})
         for key in ("sum_mid", "total", "price"):
@@ -146,8 +159,8 @@ def assemble_package(package_path: Path, pricing: dict[str, Any]) -> list[dict]:
             includes = []
         if idx < 2:
             includes = _strip_jizaoan(includes)
-            tier["includes"] = includes
         total_mid, matched, unmatched = _sum_mid(includes)
+        tier["includes"] = _display_include_names(includes)
 
         if total_mid > 0:
             tier["price_range"] = f"¥{total_mid}"
@@ -170,7 +183,7 @@ def assemble_package(package_path: Path, pricing: dict[str, Any]) -> list[dict]:
             base_includes = deep_tier.get("includes", [])
         if not isinstance(base_includes, list):
             base_includes = []
-        deep_includes = _strip_jizaoan(base_includes) + [JIZAOAN_DISPLAY_NAME]
+        deep_includes = _display_include_names(_strip_jizaoan(base_includes)) + [JIZAOAN_DISPLAY_NAME]
         base_price = _price_from_tier(base_tier)
         total_price = base_price + JIZAOAN_ADDON_PRICE
         deep_tier["name"] = CANONICAL_PACKAGE_NAMES[2]
