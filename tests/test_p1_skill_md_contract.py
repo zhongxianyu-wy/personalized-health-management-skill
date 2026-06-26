@@ -57,6 +57,7 @@ def test_workflow_has_no_manual_archive_confirmation():
 def test_workflow_has_independent_cp5_screening_gap():
     text = _text()
     assert "--stop-after screening-gap" in text
+    assert "cp5_context_pack.json" in text
     assert "screening_recommendations.json" in text
     assert "不并入 CP2" in text or "不另产" in text
 

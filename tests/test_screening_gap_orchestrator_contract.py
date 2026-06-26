@@ -12,3 +12,10 @@ def test_screening_gap_in_stop_choices():
 def test_voi_removed():
     source = (Path(__file__).parent.parent / "scripts" / "run_formal_analysis.py").read_text()
     assert "import voi_calculator" not in source
+
+
+def test_cp5_context_pack_wired_before_screening_gap_stop():
+    source = (Path(__file__).parent.parent / "scripts" / "run_formal_analysis.py").read_text()
+    assert "import build_cp5_context_pack" in source
+    assert "build_cp5_context_pack.build_context_pack(" in source
+    assert "cp5_context_pack.json" in source

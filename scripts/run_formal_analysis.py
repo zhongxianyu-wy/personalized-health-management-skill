@@ -1220,14 +1220,32 @@ def main():
         f" section4={len(snapshot['section4_screening'])}"
     )
 
+    # --- v2.0.5 CP5 context pack ----------------------------------------
+    # Deterministic pre-processing only: shrink the LLM input for CP5 by
+    # age/sex prefiltering periodic screening candidates and coarse matching
+    # existing timeline evidence. The LLM still decides final A/B/C screening
+    # recommendations; CP5 gate below remains the authority.
+    import build_cp5_context_pack
+
+    cp5_context = build_cp5_context_pack.build_context_pack(
+        artifacts=artifacts,
+        knowledge_root=SKILL_ROOT / "references" / "database",
+    )
+    write_json(artifacts / "cp5_context_pack.json", cp5_context)
+    print(
+        "[cp5-context] wrote cp5_context_pack.json "
+        f"periodic_candidates={len(cp5_context.get('periodic_candidates_prefiltered', []))}"
+    )
+
     if args.stop_after == "screening-gap":
         print(
             "[stop-after=screening-gap] snapshot and health summary are ready. "
-            "Complete independent CP5 using LLM + knowledge base: write "
+            "Read artifacts/cp5_context_pack.json first, then complete independent "
+            "CP5 using LLM + knowledge base: write "
             "artifacts/screening_recommendations.json (A cancer_risk / B other_abnormalities "
             "/ C periodic_management + excluded_done_normal). "
-            "Read periodic_screening_schedule.json (age/gender→应筛+间隔), ask gap "
-            "questions separately from CP2, record answers inline. "
+            "Only回查 periodic_screening_schedule.json/refined.md/content.md when the context pack "
+            "evidence is insufficient. Ask gap questions separately from CP2, record answers inline. "
             "Scripts validate only core logic (dedup / done+normal / medium+)."
         )
         return

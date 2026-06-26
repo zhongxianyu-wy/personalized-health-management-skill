@@ -17,7 +17,7 @@ allowed-tools:
   - Write
   - Edit
   - Bash
-version: "2.0.4"
+version: "2.0.5"
 metadata:
   requires:
     bins: [python3, curl]    # python3≥3.10(推荐3.11); uv 由 launcher 探测，非必需
@@ -72,7 +72,7 @@ bash scripts/run.sh scripts/run_formal_analysis.py \
    （缺口筛查两步交互参 `references/缺口筛查与交互确认.md`，结果并入 answers.json）
 4. 🔴 **CP3 填+审计**：`... --stop-after master-template` → 填 `structured_risk_factors_timeline.candidate.json` + `tumor_markers.candidate.json`（用 valid_factor_keys/valid_test_ids，evidence_text 字面子串）→ 校验 `validate_timeline_candidate.py`/`validate_tumor_markers.py` → **独立审计**（重读 refined.md 找漏抽）写 `cp3_audit_result.json` → `... --stop-after cp3-verify`
 5. 🔴 **CP4 结构化**：`... --stop-after health-summary-api` → `finalize_structured_summary.py` 结构化 → `... --person-id <id> --stop-after screening-gap`（snapshot 自动）。
-6. 🔴 **CP5 独立推荐筛查**：读 `periodic_screening_schedule.json`（按 age/gender 查应筛项目+间隔）+ snapshot/健康总结/人口学/当前与历史时间线，写 **1 个** `screening_recommendations.json`（A=cancer_risk / B=other_abnormalities / C=periodic_management + excluded_done_normal）。缺口问答内嵌在同一 JSON（每项附 `gap_question` + `gap_answer`），**不另产问卷/答案文件**。LLM 做判断+去重（A>B>C 优先级），脚本只校验 3 条核心规则（dedup / done+normal / medium+）。→ 不带 `--screening-gap-answers` 跑到 `--stop-after report-artifacts`。
+6. 🔴 **CP5 独立推荐筛查**：先读 `artifacts/cp5_context_pack.json`（脚本已按 age/gender 预筛周期项目、粗匹配历史检查、摘取 medium+ 癌症和健康总结异常），证据不足时再回查 `periodic_screening_schedule.json` / `refined.md` / `content.md` / 历史时间线。写 **1 个** `screening_recommendations.json`（A=cancer_risk / B=other_abnormalities / C=periodic_management + excluded_done_normal）。缺口问答内嵌在同一 JSON（每项附 `gap_question` + `gap_answer`），**不另产问卷/答案文件**。LLM 做最终判断+去重（A>B>C 优先级），脚本只校验 3 条核心规则（dedup / done+normal / medium+）。→ 不带 `--screening-gap-answers` 跑到 `--stop-after report-artifacts`。
 7. 🔴 **5 artifact**：按 CP5 推荐产 5 section artifact（见下表）；A/B 分 priority/important，C 进 maintain。数值字段留空下游兜底 → `... scripts/assemble_package.py --package <out>/artifacts/package_tiers.json --skill-root <skill_root>`
 8. **最终报告**：保留 `--answers`，不带 stop-after → exit 0 → `report.html` 就绪。
 
@@ -109,13 +109,14 @@ bash scripts/run.sh scripts/run_formal_analysis.py \
 其他非零 = 不可恢复：打印 stderr halt。同一错误复发两次 → halt 不再恢复。
 
 ## 产物
-用户交付物：`report.html`。审计 artifacts（`report.json`/`snapshot_risk.json`/`screening_recommendations_draft.json`/`screening_recommendations_final.json`/`cp3_audit_result.json`/`manifest.json` 等）落 `<out>/artifacts/`。归档落 `<cwd>/output/<person_id>/`（经 `archive_manager.py`，自动）。
+用户交付物：`report.html`。审计 artifacts（`report.json`/`snapshot_risk.json`/`cp5_context_pack.json`/`screening_recommendations.json`/`cp3_audit_result.json`/`manifest.json` 等）落 `<out>/artifacts/`。归档落 `<cwd>/output/<person_id>/`（经 `archive_manager.py`，自动）。
 
 ## Progressive References（按需加载）
 | 需要 | 文件 |
 |---|---|
 | 完整运行顺序/检查点配方 | `references/runtime_workflow.md` |
 | 缺口筛查与交互确认（CP5 LLM 分析指引） | `references/缺口筛查与交互确认.md` |
+| **CP5 最小上下文包（优先读）** | **`artifacts/cp5_context_pack.json`** |
 | **周期筛查周期表（CP5 查 age/gender→应筛+间隔）** | **`references/database/screening_general/json/periodic_screening_schedule.json`** |
 | MinerU/健康总结 API 行为 | `references/mineru_api.md` / `references/health_summary_rebuild.md` |
 | snapshot/归档规则 | `references/risk_prediction.md` |
