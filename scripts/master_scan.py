@@ -213,9 +213,7 @@ def gate_imaging_findings(
         if not evidence:
             rejected.append(dict(raw, reject_reason="missing_evidence_text"))
             continue
-        if evidence not in haystack:
-            rejected.append(dict(raw, reject_reason="evidence_text_not_found"))
-            continue
+        # v2.0.4: 不做字面子串匹配（LLM 可合理改写/概括）——只查非空已在上面完成
         exam_date = raw.get("exam_date") or md_entry.get("exam_date") or run_date
         if exam_date == "now":
             exam_date = run_date
@@ -366,9 +364,7 @@ def gate_tumor_markers(
         if not evidence:
             rejected.append(dict(raw, reject_reason="missing_evidence_text"))
             continue
-        if evidence not in haystack:
-            rejected.append(dict(raw, reject_reason="evidence_text_not_found"))
-            continue
+        # v2.0.4: 不做字面子串匹配
         exam_date = raw.get("exam_date") or md_entry.get("exam_date") or run_date
         if exam_date == "now":
             exam_date = run_date
@@ -610,13 +606,7 @@ def gate_timeline_candidate(
         if not evidence:
             rejected.append(dict(raw, reject_reason="missing_evidence_text"))
             continue
-        if evidence not in haystack:
-            # Fallback: strip common markdown bold/italic markers from both sides
-            stripped_evidence = re.sub(r"[*_]+", "", evidence)
-            stripped_haystack = re.sub(r"[*_]+", "", haystack)
-            if stripped_evidence not in stripped_haystack:
-                rejected.append(dict(raw, reject_reason="evidence_text_not_found"))
-                continue
+        # v2.0.4: 不做字面子串匹配
         exam_date = raw.get("exam_date") or md_entry.get("exam_date") or run_date
         if exam_date == "now":
             exam_date = run_date
@@ -703,11 +693,16 @@ def is_candidate_filled(candidate: dict[str, Any]) -> bool:
     """A candidate is considered 'filled' if the agent wrote at least one record.
 
     Empty timelines are also legal when there genuinely is no abnormal
-    finding, but we still log a loud warning at the orchestrator level so
-    the operator can sanity-check.
+    finding (e.g. a normal healthy-adult checkup with no master-vocab
+    cancer risk factor), but we still log a loud warning at the
+    orchestrator level so the operator can sanity-check. A candidate
+    whose ``records`` key is a list (even empty) counts as filled — the
+    downstream risk-factor gate + H5 warning handle the real
+    skipped-CP3 detection (``_guard_master_fill_not_empty`` requires at
+    least one record across timeline OR tumor markers).
     """
     records = candidate.get("records")
-    return isinstance(records, list) and len(records) > 0
+    return isinstance(records, list)
 
 
 def write_json(path: Path, payload: dict[str, Any]) -> None:
