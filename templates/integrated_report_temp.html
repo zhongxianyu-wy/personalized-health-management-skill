@@ -273,11 +273,15 @@
         </div>
         <div class="timeline-card maintain">
             <div class="card-title" style="color: var(--alert-success)">🟢 持续管理 (3-6个月)</div>
+            {% if timeline_tiers.maintain %}
             <ul>
             {% for t in timeline_tiers.maintain %}
-                <li><b>{{ t.item_name | default('—') }}</b>{% if t.rationale %}（{{ t.rationale }}）{% endif %}</li>
+                <li><b>{{ t.item_name | default('—') }}</b>{% if t.interval is defined and t.interval %}（{{ t.interval }}）{% endif %}{% if t.rationale is defined and t.rationale %} — {{ t.rationale }}{% endif %}</li>
             {% endfor %}
             </ul>
+            {% else %}
+            <p style="color: #a0aec0; font-size: 13px; margin: 8px 0;">当前无 3-6 月新增周期管理项。血压/BMI/血脂等常规筛查已在周期内完成，保持即可。</p>
+            {% endif %}
         </div>
     </div>
 

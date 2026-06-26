@@ -136,10 +136,14 @@ def validate_draft(
             )
         elif source_path is not None and evidence:
             text = source_path.read_text(encoding="utf-8")
-            if evidence not in text:
+            # v2.0.3: strip markdown (**/*/|/`/_ etc.) before substring check,
+            # consistent with validate_timeline_candidate — LLM may drop ** or | from table rows
+            import re as _re
+            _strip = lambda s: _re.sub(r'[*`|_]', '', s).strip()
+            if _strip(evidence) not in _strip(text):
                 errors.append(
                     f"{section}/{row.get('dedup_key')}: evidence_text is not a literal substring "
-                    f"of {source_path.name}"
+                    f"of {source_path.name} (after markdown strip)"
                 )
 
         if section == "cancer_risk":
@@ -385,7 +389,22 @@ def validate_report_artifacts(
             f"maintain dedup_key set {sorted(actual)} does not match "
             f"final periodic_management {sorted(expected)}"
         ]
-    return []
+    # v2.0.3 P2: interval-vs-tier consistency — urgent wording must not be in maintain
+    _URGENT = ("尽快", "立即", "紧急", "critical", "1-2周", "1-2 周")
+    errors = []
+    for tier_name, rows in (("priority", timeline_tiers.get("priority", [])),
+                            ("important", timeline_tiers.get("important", [])),
+                            ("maintain", timeline_tiers.get("maintain", []))):
+        for row in rows:
+            if not isinstance(row, dict):
+                continue
+            iv = str(row.get("interval") or "")
+            if tier_name == "maintain" and any(u in iv for u in _URGENT):
+                errors.append(
+                    f"timeline maintain/{row.get('dedup_key', '?')}: interval「{iv}」"
+                    "含紧急措辞，不应在 maintain（3-6月）层——移至 priority/important"
+                )
+    return errors
 
 
 def _print_errors(errors: list[str]) -> int:

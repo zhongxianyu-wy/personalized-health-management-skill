@@ -143,14 +143,36 @@ _CANCER_KEYWORDS: dict[str, str] = {
 }
 
 
-def _enrich_x_addons(x_addons: list[Any], snapshot: dict[str, Any]) -> list[Any]:
+_TAG_NORMALIZE = {
+    "danger": "danger", "high": "danger", "critical": "danger",
+    "high_workup": "danger", "very_high": "danger", "严重": "danger", "🔴": "danger",
+    "warning": "warning", "moderate": "warning", "moderate_workup": "warning",
+    "medium": "warning", "mild_abnormal": "warning", "中": "warning", "🟠": "warning", "🟡": "warning",
+    "info": "info", "low": "info", "mild": "info", "低": "info", "🟢": "info",
+}
+
+
+def _normalize_risk_tag(tag: Any) -> str:
+    """把 LLM 产的各种 risk_level_tag 值映射到模板 CSS 认的 danger/warning/info。"""
+    return _TAG_NORMALIZE.get(str(tag or "").strip().lower(), "info")
+
+
+def _enrich_x_addons(x_addons: Any, snapshot: dict[str, Any]) -> list[Any]:
     """后验数值**权威回填**（PUA：数值必须来自脚本/snapshot，不得 LLM 编造）。
-    对每行：① risk_source 含癌种关键词（或 LLM 填了 cancer_id）→ 用 snapshot 的权威后验
-    **覆盖**任何 LLM 填的 posterior_probability；② 未匹配/非癌项 → **清除**任何 LLM 填的
-    posterior_probability + cancer_name（防编造，如把不在 snapshot 的癌种硬填 30%）。
-    匹配规则：risk_source 含癌种关键词 → cancer_id → 查 cancers 后验。"""
+    v2.0.3: 入口类型守卫——LLM 可能产 dict（如 {recommended_addons: [...]}）而非 list，
+    需提取内层 list 或视为空，防 Jinja2 遍历 dict keys 导致全表空白。"""
+    if isinstance(x_addons, dict):
+        for wrapper_key in ("recommended_addons", "x_addons", "items", "addons"):
+            inner = x_addons.get(wrapper_key)
+            if isinstance(inner, list):
+                print(f"[report] ⚠ x_addons.json 是 dict（含 {wrapper_key}），提取内层 list", file=sys.stderr)
+                x_addons = inner
+                break
+        else:
+            print("[report] ⚠ x_addons.json 是 dict 且无可识别的 list 键，视为空", file=sys.stderr)
+            x_addons = []
     if not isinstance(x_addons, list):
-        return x_addons
+        return []
     cancers = snapshot.get("cancers", []) if isinstance(snapshot, dict) else []
     cancer_map: dict[str, Any] = {}
     for c in cancers:
@@ -161,6 +183,9 @@ def _enrich_x_addons(x_addons: list[Any], snapshot: dict[str, Any]) -> list[Any]
         if not isinstance(x, dict):
             continue
         source = str(x.get("risk_source", ""))
+        # v2.0.3: normalize risk_level_tag to CSS-known values (danger/warning/info)
+        if x.get("risk_level_tag"):
+            x["risk_level_tag"] = _normalize_risk_tag(x["risk_level_tag"])
         # 候选 cancer_id：LLM 填的 cancer_id（若有）+ risk_source 关键词匹配
         candidates = []
         if x.get("cancer_id"):
@@ -370,7 +395,8 @@ def _check_section_artifacts(report: dict[str, Any]) -> None:
     注：genetic_management 仅 BRCA 阳性有值，对非 BRCA 报告可空，故 lti 判空只看 lifestyle。"""
     tt = report.get("timeline_tiers") or {}
     timeline_empty = all(len(tt.get(k, [])) == 0 for k in ("priority", "important", "maintain"))
-    x_empty = len(report.get("x_addons") or []) == 0
+    _xa = report.get("x_addons")
+    x_empty = not isinstance(_xa, list) or len(_xa) == 0
     pkg_empty = len(report.get("package_tiers") or []) == 0
     lti = report.get("long_term_intervention") or {}
     lifestyle_empty = len(lti.get("lifestyle", [])) == 0  # genetic_management 仅 BRCA，可空

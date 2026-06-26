@@ -57,6 +57,10 @@ def match_item(include_str: str, items: dict[str, Any]) -> tuple[str | None, dic
     cleaned = _clean(include_str)
     if not cleaned:
         return None, None
+    # 0. JSON key 精确匹配（LLM 可能直接用 pricing key 如 "thyroid_us"/"ldct"）
+    raw = str(include_str).strip()
+    if raw in items:
+        return raw, items[raw]
     # ① 精确匹配 name/aliases
     for key, item in items.items():
         if cleaned == _clean(item.get("name", "")):
