@@ -80,6 +80,11 @@ def validate(payload: Any, snapshot: Any = None) -> list[str]:
 
     # 4. cancer_risk 只含 snapshot medium+（核心优先级错误，需 snapshot 输入）
     if snapshot and isinstance(snapshot, dict):
+        all_cancer_ids = {
+            str(c.get("cancer_id"))
+            for c in snapshot.get("cancers", [])
+            if isinstance(c, dict) and c.get("cancer_id")
+        }
         valid_cancer_ids = {
             str(c.get("cancer_id"))
             for c in snapshot.get("cancers", [])
@@ -90,10 +95,15 @@ def validate(payload: Any, snapshot: Any = None) -> list[str]:
             if not isinstance(row, dict):
                 continue
             cid = str(row.get("cancer_id") or "").strip()
-            if cid and valid_cancer_ids and cid not in valid_cancer_ids:
+            if not cid:
+                continue
+            # 如果 snapshot 有该癌种但非 medium+ → 拦截
+            # 如果 snapshot 无该癌种（LLM 编的/不在 ontology）→ 也拦截（不该在 A 段）
+            # 如果 snapshot 无任何癌种信息 → 跳过（snapshot 为空时不校验）
+            if all_cancer_ids and cid not in valid_cancer_ids:
                 errors.append(
                     f"cancer_risk/{row.get('dedup_key', '?')}: "
-                    f"cancer_id「{cid}」在 snapshot 中非 medium+（不应在 A 段）"
+                    f"cancer_id「{cid}」在 snapshot 中非 medium+ 或不存在（不应在 A 段）"
                 )
 
     return errors
