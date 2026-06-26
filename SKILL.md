@@ -17,7 +17,7 @@ allowed-tools:
   - Write
   - Edit
   - Bash
-version: "2.0.3"
+version: "2.0.4"
 metadata:
   requires:
     bins: [python3, curl]    # python3≥3.10(推荐3.11); uv 由 launcher 探测，非必需
@@ -72,9 +72,9 @@ bash scripts/run.sh scripts/run_formal_analysis.py \
    （缺口筛查两步交互参 `references/缺口筛查与交互确认.md`，结果并入 answers.json）
 4. 🔴 **CP3 填+审计**：`... --stop-after master-template` → 填 `structured_risk_factors_timeline.candidate.json` + `tumor_markers.candidate.json`（用 valid_factor_keys/valid_test_ids，evidence_text 字面子串）→ 校验 `validate_timeline_candidate.py`/`validate_tumor_markers.py` → **独立审计**（重读 refined.md 找漏抽）写 `cp3_audit_result.json` → `... --stop-after cp3-verify`
 5. 🔴 **CP4 结构化**：`... --stop-after health-summary-api` → `finalize_structured_summary.py` 结构化 → `... --person-id <id> --stop-after screening-gap`（snapshot 自动）。
-6. 🔴 **CP5 独立推荐筛查**：读 `periodic_screening_schedule.json`（按 age/gender 查应筛项目+间隔）+ snapshot/健康总结/人口学/当前与历史时间线，写 `screening_recommendations_draft.json`（A癌症风险/B其他异常/C周期候选，LLM 去重）+ `screening_gap_questionnaire.json`；逐项另起问题询问，不并入 CP2。答案写 `<out>/screening_gap_answers.json`，再写 `screening_recommendations_final.json` → 带 `--screening-gap-answers` 跑到 `--stop-after report-artifacts`。
-7. 🔴 **5 artifact**：按 CP5 final 产 5 section artifact（见下表）；C 只能进入 `timeline_tiers.maintain` 且每项带相同 `dedup_key`。数值字段留空下游兜底 → `... scripts/assemble_package.py --package <out>/artifacts/package_tiers.json --skill-root <skill_root>`
-8. **最终报告**：保留 `--answers` 与 `--screening-gap-answers`，不带 stop-after → exit 0 → `report.html` 就绪。
+6. 🔴 **CP5 独立推荐筛查**：读 `periodic_screening_schedule.json`（按 age/gender 查应筛项目+间隔）+ snapshot/健康总结/人口学/当前与历史时间线，写 **1 个** `screening_recommendations.json`（A=cancer_risk / B=other_abnormalities / C=periodic_management + excluded_done_normal）。缺口问答内嵌在同一 JSON（每项附 `gap_question` + `gap_answer`），**不另产问卷/答案文件**。LLM 做判断+去重（A>B>C 优先级），脚本只校验 3 条核心规则（dedup / done+normal / medium+）。→ 不带 `--screening-gap-answers` 跑到 `--stop-after report-artifacts`。
+7. 🔴 **5 artifact**：按 CP5 推荐产 5 section artifact（见下表）；A/B 分 priority/important，C 进 maintain。数值字段留空下游兜底 → `... scripts/assemble_package.py --package <out>/artifacts/package_tiers.json --skill-root <skill_root>`
+8. **最终报告**：保留 `--answers`，不带 stop-after → exit 0 → `report.html` 就绪。
 
 ## 5 section artifact（LLM 产，落 `<out>/artifacts/`）
 | artifact | schema | LLM 产（读知识库） | 留空（下游脚本算） |
@@ -104,9 +104,7 @@ bash scripts/run.sh scripts/run_formal_analysis.py \
 | 8 | CP2 问诊答案空 | 完成 CP2，带 `--answers` 重跑 |
 | 9 | CP3.1 cp3_audit_result.json 缺 | 完成审计，重跑 |
 | 10 | report sections_incomplete（5 artifact 空/缺） | 产 5 artifact，重跑 |
-| 11 | CP5 草案/问卷缺失或校验失败 | 完成或修正 CP5A |
-| 12 | CP5 独立回答缺失/不完整 | 逐项询问，带 `--screening-gap-answers` |
-| 13 | CP5 final 或报告 artifact 与回答/去重不一致 | 修正 LLM 输出，脚本不代改 |
+| 11 | CP5 screening_recommendations.json 缺失或核心校验失败（dedup/done+normal/medium+） | 修正 A/B/C 推荐后重跑 |
 
 其他非零 = 不可恢复：打印 stderr halt。同一错误复发两次 → halt 不再恢复。
 

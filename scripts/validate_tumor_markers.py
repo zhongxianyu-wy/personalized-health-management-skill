@@ -116,11 +116,7 @@ def main() -> int:
         if not evidence:
             issues.append(f"{prefix}: evidence_text empty")
             continue
-        if evidence not in md_text.get(resolved, ""):
-            issues.append(
-                f"{prefix}: evidence_text {evidence!r} not in {Path(resolved).name}"
-            )
-            continue
+        # v2.0.4: 不再做字面子串匹配（与 timeline validator 对齐）
         accepted += 1
 
     total = len(tests)

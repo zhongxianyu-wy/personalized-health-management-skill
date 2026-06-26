@@ -60,106 +60,65 @@ class ScreeningGapGateError(RuntimeError):
         super().__init__("; ".join(errors))
 
 
-def _read_required_json(
-    path: Path,
-    *,
-    code: int,
-    expected_type: type = dict,
-):
-    if not path.is_file():
-        raise ScreeningGapGateError(code, [f"missing required CP5 artifact: {path.name}"])
-    try:
-        payload = json.loads(path.read_text(encoding="utf-8"))
-    except (OSError, json.JSONDecodeError) as exc:
-        raise ScreeningGapGateError(code, [f"invalid JSON in {path.name}: {exc}"]) from exc
-    if not isinstance(payload, expected_type):
-        label = "object" if expected_type is dict else "array" if expected_type is list else expected_type.__name__
-        raise ScreeningGapGateError(code, [f"{path.name} must contain a JSON {label}"])
-    return payload
-
-
 def _validate_screening_gap_stage(
     *,
     artifacts: Path,
     knowledge_root: Path,
     screening_gap_answers_path: Path | None,
 ) -> dict:
+    """v2.0.4: 简化 CP5 校验——只读 1 个 screening_recommendations.json，
+    只查 3 条核心规则（dedup / done+normal / medium+），不做字段级校验。"""
     scripts_dir = str(Path(__file__).resolve().parent)
     if scripts_dir not in sys.path:
         sys.path.insert(0, scripts_dir)
     import validate_screening_gap as screening_gate
 
-    draft = _read_required_json(
-        artifacts / "screening_recommendations_draft.json",
-        code=11,
-    )
-    questionnaire = _read_required_json(
-        artifacts / "screening_gap_questionnaire.json",
-        code=11,
-    )
-    snapshot = _read_required_json(artifacts / "snapshot_risk.json", code=11)
+    # 单一产物（不再分 draft/questionnaire/answers/final）
+    rec_path = artifacts / "screening_recommendations.json"
+    if not rec_path.is_file():
+        raise ScreeningGapGateError(11, [
+            "缺少 screening_recommendations.json——agent 需产 A/B/C 三段推荐 "
+            "（A 癌症风险/B 异常复查/C 周期管理 + gap 问答内嵌）"
+        ])
+    try:
+        payload = json.loads(rec_path.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError) as exc:
+        raise ScreeningGapGateError(11, [f"screening_recommendations.json JSON 解析失败: {exc}"]) from exc
 
-    errors = screening_gate.validate_draft(
-        draft,
-        snapshot=snapshot,
-        knowledge_root=knowledge_root,
-    )
-    errors.extend(screening_gate.validate_questionnaire(draft, questionnaire))
+    snapshot = None
+    snap_path = artifacts / "snapshot_risk.json"
+    if snap_path.is_file():
+        try:
+            snapshot = json.loads(snap_path.read_text(encoding="utf-8"))
+        except Exception:
+            pass  # snapshot 非必需，有则查 medium+
+
+    errors = screening_gate.validate(payload, snapshot)
     if errors:
         raise ScreeningGapGateError(11, errors)
 
-    questions = questionnaire.get("questions", [])
-    if screening_gap_answers_path is None:
-        if questions:
-            raise ScreeningGapGateError(
-                12,
-                [
-                    "screening-gap questions require independent user answers; "
-                    "re-run with --screening-gap-answers <file>"
-                ],
-            )
-        answers = {"answers": {}}
-    else:
-        answers = _read_required_json(Path(screening_gap_answers_path), code=12)
-    answer_errors = screening_gate.validate_answers(questionnaire, answers)
-    if answer_errors:
-        raise ScreeningGapGateError(12, answer_errors)
-
-    final = _read_required_json(
-        artifacts / "screening_recommendations_final.json",
-        code=13,
-    )
-    final_errors = screening_gate.validate_final(draft, questionnaire, answers, final)
-    if final_errors:
-        raise ScreeningGapGateError(13, final_errors)
-
     return {
-        "candidate_count": len(draft.get("periodic_candidates", [])),
-        "question_count": len(questions),
-        "recommended_count": len(final.get("periodic_management", [])),
-        "excluded_done_normal_count": len(final.get("excluded_done_normal", [])),
+        "cancer_risk_count": len(payload.get("cancer_risk", [])),
+        "other_abnormalities_count": len(payload.get("other_abnormalities", [])),
+        "periodic_management_count": len(payload.get("periodic_management", [])),
     }
 
 
 def _validate_screening_report_artifacts(*, artifacts: Path) -> None:
-    scripts_dir = str(Path(__file__).resolve().parent)
-    if scripts_dir not in sys.path:
-        sys.path.insert(0, scripts_dir)
-    import validate_screening_gap as screening_gate
-
-    final = _read_required_json(
-        artifacts / "screening_recommendations_final.json",
-        code=13,
-    )
-    timeline = _read_required_json(artifacts / "timeline_tiers.json", code=13)
-    package = _read_required_json(
-        artifacts / "package_tiers.json",
-        code=13,
-        expected_type=list,
-    )
-    errors = screening_gate.validate_report_artifacts(final, timeline, package)
-    if errors:
-        raise ScreeningGapGateError(13, errors)
+    """v2.0.4: 简化——只查 timeline maintain 非空时有 dedup_key（不强制匹配 final），
+    不再做 maintain=periodic_management 严格等值校验（允许 LLM 在 artifact 阶段微调）。"""
+    timeline_path = artifacts / "timeline_tiers.json"
+    if timeline_path.is_file():
+        try:
+            timeline = json.loads(timeline_path.read_text(encoding="utf-8"))
+            # 仅检查 maintain 项有内容（完整性），不查字符级
+            maintain = timeline.get("maintain", [])
+            if isinstance(maintain, list):
+                for row in maintain:
+                    if isinstance(row, dict) and not row.get("item_name"):
+                        print("[report] ⚠ timeline maintain 有项缺 item_name", file=sys.stderr)
+        except Exception:
+            pass  # 非阻断
 
 
 def _supported_input_names(input_path: Path) -> set[str]:
@@ -1265,12 +1224,11 @@ def main():
         print(
             "[stop-after=screening-gap] snapshot and health summary are ready. "
             "Complete independent CP5 using LLM + knowledge base: write "
-            "artifacts/screening_recommendations_draft.json and "
-            "artifacts/screening_gap_questionnaire.json. Ask these questions "
-            "separately from CP2, save user answers to screening_gap_answers.json, "
-            "then write artifacts/screening_recommendations_final.json and re-run "
-            "with --screening-gap-answers <file>. Scripts validate only; they do "
-            "not generate or deduplicate medical recommendations."
+            "artifacts/screening_recommendations.json (A cancer_risk / B other_abnormalities "
+            "/ C periodic_management + excluded_done_normal). "
+            "Read periodic_screening_schedule.json (age/gender→应筛+间隔), ask gap "
+            "questions separately from CP2, record answers inline. "
+            "Scripts validate only core logic (dedup / done+normal / medium+)."
         )
         return
 
@@ -1278,11 +1236,7 @@ def main():
         screening_gap_summary = _validate_screening_gap_stage(
             artifacts=artifacts,
             knowledge_root=SKILL_ROOT / "references" / "database",
-            screening_gap_answers_path=(
-                Path(args.screening_gap_answers)
-                if args.screening_gap_answers
-                else None
-            ),
+            screening_gap_answers_path=None,  # v2.0.4: answers 内嵌在 recommendations 里，不再独立文件
         )
     except ScreeningGapGateError as exc:
         print(

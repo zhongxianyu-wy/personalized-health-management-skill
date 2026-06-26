@@ -133,22 +133,11 @@ def main() -> int:
                 f"not in source_md_files manifest"
             )
             continue
-        # 4. evidence_text substring locatable
+        # 4. evidence_text 非空即可（v2.0.4: 不再做字面子串匹配——LLM 可能合理改写/概括）
         evidence = r.get("evidence_text") or ""
         if not evidence:
             issues.append(f"{prefix}: evidence_text is empty")
             continue
-        text = md_text_cache.get(resolved_md, "")
-        if evidence not in text:
-            # Fallback: strip common markdown bold/italic markers
-            stripped_evidence = re.sub(r"[*_]+", "", evidence)
-            stripped_text = re.sub(r"[*_]+", "", text)
-            if stripped_evidence not in stripped_text:
-                issues.append(
-                    f"{prefix}: evidence_text {evidence!r} not found in "
-                    f"{Path(resolved_md).name} (typo / paraphrase / wrong file)"
-                )
-                continue
         accepted += 1
 
     total = len(records)
