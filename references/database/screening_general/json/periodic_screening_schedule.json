@@ -1,0 +1,26 @@
+{
+  "schema_version": "periodic-screening-schedule-v1",
+  "last_updated": "2026-06-26",
+  "note": "普通人群推荐筛查周期表（起始年龄 + 推荐间隔）。v2.0.2 CP5 LLM 读此表判断「该年龄/性别应做哪些筛查 → 对比档案 → 判 never_recorded/overdue」。来源为中国权威指南。high_risk_only=true 的项目仅高危人群需要（LLM 须先确认危险因素）。",
+
+  "items": [
+    {"id": "bp_annual", "name": "血压测量", "category": "general", "method": "血压测量", "start_age": 18, "stop_age": 999, "gender": "all", "interval_years": 1, "high_risk_only": false, "source": "中国防治慢性病中长期规划(2017-2025)；35岁以上首诊测血压"},
+    {"id": "bmi_annual", "name": "体格检查（BMI/腰围）", "category": "general", "method": "身高体重腰围", "start_age": 18, "stop_age": 999, "gender": "all", "interval_years": 1, "high_risk_only": false, "source": "成人健康体检项目推荐指引(2025年版)"},
+    {"id": "lipid_panel", "name": "血脂检测", "category": "general", "method": "血脂四项(TC/TG/LDL-C/HDL-C)", "start_age": 20, "stop_age": 999, "gender": "all", "interval_years": 3, "high_risk_only": false, "source": "中国血脂管理指南(2023)；<40岁每2-5年、≥40岁每年，取一般人群折中值3年"},
+    {"id": "glucose_hba1c", "name": "血糖/HbA1c 筛查", "category": "general", "method": "空腹血糖 或 HbA1c", "start_age": 35, "stop_age": 999, "gender": "all", "interval_years": 3, "high_risk_only": false, "source": "中国糖尿病防治指南(2024)；≥40岁高危人群每年1次，一般人群每3年"},
+    {"id": "bone_density_dexa", "name": "骨密度检测", "category": "general", "method": "双能X线骨密度(DXA)", "start_age": 65, "stop_age": 999, "gender": "female", "interval_years": 2, "high_risk_only": false, "source": "原发性骨质疏松症诊疗指南；女性≥65岁，男性≥70岁"},
+    {"id": "bone_density_dexa_male", "name": "骨密度检测（男性）", "category": "general", "method": "双能X线骨密度(DXA)", "start_age": 70, "stop_age": 999, "gender": "male", "interval_years": 2, "high_risk_only": false, "source": "原发性骨质疏松症诊疗指南；男性≥70岁"},
+    {"id": "eye_exam", "name": "眼科检查", "category": "general", "method": "视力+眼底+眼压", "start_age": 40, "stop_age": 999, "gender": "all", "interval_years": 2, "high_risk_only": false, "source": "成人健康体检项目推荐指引(2025年版)；40岁起每1-2年"},
+
+    {"id": "crc_colonoscopy", "name": "结直肠癌筛查（结肠镜）", "category": "cancer", "method": "结肠镜", "start_age": 45, "stop_age": 75, "gender": "all", "interval_years": 10, "high_risk_only": false, "source": "中国结直肠癌筛查与早诊早治指南(2020)；一般人群45-75岁每10年1次结肠镜"},
+    {"id": "crc_fit", "name": "结直肠癌筛查（FIT 粪便隐血）", "category": "cancer", "method": "粪便免疫化学检测(FIT)", "start_age": 45, "stop_age": 75, "gender": "all", "interval_years": 1, "high_risk_only": false, "source": "中国结直肠癌筛查与早诊早治指南(2020)；每年1次FIT作为结肠镜替代"},
+    {"id": "breast_mammography", "name": "乳腺癌筛查（钼靶±超声）", "category": "cancer", "method": "乳腺X线钼靶 ± 超声", "start_age": 40, "stop_age": 75, "gender": "female", "interval_years": 2, "high_risk_only": false, "source": "中国女性乳腺癌筛查与早诊早治指南(2021)；40岁起每1-2年"},
+    {"id": "cervical_tct", "name": "宫颈癌筛查（TCT/HPV）", "category": "cancer", "method": "TCT细胞学 ± HPV检测", "start_age": 25, "stop_age": 65, "gender": "female", "interval_years": 3, "high_risk_only": false, "source": "中国子宫颈癌筛查指南；25-64岁每3年TCT或每5年HPV"},
+    {"id": "lung_ldct", "name": "肺癌筛查（LDCT）", "category": "cancer", "method": "低剂量螺旋CT", "start_age": 50, "stop_age": 80, "gender": "all", "interval_years": 1, "high_risk_only": true, "source": "中国肺癌LDCT筛查指南(2023)；50-80岁吸烟≥20包年高危人群每年1次"},
+    {"id": "prostate_psa", "name": "前列腺癌筛查（PSA）", "category": "cancer", "method": "血清PSA", "start_age": 50, "stop_age": 75, "gender": "male", "interval_years": 2, "high_risk_only": false, "source": "中国前列腺癌筛查专家共识；50岁起每1-2年"},
+    {"id": "gastric_endoscopy", "name": "胃癌筛查（胃镜）", "category": "cancer", "method": "胃镜", "start_age": 40, "stop_age": 75, "gender": "all", "interval_years": 3, "high_risk_only": true, "source": "中国胃癌筛查与早诊早治指南；40岁以上高危人群（Hp感染/萎缩性胃炎/家族史）"},
+    {"id": "liver_us_afp", "name": "肝癌筛查（超声+AFP）", "category": "cancer", "method": "腹部超声 + 血清AFP", "start_age": 35, "stop_age": 75, "gender": "all", "interval_years": 1, "high_risk_only": true, "source": "中国肝癌筛查与早诊早治指南；35-40岁以上高危人群（HBV/HCV/肝硬化）每6-12月"},
+    {"id": "thyroid_us", "name": "甲状腺筛查（超声）", "category": "cancer", "method": "甲状腺超声", "start_age": 30, "stop_age": 75, "gender": "all", "interval_years": 2, "high_risk_only": false, "source": "中国甲状腺癌诊疗指南；30岁以上每1-2年超声"},
+    {"id": "esophageal_endoscopy", "name": "食管癌筛查（内镜）", "category": "cancer", "method": "食管内镜", "start_age": 40, "stop_age": 75, "gender": "all", "interval_years": 3, "high_risk_only": true, "source": "中国食管癌筛查指南；40岁以上高危人群（高发区/烫饮/Barrett）"}
+  ]
+}
