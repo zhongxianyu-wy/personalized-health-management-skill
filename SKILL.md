@@ -17,7 +17,6 @@ allowed-tools:
   - Write
   - Edit
   - Bash
-version: "2.0.5"
 metadata:
   requires:
     bins: [python3, curl]    # python3≥3.10(推荐3.11); uv 由 launcher 探测，非必需
