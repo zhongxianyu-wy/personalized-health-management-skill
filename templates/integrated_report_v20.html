@@ -96,14 +96,14 @@ h2.sec-title { color: var(--primary); font-size: 18px; border-left: 4px solid va
   <h2 class="sec-title">🧱 循证"X"个性化加项清单</h2>
   <table class="data-table">
     <thead><tr>
-      <th style="width: 24%;">风险触发源</th><th style="width: 14%;">级别</th><th style="width: 26%;">推荐检查 (X)</th>
+      <th style="width: 24%;">风险触发源</th><th style="width: 14%;">风险级别</th><th style="width: 26%;">推荐检查</th>
       <th style="width: 12%;">周期</th><th style="width: 12%;">参考价格</th><th style="width: 12%;">临床价值</th>
     </tr></thead>
     <tbody>
     {% for x in x_addons %}
       <tr>
         <td>{{ x.risk_source }}</td>
-        <td><span class="tag tag-{{ x.risk_level_tag }}">{{ x.risk_level_label | default(x.risk_level_tag) }}</span></td>
+        <td><span class="tag tag-{{ x.risk_level_tag }}">{{ x.risk_level_label | default('低风险') }}</span></td>
         <td><strong>{{ x.method }}</strong></td>
         <td>{{ x.interval }}</td>
         <td>{{ x.price_range }}</td>
@@ -149,7 +149,7 @@ h2.sec-title { color: var(--primary); font-size: 18px; border-left: 4px solid va
     <div class="package-card" style="{% if p.recommended %}border-top: 3px solid var(--primary); background: var(--primary-light);{% else %}border-top: 3px solid #718096;{% endif %}">
       <div class="pkg-name">{{ p.name }}{% if p.recommended %} (推荐){% endif %}</div>
       <div class="pkg-price">{{ p.price_range }}</div>
-      <p style="font-size: 12px; color: #4a5568;"><b>包含：</b>{{ p.includes | join(' + ') }}</p>
+      <p style="font-size: 12px; color: #4a5568;"><b>包含：</b>{{ p.includes | join('、') }}</p>
       <p style="font-size: 11px; color: #718096;">🎯 {{ p.note }}</p>
     </div>
     {% endfor %}

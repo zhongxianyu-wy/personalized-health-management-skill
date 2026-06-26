@@ -26,6 +26,7 @@ from __future__ import annotations
 
 import json
 import os
+import re
 import sys
 from datetime import datetime
 from pathlib import Path
@@ -151,10 +152,30 @@ _TAG_NORMALIZE = {
     "info": "info", "low": "info", "mild": "info", "低": "info", "🟢": "info",
 }
 
+_TAG_LABEL_CN = {
+    "danger": "高风险",
+    "warning": "中风险",
+    "info": "低风险",
+}
+
+_TAG_SORT_RANK = {
+    "danger": 0,
+    "warning": 1,
+    "info": 2,
+}
+
 
 def _normalize_risk_tag(tag: Any) -> str:
     """把 LLM 产的各种 risk_level_tag 值映射到模板 CSS 认的 danger/warning/info。"""
     return _TAG_NORMALIZE.get(str(tag or "").strip().lower(), "info")
+
+
+def _normalize_risk_label(label: Any, tag: str) -> str:
+    """模板展示用中文风险级别；英文/内部枚举标签统一转中文。"""
+    text = str(label or "").strip()
+    if not text or re.search(r"[A-Za-z_]", text):
+        return _TAG_LABEL_CN.get(tag, "低风险")
+    return text
 
 
 def _enrich_x_addons(x_addons: Any, snapshot: dict[str, Any]) -> list[Any]:
@@ -179,13 +200,14 @@ def _enrich_x_addons(x_addons: Any, snapshot: dict[str, Any]) -> list[Any]:
         if isinstance(c, dict) and c.get("posterior_probability"):
             cancer_map[c.get("cancer_id", "")] = c
 
-    for x in x_addons:
+    normalized_rows: list[tuple[int, dict[str, Any]]] = []
+    for order, x in enumerate(x_addons):
         if not isinstance(x, dict):
             continue
         source = str(x.get("risk_source", ""))
         # v2.0.3: normalize risk_level_tag to CSS-known values (danger/warning/info)
-        if x.get("risk_level_tag"):
-            x["risk_level_tag"] = _normalize_risk_tag(x["risk_level_tag"])
+        x["risk_level_tag"] = _normalize_risk_tag(x.get("risk_level_tag"))
+        x["risk_level_label"] = _normalize_risk_label(x.get("risk_level_label"), x["risk_level_tag"])
         # 候选 cancer_id：LLM 填的 cancer_id（若有）+ risk_source 关键词匹配
         candidates = []
         if x.get("cancer_id"):
@@ -213,7 +235,11 @@ def _enrich_x_addons(x_addons: Any, snapshot: dict[str, Any]) -> list[Any]:
                     f"[report] ⚠ x_addons 行 risk_source「{source}」未展示后验概率（{reason}）。",
                     file=sys.stderr,
                 )
-    return x_addons
+        normalized_rows.append((order, x))
+    normalized_rows.sort(
+        key=lambda row: (_TAG_SORT_RANK.get(row[1].get("risk_level_tag"), 2), row[0])
+    )
+    return [row for _, row in normalized_rows]
 
 
 def _format_cn_date(dt: datetime) -> str:

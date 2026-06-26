@@ -4,10 +4,14 @@
 读 package_tiers.json 的 includes[] → join pricing/json/08_pricing.json →
 Σmid 更新 price_range（具体数字，非区间）。解决 LLM 手填价格不可复现问题。
 
-档3（吉早安替换/弥补）的 "价格1/价格2" 双价格：
-  price1 = 吉早安 mid + 未被替代项 mid 之和
-  price2 = 吉早安 mid + 所有推荐项 mid 之和
-  assemble 时需 LLM 在 includes 标注分类（本脚本按 includes 顺序求和）。
+三档名称固定：
+  1. 核心风险筛查档
+  2. 全面覆盖档
+  3. 癌症深入筛查档
+
+档3固定为「全面覆盖档 + 吉早安检测（+1999元）」：
+  档3价格 = 档2脚本价格 + 1999
+  档3包含 = 档2 includes + 吉早安
 
 用法：
     python scripts/assemble_package.py --package <out>/artifacts/package_tiers.json \\
@@ -31,16 +35,9 @@ from typing import Any
 
 
 JIZAOAN_KEY = "jizaoan"
-JIZAOAN_REPLACEABLE_KEYS = {
-    # 吉早安覆盖 8 癌对应的常见专项筛查。未在 pricing DB 中建模的项目
-    #（如 EUS/阴道超声）不会被自动推断；LLM 若写入且 pricing 不匹配则照常告警。
-    "ldct",
-    "colonoscopy",
-    "gastroscopy",
-    "gi_combined",
-    "abdominal_us",
-    "breast_us",
-}
+JIZAOAN_DISPLAY_NAME = "吉早安"
+JIZAOAN_ADDON_PRICE = 1999
+CANONICAL_PACKAGE_NAMES = ("核心风险筛查档", "全面覆盖档", "癌症深入筛查档")
 
 
 def load_pricing(skill_root: Path) -> dict[str, Any] | None:
@@ -109,73 +106,51 @@ def assemble_package(package_path: Path, pricing: dict[str, Any]) -> list[dict]:
     pkg = json.loads(package_path.read_text(encoding="utf-8"))
     items = pricing.get("items", {})
 
-    for tier in pkg:
-        includes = tier.get("includes", [])
-        # 双价格模式（档3 吉早安替换/弥补：includes=未被替代项, includes_all=全部推荐项）
-        includes_all = tier.get("includes_all")
-        if isinstance(includes_all, list) and includes_all:
-            jz_mid = items.get("jizaoan", {}).get("mid", 2480)
-            def _sum_mid(item_list: list) -> tuple[int, list[str]]:
-                s, m = 0, []
-                for inc in item_list:
-                    key, item = match_item(str(inc), items)
-                    if key == JIZAOAN_KEY:
-                        continue
-                    if item:
-                        s += item["mid"]
-                        m.append(f"{item['name']}({item['mid']})")
-                return s, m
-            def _without_jizaoan(item_list: list) -> list:
-                cleaned = []
-                for inc in item_list:
-                    key, _ = match_item(str(inc), items)
-                    if key != JIZAOAN_KEY:
-                        cleaned.append(inc)
-                return cleaned
-            includes_all_clean = _without_jizaoan(includes_all)
-            includes_clean = _without_jizaoan(includes)
-            if not includes_clean:
-                derived = []
-                for inc in includes_all_clean:
-                    key, _ = match_item(str(inc), items)
-                    if key not in JIZAOAN_REPLACEABLE_KEYS:
-                        derived.append(inc)
-                includes_clean = derived
-            tier["includes"] = includes_clean
-            tier["includes_all"] = includes_all_clean
-            sum1, m1 = _sum_mid(includes_clean)
-            sum2, m2 = _sum_mid(includes_all_clean)
-            tier["price_range"] = f"¥{jz_mid + sum1} / ¥{jz_mid + sum2}"
-            tier["_pricing_detail"] = {
-                "price1_items": m1, "price2_items": m2,
-                "jizaoan_mid": jz_mid, "price1": jz_mid + sum1, "price2": jz_mid + sum2,
-            }
-            print(f"  [assemble] {tier.get('name','?')}: "
-                  f"双价格 {jz_mid + sum1}/{jz_mid + sum2} "
-                  f"(吉早安{jz_mid}+未替代{sum1} / 吉早安{jz_mid}+全部{sum2})")
-            continue
-        total_mid = 0
-        matched: list[str] = []
-        unmatched: list[str] = []
-
-        for inc in includes:
-            # includes 可能是 str 或含"价格1/价格2"标注的复杂格式
+    def _sum_mid(item_list: list) -> tuple[int, list[str], list[str]]:
+        total, matched, unmatched = 0, [], []
+        for inc in item_list:
             text = str(inc)
             key, item = match_item(text, items)
             if item:
-                total_mid += item["mid"]
+                total += item["mid"]
                 matched.append(f"{item['name']}({item['mid']})")
             else:
                 unmatched.append(text)
+        return total, matched, unmatched
+
+    def _strip_jizaoan(item_list: list) -> list:
+        out = []
+        for inc in item_list:
+            key, _ = match_item(str(inc), items)
+            if key != JIZAOAN_KEY:
+                out.append(inc)
+        return out
+
+    def _price_from_tier(tier: dict) -> int:
+        detail = tier.get("_pricing_detail", {})
+        for key in ("sum_mid", "total", "price"):
+            value = detail.get(key)
+            if isinstance(value, int):
+                return value
+        text = str(tier.get("price_range", ""))
+        m = re.search(r"¥?\s*([0-9][0-9,]*)", text)
+        return int(m.group(1).replace(",", "")) if m else 0
+
+    for idx, tier in enumerate(pkg):
+        if idx < len(CANONICAL_PACKAGE_NAMES):
+            tier["name"] = CANONICAL_PACKAGE_NAMES[idx]
+        if idx == 2 and len(pkg) >= 2:
+            continue
+        includes = tier.get("includes", [])
+        if not isinstance(includes, list):
+            includes = []
+        if idx < 2:
+            includes = _strip_jizaoan(includes)
+            tier["includes"] = includes
+        total_mid, matched, unmatched = _sum_mid(includes)
 
         if total_mid > 0:
-            # 档3 双价格：如果 price_range 含 "/"（如"价格1/价格2"），保留双价格格式
-            existing = str(tier.get("price_range", ""))
-            if "/" in existing and "价格" in existing:
-                # 双价格档：price_range 已含 LLM 标注的 price1/price2，只附 Σmid 到 note
-                tier["_pricing_sum_mid"] = total_mid
-            else:
-                tier["price_range"] = f"¥{total_mid}"
+            tier["price_range"] = f"¥{total_mid}"
 
         tier["_pricing_detail"] = {
             "matched": matched, "unmatched": unmatched, "sum_mid": total_mid,
@@ -186,6 +161,34 @@ def assemble_package(package_path: Path, pricing: dict[str, Any]) -> list[dict]:
                 f"未匹配 pricing 的 includes: {unmatched}",
                 file=sys.stderr,
             )
+
+    if len(pkg) >= 3:
+        base_tier = pkg[1] if isinstance(pkg[1], dict) else {}
+        deep_tier = pkg[2] if isinstance(pkg[2], dict) else {}
+        base_includes = base_tier.get("includes", [])
+        if not isinstance(base_includes, list) or not base_includes:
+            base_includes = deep_tier.get("includes", [])
+        if not isinstance(base_includes, list):
+            base_includes = []
+        deep_includes = _strip_jizaoan(base_includes) + [JIZAOAN_DISPLAY_NAME]
+        base_price = _price_from_tier(base_tier)
+        total_price = base_price + JIZAOAN_ADDON_PRICE
+        deep_tier["name"] = CANONICAL_PACKAGE_NAMES[2]
+        deep_tier["includes"] = deep_includes
+        deep_tier.pop("includes_all", None)
+        deep_tier["price_range"] = f"¥{total_price}"
+        deep_tier["note"] = "在全面覆盖档基础上增加吉早安检测（+1999元）"
+        deep_tier["_pricing_detail"] = {
+            "base_tier_name": base_tier.get("name", CANONICAL_PACKAGE_NAMES[1]),
+            "base_tier_price": base_price,
+            "jizaoan_addon_price": JIZAOAN_ADDON_PRICE,
+            "total": total_price,
+        }
+        print(
+            f"  [assemble] {deep_tier.get('name','?')}: "
+            f"{base_price}+{JIZAOAN_ADDON_PRICE}={total_price} "
+            "（全面覆盖档+吉早安）"
+        )
 
     package_path.write_text(
         json.dumps(pkg, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"

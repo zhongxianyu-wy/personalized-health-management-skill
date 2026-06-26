@@ -228,7 +228,7 @@
     <div class="report-header">
         <div class="header-title">
             <h1>{{ person.honorific_name | default(person.name) }}个性化体检与健康管理方案</h1>
-            <p>基于 CancerRisk 风险画像{% if brca_status == 'positive' %} + 遗传高危特订方案{% endif %}</p>
+            <p>基于个体化风险画像{% if brca_status == 'positive' %} + 遗传高危特订方案{% endif %}</p>
         </div>
         <div style="text-align: right; font-size: 13px; color: #718096;">
             推荐体检时间窗口：{{ checkup_window }}<br>
@@ -291,8 +291,8 @@
         <thead>
             <tr>
                 <th style="width: 25%">风险触发源 / 核心医学背景</th>
-                <th style="width: 15%">CancerRisk 级别</th>
-                <th style="width: 28%">推荐个性化临床检查 (X)</th>
+                <th style="width: 15%">风险级别</th>
+                <th style="width: 28%">推荐个性化临床检查</th>
                 <th style="width: 12%">推荐周期</th>
                 <th style="width: 10%">参考价格</th>
                 <th style="width: 10%">遗传临床价值说明</th>
@@ -306,7 +306,7 @@
                 <div style="font-size:12px;color:#718096;margin-top:3px;">→ {{ x.cancer_name }}后验 <b style="color:{{ '#e53e3e' if x.posterior_probability > 0.02 else ('#ed8936' if x.posterior_probability > 0.005 else '#38a169') }};">{{ (x.posterior_probability * 100) | round(2) }}%</b></div>
                 {% endif %}
                 </td>
-                <td><span class="tag tag-{{ x.risk_level_tag | default('info') }}">{{ x.risk_level_label | default(x.risk_level_tag) | default('—') }}</span></td>
+                <td><span class="tag tag-{{ x.risk_level_tag | default('info') }}">{{ x.risk_level_label | default('低风险') }}</span></td>
                 <td><strong>{{ x.method | default('—') }}</strong></td>
                 <td>{{ x.interval | default('—') }}</td>
                 <td>{{ x.price_range | default('—') }}</td>
@@ -324,7 +324,7 @@
             <div style="font-size: 16px; font-weight: bold; color: var(--tech-red);">
                 🔍 吉早安® cfDNA 甲基化多癌早筛报告
             </div>
-            <div class="result-box">检测结果：阳性（{{ jizaoan_top_cancers | join(' & ') }}信号）</div>
+            <div class="result-box">检测结果：阳性（{{ jizaoan_top_cancers | join('、') }}信号）</div>
         </div>
         <div style="display: grid; grid-template-columns: 2.2fr 1fr; gap: 20px; font-size: 13px;">
             <div>
@@ -370,15 +370,8 @@
         <div class="package-card" style="{% if p.recommended %}border-top: 3px solid var(--primary); background: var(--primary-light);{% else %}border-top: 3px solid #718096;{% endif %}">
             <div class="pkg-name">{{ p.name | default('—') }}{% if p.recommended %} (推荐){% endif %}</div>
             <div class="pkg-price">{{ p.price_range | default('—') }}</div>
-            {% if p.includes_all is defined and p.includes_all %}
-            <p style="font-size: 12px; color: #4a5568;"><b>吉早安® + 未替代检测：</b>吉早安®{% if p.includes is defined and p.includes %} + {{ p.includes | join(' + ') }}{% endif %}</p>
-            <p style="font-size: 12px; color: #4a5568;"><b>全部检测项 + 吉早安®：</b>{{ p.includes_all | join(' + ') }} + 吉早安®</p>
-            <p style="font-size: 11px; color: #718096;">📋 吉早安®可替代其中 8 癌专项（LDCT/肠镜/胃镜/腹部超声/食管内镜/EUS/乳腺超声/阴道超声→1 管血）；价格1=吉早安+未被替代项，价格2=吉早安+全部项</p>
-            {% if p.note %}<p style="font-size: 11px; color: #718096;">🎯 {{ p.note }}</p>{% endif %}
-            {% else %}
-            <p style="font-size: 12px; color: #4a5568;"><b>包含：</b>{{ p.includes | join(' + ') }}</p>
+            <p style="font-size: 12px; color: #4a5568;"><b>包含：</b>{{ p.includes | join('、') }}</p>
             <p style="font-size: 11px; color: #718096;">🎯 {{ p.note | default('') }}</p>
-            {% endif %}
         </div>
         {% endfor %}
     </div>

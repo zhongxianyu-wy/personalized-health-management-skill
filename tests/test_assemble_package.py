@@ -45,52 +45,69 @@ def test_basic_mid_sum_overwrites_price(tmp_path: Path) -> None:
     assert out[0]["price_range"] == "¥620"  # 500 + 120
 
 
-def test_dual_price_includes_all(tmp_path: Path) -> None:
-    """Tier-3 jizaoan replace/compensate: price1=jizaoan+未被替代, price2=jizaoan+全部."""
-    p = _write_pkg(tmp_path, [{
-        "name": "档3", "price_range": "占位",
-        "includes": ["甲状腺彩超"],               # 未被替代项 → price1
-        "includes_all": ["LDCT", "甲状腺彩超"],    # 全部推荐项 → price2
-        "recommended": False,
-    }])
+def test_package_names_are_canonical(tmp_path: Path) -> None:
+    """LLM 手写名称会被固定为报告设计三档名称。"""
+    p = _write_pkg(tmp_path, [
+        {"name": "档1", "includes": ["LDCT"], "recommended": False},
+        {"name": "档2", "includes": ["LDCT", "甲状腺彩超"], "recommended": True},
+    ])
     assemble_package.assemble_package(p, PRICING)
     out = json.loads(p.read_text(encoding="utf-8"))
-    # price1 = 2480 + 120 = 2600; price2 = 2480 + 500 + 120 = 3100
-    assert out[0]["price_range"] == "¥2600 / ¥3100"
-    assert out[0]["_pricing_detail"]["price1"] == 2600
-    assert out[0]["_pricing_detail"]["price2"] == 3100
+    assert [t["name"] for t in out] == ["核心风险筛查档", "全面覆盖档"]
+    assert out[0]["price_range"] == "¥500"
+    assert out[1]["price_range"] == "¥620"
 
 
-def test_dual_price_does_not_double_count_jizaoan_when_llm_includes_it(tmp_path: Path) -> None:
-    """If LLM writes 吉早安 in includes/includes_all, assemble adds it only once."""
-    p = _write_pkg(tmp_path, [{
-        "name": "档3",
-        "includes": ["吉早安", "甲状腺彩超"],
-        "includes_all": ["吉早安", "LDCT", "甲状腺彩超"],
-        "recommended": False,
-    }])
+def test_deep_tier_does_not_double_count_jizaoan_when_llm_includes_it(tmp_path: Path) -> None:
+    """档3固定按档2 +1999；LLM 在旧字段里写吉早安也不会重复计价。"""
+    p = _write_pkg(tmp_path, [
+        {"name": "档1", "includes": ["LDCT"], "recommended": False},
+        {"name": "档2", "includes": ["LDCT", "甲状腺彩超", "吉早安"], "recommended": True},
+        {"name": "档3", "includes": ["吉早安"], "includes_all": ["吉早安", "LDCT"], "recommended": False},
+    ])
     assemble_package.assemble_package(p, PRICING)
     out = json.loads(p.read_text(encoding="utf-8"))
-    assert out[0]["price_range"] == "¥2600 / ¥3100"
-    assert out[0]["_pricing_detail"]["price1"] == 2600
-    assert out[0]["_pricing_detail"]["price2"] == 3100
-    assert "吉早安" not in " ".join(out[0]["_pricing_detail"]["price1_items"])
+    assert out[2]["includes"] == ["LDCT", "甲状腺彩超", "吉早安"]
+    assert out[2]["price_range"] == "¥2619"
+    assert out[2]["_pricing_detail"]["base_tier_price"] == 620
+    assert out[2]["_pricing_detail"]["jizaoan_addon_price"] == 1999
 
 
-def test_dual_price_derives_unreplaced_items_from_all_items(tmp_path: Path) -> None:
-    """When only includes_all is supplied, derive price1 by excluding replaceable cancer-screen items."""
-    p = _write_pkg(tmp_path, [{
-        "name": "档3",
-        "includes": [],
-        "includes_all": ["LDCT", "肠镜", "甲状腺彩超"],
-        "recommended": False,
-    }])
+def test_legacy_includes_all_removed_from_deep_tier(tmp_path: Path) -> None:
+    """旧替代字段 includes_all 不再进入模板；档3直接继承档2并追加吉早安。"""
+    p = _write_pkg(tmp_path, [
+        {"name": "档1", "includes": ["LDCT"], "recommended": False},
+        {"name": "档2", "includes": ["LDCT", "肠镜", "甲状腺彩超"], "recommended": True},
+        {"name": "档3", "includes": [], "includes_all": ["LDCT", "肠镜", "甲状腺彩超"], "recommended": False},
+    ])
     assemble_package.assemble_package(p, PRICING)
     out = json.loads(p.read_text(encoding="utf-8"))
-    assert out[0]["includes"] == ["甲状腺彩超"]
-    assert out[0]["price_range"] == "¥2600 / ¥4100"
-    assert out[0]["_pricing_detail"]["price1"] == 2600
-    assert out[0]["_pricing_detail"]["price2"] == 4100
+    assert out[2]["includes"] == ["LDCT", "肠镜", "甲状腺彩超", "吉早安"]
+    assert "includes_all" not in out[2]
+    assert out[2]["price_range"] == "¥3619"
+
+
+def test_canonical_package_names_and_deep_tier_adds_jizaoan_to_comprehensive(tmp_path: Path) -> None:
+    """三档名称固定；档3=全面覆盖档 + 吉早安检测（+1999元），不再输出替代双价格。"""
+    p = _write_pkg(tmp_path, [
+        {"name": "LLM自定义1", "includes": ["LDCT"], "recommended": False},
+        {"name": "LLM自定义2", "includes": ["LDCT", "甲状腺彩超"], "recommended": True},
+        {
+            "name": "LLM旧替换档",
+            "includes": [],
+            "includes_all": ["吉早安", "LDCT", "肠镜", "甲状腺彩超"],
+            "recommended": False,
+        },
+    ])
+    assemble_package.assemble_package(p, PRICING)
+    out = json.loads(p.read_text(encoding="utf-8"))
+    assert [t["name"] for t in out] == ["核心风险筛查档", "全面覆盖档", "癌症深入筛查档"]
+    assert out[2]["includes"] == ["LDCT", "甲状腺彩超", "吉早安"]
+    assert "includes_all" not in out[2]
+    assert out[1]["price_range"] == "¥620"
+    assert out[2]["price_range"] == "¥2619"
+    assert out[2]["_pricing_detail"]["base_tier_price"] == 620
+    assert out[2]["_pricing_detail"]["jizaoan_addon_price"] == 1999
 
 
 def test_unmatched_include_warned_not_crash(tmp_path: Path, capsys) -> None:

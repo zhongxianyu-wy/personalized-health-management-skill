@@ -46,9 +46,9 @@ def _mock(tmp, *, brca=False, jizaoan="unknown",
         "interval": "每3-5年", "price_range": "¥900-1400", "clinical_value": "早癌精查",
     }])
     w("package_tiers.json", packages if packages is not None else [
-        {"name": "遗传核心风险应对型", "price_range": "¥2,000-3,500", "includes": ["LDCT"], "note": "核心", "recommended": False},
-        {"name": "BRCA1全靶器官精准型", "price_range": "¥4,000-9,000", "includes": ["LDCT", "无痛结肠镜"], "note": "全面", "recommended": True},
-        {"name": "BRCA1长程健康管理型", "price_range": "¥6,000-12,000", "includes": ["精准型"], "note": "长程", "recommended": False},
+        {"name": "核心风险筛查档", "price_range": "¥2,000", "includes": ["LDCT"], "note": "核心", "recommended": False},
+        {"name": "全面覆盖档", "price_range": "¥4,000", "includes": ["LDCT", "无痛结肠镜"], "note": "全面", "recommended": True},
+        {"name": "癌症深入筛查档", "price_range": "¥5,999", "includes": ["LDCT", "无痛结肠镜", "吉早安"], "note": "在全面覆盖档基础上增加吉早安检测（+1999元）", "recommended": False},
     ])
     w("long_term_intervention.json", intervention if intervention is not None else {
         "genetic_management": ["预防性手术决策(BSO)", "家族遗传阻断"],
@@ -92,7 +92,7 @@ def test_positive_replays_temp(tmp_path):
     assert "tech-board" in html and "result-box" in html         # 液检阳态看板
     assert "阳性" in html
     assert "package-grid" in html                                # 套餐 grid
-    assert "BRCA1全靶器官精准型 (推荐)" in html                  # 中卡 recommended 高亮
+    assert "全面覆盖档 (推荐)" in html                           # 中卡 recommended 高亮
     assert "遗传特异性临床管理" in html                          # 遗传管理
     assert "生活方式干预" in html                                # 生活方式
     assert "evidence-v0003" in html                              # 页脚版本
@@ -119,25 +119,52 @@ def test_untested_neutral(tmp_path):
     assert "本次未检测" in html
 
 
-def test_dual_package_displays_replacement_and_full_options(tmp_path):
-    """档3双价格应同时展示：吉早安+未替代项 / 全部检测+吉早安。"""
+def test_deep_package_displays_comprehensive_plus_jizaoan(tmp_path):
+    """档3展示为全面覆盖档基础上增加吉早安检测。"""
     packages = [
-        {"name": "基础", "price_range": "¥500", "includes": ["LDCT"], "note": "基础", "recommended": False},
-        {"name": "全面", "price_range": "¥1500", "includes": ["LDCT", "肠镜"], "note": "全面", "recommended": True},
+        {"name": "核心风险筛查档", "price_range": "¥500", "includes": ["LDCT"], "note": "基础", "recommended": False},
+        {"name": "全面覆盖档", "price_range": "¥1500", "includes": ["LDCT", "肠镜"], "note": "全面", "recommended": True},
         {
-            "name": "吉早安替换/弥补",
-            "price_range": "¥2600 / ¥4100",
-            "includes": ["甲状腺彩超"],
-            "includes_all": ["LDCT", "肠镜", "甲状腺彩超"],
-            "note": "双策略",
+            "name": "癌症深入筛查档",
+            "price_range": "¥3499",
+            "includes": ["LDCT", "肠镜", "吉早安"],
+            "note": "在全面覆盖档基础上增加吉早安检测（+1999元）",
             "recommended": False,
         },
     ]
     _, html = _render(tmp_path, packages=packages)
-    assert "吉早安® + 未替代检测" in html
-    assert "甲状腺彩超" in html
-    assert "全部检测项 + 吉早安®" in html
-    assert "LDCT + 肠镜 + 甲状腺彩超 + 吉早安®" in html
+    assert "癌症深入筛查档" in html
+    assert "在全面覆盖档基础上增加吉早安检测（+1999元）" in html
+    assert "LDCT、肠镜、吉早安" in html
+    assert "吉早安® + 未替代检测" not in html
+    assert "全部检测项 + 吉早安®" not in html
+
+
+def test_template_uses_chinese_labels_and_deep_tier_simple_addon(tmp_path):
+    """模板输出使用中文风险级别；档3展示为全面覆盖基础上加吉早安，不再展示替代双价。"""
+    packages = [
+        {"name": "核心风险筛查档", "price_range": "¥500", "includes": ["LDCT"], "note": "核心", "recommended": False},
+        {"name": "全面覆盖档", "price_range": "¥1500", "includes": ["LDCT", "肠镜"], "note": "全面", "recommended": True},
+        {
+            "name": "癌症深入筛查档",
+            "price_range": "¥3499",
+            "includes": ["LDCT", "肠镜", "吉早安"],
+            "note": "在全面覆盖档基础上增加吉早安检测（+1999元）",
+            "recommended": False,
+        },
+    ]
+    x_addons = [
+        {"risk_source": "中风险来源", "risk_level_tag": "warning", "method": "重要检查", "interval": "1个月内", "price_range": "¥100", "clinical_value": "复查"},
+        {"risk_source": "高风险来源", "risk_level_tag": "danger", "method": "优先检查", "interval": "1-2周内", "price_range": "¥200", "clinical_value": "排查"},
+    ]
+    _, html = _render(tmp_path, packages=packages, x_addons=x_addons)
+    assert "风险级别" in html
+    assert "CancerRisk 级别" not in html
+    assert "高风险" in html and "中风险" in html
+    assert "癌症深入筛查档" in html
+    assert "在全面覆盖档基础上增加吉早安检测（+1999元）" in html
+    assert "吉早安® + 未替代检测" not in html
+    assert "全部检测项 + 吉早安®" not in html
 
 
 def test_empty_artifacts_no_crash(tmp_path):

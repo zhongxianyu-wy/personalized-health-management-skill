@@ -210,6 +210,32 @@ def test_x_addons_enrichment_links_cancer(artifacts: Path, answers_path: Path) -
     assert row["posterior_probability"] == 0.02  # from snapshot fixture
 
 
+def test_x_addons_sorted_high_medium_low_and_label_is_chinese(
+    artifacts: Path, answers_path: Path
+) -> None:
+    """风险源解析输出按高/中/低风险排序；缺省/英文标签归一为中文。"""
+    _write(
+        artifacts / "timeline_tiers.json",
+        {"priority": [{"item_name": "肺CT", "rationale": "r"}], "important": [], "maintain": []},
+    )
+    _write(
+        artifacts / "x_addons.json",
+        [
+            {"risk_source": "低风险来源", "method": "常规复查", "risk_level_tag": "low"},
+            {"risk_source": "高风险来源", "method": "优先检查", "risk_level_tag": "danger"},
+            {"risk_source": "中风险来源", "method": "重要检查", "risk_level_tag": "warning", "risk_level_label": "Medium"},
+        ],
+    )
+    _write(
+        artifacts / "package_tiers.json",
+        [{"name": "档1", "includes": ["LDCT"], "recommended": True}],
+    )
+    _write(artifacts / "long_term_intervention.json", {"genetic_management": [], "lifestyle": ["戒烟"]})
+    result = _assemble(artifacts, answers_path)
+    assert [x["risk_source"] for x in result["x_addons"]] == ["高风险来源", "中风险来源", "低风险来源"]
+    assert [x["risk_level_label"] for x in result["x_addons"]] == ["高风险", "中风险", "低风险"]
+
+
 # ---------------------------------------------------------------------------
 # Test 3 — tumor_markers.json preferred over candidate
 # ---------------------------------------------------------------------------
