@@ -1247,12 +1247,11 @@ def main():
 
     (out / "module_audits" / "task_cp5_screening_gap.md").write_text(
         "# CP5 Screening Gap Audit\n\n"
-        f"- candidates: {screening_gap_summary['candidate_count']}\n"
-        f"- questions: {screening_gap_summary['question_count']}\n"
-        f"- recommended: {screening_gap_summary['recommended_count']}\n"
-        f"- excluded_done_normal: {screening_gap_summary['excluded_done_normal_count']}\n"
+        f"- cancer_risk(A): {screening_gap_summary.get('cancer_risk_count', 0)}\n"
+        f"- other_abnormalities(B): {screening_gap_summary.get('other_abnormalities_count', 0)}\n"
+        f"- periodic_management(C): {screening_gap_summary.get('periodic_management_count', 0)}\n"
         "- decision_engine: LLM + knowledge base\n"
-        "- script_role: PUA validation only\n",
+        "- script_role: PUA validation only (3 rules: dedup / done+normal / medium+)\n",
         encoding="utf-8",
     )
 
