@@ -61,6 +61,38 @@ def test_dual_price_includes_all(tmp_path: Path) -> None:
     assert out[0]["_pricing_detail"]["price2"] == 3100
 
 
+def test_dual_price_does_not_double_count_jizaoan_when_llm_includes_it(tmp_path: Path) -> None:
+    """If LLM writes 吉早安 in includes/includes_all, assemble adds it only once."""
+    p = _write_pkg(tmp_path, [{
+        "name": "档3",
+        "includes": ["吉早安", "甲状腺彩超"],
+        "includes_all": ["吉早安", "LDCT", "甲状腺彩超"],
+        "recommended": False,
+    }])
+    assemble_package.assemble_package(p, PRICING)
+    out = json.loads(p.read_text(encoding="utf-8"))
+    assert out[0]["price_range"] == "¥2600 / ¥3100"
+    assert out[0]["_pricing_detail"]["price1"] == 2600
+    assert out[0]["_pricing_detail"]["price2"] == 3100
+    assert "吉早安" not in " ".join(out[0]["_pricing_detail"]["price1_items"])
+
+
+def test_dual_price_derives_unreplaced_items_from_all_items(tmp_path: Path) -> None:
+    """When only includes_all is supplied, derive price1 by excluding replaceable cancer-screen items."""
+    p = _write_pkg(tmp_path, [{
+        "name": "档3",
+        "includes": [],
+        "includes_all": ["LDCT", "肠镜", "甲状腺彩超"],
+        "recommended": False,
+    }])
+    assemble_package.assemble_package(p, PRICING)
+    out = json.loads(p.read_text(encoding="utf-8"))
+    assert out[0]["includes"] == ["甲状腺彩超"]
+    assert out[0]["price_range"] == "¥2600 / ¥4100"
+    assert out[0]["_pricing_detail"]["price1"] == 2600
+    assert out[0]["_pricing_detail"]["price2"] == 4100
+
+
 def test_unmatched_include_warned_not_crash(tmp_path: Path, capsys) -> None:
     """An include that matches no pricing item is warned on stderr, others still sum."""
     p = _write_pkg(tmp_path, [{

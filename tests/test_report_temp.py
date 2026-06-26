@@ -119,6 +119,27 @@ def test_untested_neutral(tmp_path):
     assert "本次未检测" in html
 
 
+def test_dual_package_displays_replacement_and_full_options(tmp_path):
+    """档3双价格应同时展示：吉早安+未替代项 / 全部检测+吉早安。"""
+    packages = [
+        {"name": "基础", "price_range": "¥500", "includes": ["LDCT"], "note": "基础", "recommended": False},
+        {"name": "全面", "price_range": "¥1500", "includes": ["LDCT", "肠镜"], "note": "全面", "recommended": True},
+        {
+            "name": "吉早安替换/弥补",
+            "price_range": "¥2600 / ¥4100",
+            "includes": ["甲状腺彩超"],
+            "includes_all": ["LDCT", "肠镜", "甲状腺彩超"],
+            "note": "双策略",
+            "recommended": False,
+        },
+    ]
+    _, html = _render(tmp_path, packages=packages)
+    assert "吉早安® + 未替代检测" in html
+    assert "甲状腺彩超" in html
+    assert "全部检测项 + 吉早安®" in html
+    assert "LDCT + 肠镜 + 甲状腺彩超 + 吉早安®" in html
+
+
 def test_empty_artifacts_no_crash(tmp_path):
     """5 artifact 全空（最小边界）→ StrictUndefined 不崩，section 结构常驻。"""
     _, html = _render(tmp_path, brca=False, jizaoan="unknown",

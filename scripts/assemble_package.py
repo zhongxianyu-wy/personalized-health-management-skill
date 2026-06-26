@@ -30,6 +30,19 @@ from pathlib import Path
 from typing import Any
 
 
+JIZAOAN_KEY = "jizaoan"
+JIZAOAN_REPLACEABLE_KEYS = {
+    # 吉早安覆盖 8 癌对应的常见专项筛查。未在 pricing DB 中建模的项目
+    #（如 EUS/阴道超声）不会被自动推断；LLM 若写入且 pricing 不匹配则照常告警。
+    "ldct",
+    "colonoscopy",
+    "gastroscopy",
+    "gi_combined",
+    "abdominal_us",
+    "breast_us",
+}
+
+
 def load_pricing(skill_root: Path) -> dict[str, Any] | None:
     p = skill_root / "references" / "database" / "pricing" / "json" / "08_pricing.json"
     if not p.is_file():
@@ -105,13 +118,33 @@ def assemble_package(package_path: Path, pricing: dict[str, Any]) -> list[dict]:
             def _sum_mid(item_list: list) -> tuple[int, list[str]]:
                 s, m = 0, []
                 for inc in item_list:
-                    _, item = match_item(str(inc), items)
+                    key, item = match_item(str(inc), items)
+                    if key == JIZAOAN_KEY:
+                        continue
                     if item:
                         s += item["mid"]
                         m.append(f"{item['name']}({item['mid']})")
                 return s, m
-            sum1, m1 = _sum_mid(includes)
-            sum2, m2 = _sum_mid(includes_all)
+            def _without_jizaoan(item_list: list) -> list:
+                cleaned = []
+                for inc in item_list:
+                    key, _ = match_item(str(inc), items)
+                    if key != JIZAOAN_KEY:
+                        cleaned.append(inc)
+                return cleaned
+            includes_all_clean = _without_jizaoan(includes_all)
+            includes_clean = _without_jizaoan(includes)
+            if not includes_clean:
+                derived = []
+                for inc in includes_all_clean:
+                    key, _ = match_item(str(inc), items)
+                    if key not in JIZAOAN_REPLACEABLE_KEYS:
+                        derived.append(inc)
+                includes_clean = derived
+            tier["includes"] = includes_clean
+            tier["includes_all"] = includes_all_clean
+            sum1, m1 = _sum_mid(includes_clean)
+            sum2, m2 = _sum_mid(includes_all_clean)
             tier["price_range"] = f"¥{jz_mid + sum1} / ¥{jz_mid + sum2}"
             tier["_pricing_detail"] = {
                 "price1_items": m1, "price2_items": m2,
