@@ -36,3 +36,12 @@ def test_genetic_result_questions_do_not_offer_unknown_options() -> None:
         assert "unknown" not in values
         assert "不清楚" not in visible
         assert "未知" not in visible
+
+
+def test_alcohol_question_uses_daily_gram_threshold_and_two_options() -> None:
+    question = _question("q_alcohol_status")
+    assert question["prompt"] == "是否有饮酒史（男性平均每日超过40g酒精，女性平均每日超过20g酒精）？"
+    assert question["options"] == [
+        {"value": "heavy", "label": "有（超过标准）", "exists": True},
+        {"value": "never", "label": "无（低于标准）", "exists": False},
+    ]

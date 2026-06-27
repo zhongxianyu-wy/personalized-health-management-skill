@@ -281,15 +281,15 @@ def _normalize_answer_value(value: Any) -> str:
     if s in {"female", "女", "f", "女士", "女性"}:
         return "female"
     # Smoking / alcohol normalisation
-    if s in {"never", "从不", "从未", "没吸过", "不喝酒"}:
+    if s in {"never", "从不", "从未", "没吸过", "不喝酒", "无（低于标准）", "低于标准"}:
         return "never"
     if s in {"former", "已戒烟", "以前吸", "已戒"}:
         return "former"
-    if s in {"current", "目前吸烟", "正在吸", "吸烟", "经常大量饮酒", "经常", "大量"}:
+    if s in {"current", "目前吸烟", "正在吸", "吸烟"}:
         return "current"
     if s in {"occasional", "偶尔饮酒", "偶尔"}:
         return "occasional"
-    if s in {"heavy", "经常大量饮酒", "大量饮酒", "酗酒"}:
+    if s in {"heavy", "经常大量饮酒", "大量饮酒", "酗酒", "有（超过标准）", "超过标准"}:
         return "heavy"
     return str(value).strip()
 

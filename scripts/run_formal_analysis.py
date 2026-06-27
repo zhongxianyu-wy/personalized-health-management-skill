@@ -829,7 +829,7 @@ def main():
             '                    "q_demographics_age": <integer — user said>,\n'
             '                    "q_family_history_cancer": "<yes|no|unknown — user said>",\n'
             '                    "q_smoking_status": "<never|former|current|unknown — user said>",\n'
-            '                    "q_alcohol_status": "<never|occasional|heavy|unknown — user said>", ...}}\n'
+            '                    "q_alcohol_status": "<heavy|never — user said>", ...}}\n'
             "  4. Re-run with `--answers <that-file>`.\n"
             f"\nSentinel file: {sentinel}",
             file=sys.stderr,

@@ -100,16 +100,14 @@ interactive:
           - {value: current, label: "目前吸烟", exists: true}
           - {value: unknown, label: "不愿透露"}
       - question_id: q_alcohol_status
-        prompt: "您的饮酒情况？（每周≥3次为大量饮酒）"
+        prompt: "是否有饮酒史（男性平均每日超过40g酒精，女性平均每日超过20g酒精）？"
         factor_id: alcohol_heavy
         factor_level: heavy
         target: timeline
         type: single_choice
         options:
-          - {value: never,      label: "从不饮酒",   exists: false}
-          - {value: occasional, label: "偶尔饮酒",   exists: false}
-          - {value: heavy,      label: "经常大量饮酒", exists: true}
-          - {value: unknown,    label: "不愿透露"}
+          - {value: heavy, label: "有（超过标准）", exists: true}
+          - {value: never, label: "无（低于标准）", exists: false}
       - question_id: q_has_genetic_mutation
         prompt: "您是否有基因突变（如 BRCA、Lynch 综合征等遗传性肿瘤相关基因）？"
         type: single_choice
