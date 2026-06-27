@@ -374,6 +374,16 @@ def _overall_jizaoan_performance(evidence_store: Path) -> tuple[Any, Any]:
     return None, None
 
 
+def _jizaoan_market_price(evidence_store: Path) -> str | None:
+    """吉早安价格统一从 pricing DB 覆盖，避免 LLM artifact 带旧市场区间。"""
+    pricing_path = evidence_store.parent.parent / "pricing" / "json" / "08_pricing.json"
+    payload = _read_json(pricing_path, {})
+    items = payload.get("items", {}) if isinstance(payload, dict) else {}
+    jizaoan = items.get("jizaoan", {}) if isinstance(items, dict) else {}
+    mid = jizaoan.get("mid") if isinstance(jizaoan, dict) else None
+    return f"¥{mid}" if isinstance(mid, int) and mid > 0 else None
+
+
 def _liquid_biopsy_perf(artifacts: Path, evidence_store: Path) -> dict[str, Any]:
     """Liquid-biopsy performance panel for the 液体活检 section.
 
@@ -395,6 +405,9 @@ def _liquid_biopsy_perf(artifacts: Path, evidence_store: Path) -> dict[str, Any]
         result["sensitivity"] = f"{sens * 100:.1f}%"
     if isinstance(spec, (int, float)) and 0 <= spec <= 1:
         result["specificity"] = f"{spec * 100:.1f}%"
+    market_price = _jizaoan_market_price(evidence_store)
+    if market_price:
+        result["market_price_range"] = market_price
     return result
 
 

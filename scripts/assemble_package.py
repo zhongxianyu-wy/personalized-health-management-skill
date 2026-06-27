@@ -9,8 +9,8 @@
   2. 全面覆盖档
   3. 癌症深入筛查档
 
-档3固定为「全面覆盖档 + 吉早安检测（+1999元）」：
-  档3价格 = 档2脚本价格 + 1999
+档3固定为「全面覆盖档 + 吉早安检测（+1280元）」：
+  档3价格 = 档2脚本价格 + 1280
   档3包含 = 档2 includes + 吉早安
 
 用法：
@@ -37,7 +37,7 @@ from typing import Any
 
 JIZAOAN_KEY = "jizaoan"
 JIZAOAN_DISPLAY_NAME = "吉早安"
-JIZAOAN_ADDON_PRICE = 1999
+JIZAOAN_ADDON_PRICE = 1280
 CANONICAL_PACKAGE_NAMES = ("核心风险筛查档", "全面覆盖档", "癌症深入筛查档")
 
 
@@ -203,7 +203,7 @@ def assemble_package(package_path: Path, pricing: dict[str, Any]) -> list[dict]:
         deep_tier["include_details"] = deep_include_details
         deep_tier.pop("includes_all", None)
         deep_tier["price_range"] = f"¥{total_price}"
-        deep_tier["note"] = "在全面覆盖档基础上增加吉早安检测（+1999元）"
+        deep_tier["note"] = "在全面覆盖档基础上增加吉早安检测（+1280元）"
         deep_tier["_pricing_detail"] = {
             "base_tier_name": base_tier.get("name", CANONICAL_PACKAGE_NAMES[1]),
             "base_tier_price": base_price,

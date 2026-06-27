@@ -48,7 +48,7 @@ def _mock(tmp, *, brca=False, jizaoan="unknown",
     w("package_tiers.json", packages if packages is not None else [
         {"name": "核心风险筛查档", "price_range": "¥2,000", "includes": ["LDCT"], "note": "核心", "recommended": False},
         {"name": "全面覆盖档", "price_range": "¥4,000", "includes": ["LDCT", "无痛结肠镜"], "note": "全面", "recommended": True},
-        {"name": "癌症深入筛查档", "price_range": "¥5,999", "includes": ["LDCT", "无痛结肠镜", "吉早安"], "note": "在全面覆盖档基础上增加吉早安检测（+1999元）", "recommended": False},
+        {"name": "癌症深入筛查档", "price_range": "¥5,280", "includes": ["LDCT", "无痛结肠镜", "吉早安"], "note": "在全面覆盖档基础上增加吉早安检测（+1280元）", "recommended": False},
     ])
     w("long_term_intervention.json", intervention if intervention is not None else {
         "genetic_management": ["预防性手术决策(BSO)", "家族遗传阻断"],
@@ -56,7 +56,7 @@ def _mock(tmp, *, brca=False, jizaoan="unknown",
     })
     w("liquid_biopsy_perf.json", liquid if liquid is not None else {
         "sensitivity": "81.9%",
-        "market_price_range": "¥1,980-2,980", "clinical_hint": "阳性信号提示早期异型细胞活动",
+        "market_price_range": "¥1280", "clinical_hint": "阳性信号提示早期异型细胞活动",
         "negative_risk_reduction": "阴性降低风险评级",
     })
     ans = {"q_jizaoan_result": jizaoan}
@@ -126,15 +126,15 @@ def test_deep_package_displays_comprehensive_plus_jizaoan(tmp_path):
         {"name": "全面覆盖档", "price_range": "¥1500", "includes": ["LDCT", "肠镜"], "note": "全面", "recommended": True},
         {
             "name": "癌症深入筛查档",
-            "price_range": "¥3499",
+            "price_range": "¥2780",
             "includes": ["LDCT", "肠镜", "吉早安"],
-            "note": "在全面覆盖档基础上增加吉早安检测（+1999元）",
+            "note": "在全面覆盖档基础上增加吉早安检测（+1280元）",
             "recommended": False,
         },
     ]
     _, html = _render(tmp_path, packages=packages)
     assert "癌症深入筛查档" in html
-    assert "在全面覆盖档基础上增加吉早安检测（+1999元）" in html
+    assert "在全面覆盖档基础上增加吉早安检测（+1280元）" in html
     assert "LDCT、肠镜、吉早安" in html
     assert "吉早安® + 未替代检测" not in html
     assert "全部检测项 + 吉早安®" not in html
@@ -167,14 +167,14 @@ def test_package_template_displays_each_include_price(tmp_path):
         },
         {
             "name": "癌症深入筛查档",
-            "price_range": "¥3499",
+            "price_range": "¥2780",
             "includes": ["低剂量胸部CT", "无痛肠镜", "吉早安"],
             "include_details": [
                 {"name": "低剂量胸部CT", "price_range": "¥500"},
                 {"name": "无痛肠镜", "price_range": "¥1000"},
-                {"name": "吉早安", "price_range": "¥1999"},
+                {"name": "吉早安", "price_range": "¥1280"},
             ],
-            "note": "在全面覆盖档基础上增加吉早安检测（+1999元）",
+            "note": "在全面覆盖档基础上增加吉早安检测（+1280元）",
             "recommended": False,
         },
     ]
@@ -182,7 +182,7 @@ def test_package_template_displays_each_include_price(tmp_path):
     assert "低剂量胸部CT：¥500" in html
     assert "甲状腺彩超：¥120" in html
     assert "无痛肠镜：¥1000" in html
-    assert "吉早安：¥1999" in html
+    assert "吉早安：¥1280" in html
 
 
 def test_template_uses_chinese_labels_and_deep_tier_simple_addon(tmp_path):
@@ -192,9 +192,9 @@ def test_template_uses_chinese_labels_and_deep_tier_simple_addon(tmp_path):
         {"name": "全面覆盖档", "price_range": "¥1500", "includes": ["LDCT", "肠镜"], "note": "全面", "recommended": True},
         {
             "name": "癌症深入筛查档",
-            "price_range": "¥3499",
+            "price_range": "¥2780",
             "includes": ["LDCT", "肠镜", "吉早安"],
-            "note": "在全面覆盖档基础上增加吉早安检测（+1999元）",
+            "note": "在全面覆盖档基础上增加吉早安检测（+1280元）",
             "recommended": False,
         },
     ]
@@ -207,7 +207,7 @@ def test_template_uses_chinese_labels_and_deep_tier_simple_addon(tmp_path):
     assert "CancerRisk 级别" not in html
     assert "高风险" in html and "中风险" in html
     assert "癌症深入筛查档" in html
-    assert "在全面覆盖档基础上增加吉早安检测（+1999元）" in html
+    assert "在全面覆盖档基础上增加吉早安检测（+1280元）" in html
     assert "吉早安® + 未替代检测" not in html
     assert "全部检测项 + 吉早安®" not in html
 
@@ -257,17 +257,19 @@ def test_empty_artifacts_no_crash(tmp_path):
 
 
 def test_spec_fallback_from_detection_performance(tmp_path):
-    """LLM 缺 specificity → 从检测性能库综合记录回填 99.0%。"""
+    """LLM 缺 specificity → 从检测性能库综合记录回填 99.0%；吉早安价格从价格库覆盖。"""
     report, _ = _render(tmp_path, brca=False, jizaoan="negative",
-                        liquid={"sensitivity": "81.9%", "market_price_range": "¥1,980-2,980",
+                        liquid={"sensitivity": "81.9%", "market_price_range": "旧市场价",
                                 "clinical_hint": "提示", "negative_risk_reduction": "降级"})
     assert report["liquid_biopsy_perf"]["specificity"] == "99.0%"
+    assert report["liquid_biopsy_perf"]["market_price_range"] == "¥1280"
 
 
 def test_sens_spec_always_from_detection_performance(tmp_path):
-    """sens/spec 总从检测性能库综合记录覆盖 LLM 多口径值。"""
+    """sens/spec/price 总从权威库覆盖 LLM 多口径值。"""
     report, _ = _render(tmp_path, brca=False, jizaoan="negative",
                         liquid={"sensitivity": "74.9%", "specificity": "99.5%",
-                                "market_price_range": "¥1,980-2,980"})
+                                "market_price_range": "旧市场价"})
     assert report["liquid_biopsy_perf"]["specificity"] == "99.0%"
     assert report["liquid_biopsy_perf"]["sensitivity"] == "81.9%"
+    assert report["liquid_biopsy_perf"]["market_price_range"] == "¥1280"

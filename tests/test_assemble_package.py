@@ -22,7 +22,7 @@ PRICING = {
     "items": {
         "ldct": {"name": "低剂量胸部CT", "aliases": ["LDCT", "肺CT"], "mid": 500},
         "colonoscopy": {"name": "无痛肠镜", "aliases": ["肠镜"], "mid": 1000},
-        "jizaoan": {"name": "吉早安", "aliases": ["吉早安多癌筛查"], "mid": 2480},
+        "jizaoan": {"name": "吉早安", "aliases": ["吉早安多癌筛查"], "mid": 1280},
         "thyroid_us": {"name": "甲状腺彩超", "aliases": ["甲状腺超声"], "mid": 120},
     }
 }
@@ -61,7 +61,7 @@ def test_package_includes_have_item_price_details(tmp_path: Path) -> None:
     assert out[2]["include_details"] == [
         {"name": "低剂量胸部CT", "price_range": "¥500"},
         {"name": "无痛肠镜", "price_range": "¥1000"},
-        {"name": "吉早安", "price_range": "¥1999"},
+        {"name": "吉早安", "price_range": "¥1280"},
     ]
 
 
@@ -94,7 +94,7 @@ def test_pricing_keys_are_rendered_as_chinese_include_names(tmp_path: Path) -> N
 
 
 def test_deep_tier_does_not_double_count_jizaoan_when_llm_includes_it(tmp_path: Path) -> None:
-    """档3固定按档2 +1999；LLM 在旧字段里写吉早安也不会重复计价。"""
+    """档3固定按档2 +1280；LLM 在旧字段里写吉早安也不会重复计价。"""
     p = _write_pkg(tmp_path, [
         {"name": "档1", "includes": ["LDCT"], "recommended": False},
         {"name": "档2", "includes": ["LDCT", "甲状腺彩超", "吉早安"], "recommended": True},
@@ -103,9 +103,9 @@ def test_deep_tier_does_not_double_count_jizaoan_when_llm_includes_it(tmp_path: 
     assemble_package.assemble_package(p, PRICING)
     out = json.loads(p.read_text(encoding="utf-8"))
     assert out[2]["includes"] == ["低剂量胸部CT", "甲状腺彩超", "吉早安"]
-    assert out[2]["price_range"] == "¥2619"
+    assert out[2]["price_range"] == "¥1900"
     assert out[2]["_pricing_detail"]["base_tier_price"] == 620
-    assert out[2]["_pricing_detail"]["jizaoan_addon_price"] == 1999
+    assert out[2]["_pricing_detail"]["jizaoan_addon_price"] == 1280
 
 
 def test_legacy_includes_all_removed_from_deep_tier(tmp_path: Path) -> None:
@@ -119,11 +119,11 @@ def test_legacy_includes_all_removed_from_deep_tier(tmp_path: Path) -> None:
     out = json.loads(p.read_text(encoding="utf-8"))
     assert out[2]["includes"] == ["低剂量胸部CT", "无痛肠镜", "甲状腺彩超", "吉早安"]
     assert "includes_all" not in out[2]
-    assert out[2]["price_range"] == "¥3619"
+    assert out[2]["price_range"] == "¥2900"
 
 
 def test_canonical_package_names_and_deep_tier_adds_jizaoan_to_comprehensive(tmp_path: Path) -> None:
-    """三档名称固定；档3=全面覆盖档 + 吉早安检测（+1999元），不再输出替代双价格。"""
+    """三档名称固定；档3=全面覆盖档 + 吉早安检测（+1280元），不再输出替代双价格。"""
     p = _write_pkg(tmp_path, [
         {"name": "LLM自定义1", "includes": ["LDCT"], "recommended": False},
         {"name": "LLM自定义2", "includes": ["LDCT", "甲状腺彩超"], "recommended": True},
@@ -140,9 +140,9 @@ def test_canonical_package_names_and_deep_tier_adds_jizaoan_to_comprehensive(tmp
     assert out[2]["includes"] == ["低剂量胸部CT", "甲状腺彩超", "吉早安"]
     assert "includes_all" not in out[2]
     assert out[1]["price_range"] == "¥620"
-    assert out[2]["price_range"] == "¥2619"
+    assert out[2]["price_range"] == "¥1900"
     assert out[2]["_pricing_detail"]["base_tier_price"] == 620
-    assert out[2]["_pricing_detail"]["jizaoan_addon_price"] == 1999
+    assert out[2]["_pricing_detail"]["jizaoan_addon_price"] == 1280
 
 
 def test_unmatched_include_warned_not_crash(tmp_path: Path, capsys) -> None:
@@ -164,7 +164,7 @@ def test_load_pricing_real_file() -> None:
     assert "items" in pricing and len(pricing["items"]) > 0
     for key in ("ldct", "colonoscopy", "jizaoan", "thyroid_us"):
         assert key in pricing["items"], f"missing pricing item: {key}"
-    assert pricing["items"]["jizaoan"]["mid"] == 2480
+    assert pricing["items"]["jizaoan"]["mid"] == 1280
 
 
 def test_assemble_package_wired_into_orchestrator() -> None:

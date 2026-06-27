@@ -22,7 +22,7 @@ def _mock_artifacts(tmp, *, brca=False, jizaoan="negative"):
     w("timeline_tiers.json", {"priority": [{"item_name": "结肠镜", "rationale": "高危"}], "important": [], "maintain": []})
     w("x_addons.json", [{"risk_source": "ALT高", "risk_level_tag": "warning", "method": "肝超声", "interval": "3月", "price_range": "¥100", "clinical_value": "排查"}])
     w("package_tiers.json", [{"name": "基础", "price_range": "¥1200-3000", "includes": ["LDCT"], "note": "基础", "recommended": False}, {"name": "进阶", "price_range": "¥3000-8000", "includes": ["LDCT"], "note": "推荐", "recommended": True}, {"name": "深度", "price_range": "¥5000-12000", "includes": ["MRI"], "note": "深度", "recommended": False}])
-    w("liquid_biopsy_perf.json", {"sensitivity": "74.9%", "specificity": "99.0%", "market_price_range": "¥1980-2980", "negative_risk_reduction": "降级"})
+    w("liquid_biopsy_perf.json", {"sensitivity": "74.9%", "specificity": "99.0%", "market_price_range": "¥1280", "negative_risk_reduction": "降级"})
     w("long_term_intervention.json", {"genetic_management": [], "lifestyle": ["戒烟"]})
     ans = {"q_jizaoan_result": jizaoan}
     if jizaoan == "positive":
