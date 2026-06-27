@@ -22,20 +22,24 @@ def _question(question_id: str) -> dict:
     raise AssertionError(f"missing question: {question_id}")
 
 
-def test_genetic_result_questions_do_not_offer_unknown_options() -> None:
-    """基因检测结果题不再提供「未知/不清楚」选项；不确定时应在上游是否有突变题选择无。"""
+def test_genetic_result_questions_offer_unknown_as_fourth_option() -> None:
+    """基因检测结果题保留「未知」选项，且固定排第 4。"""
     for qid in (
-        "q_has_genetic_mutation",
         "q_genetic_mutations_brca",
         "q_genetic_mutations_lynch_mlh1_msh2",
         "q_genetic_mutations_lynch_msh6_pms2",
     ):
         question = _question(qid)
-        visible = question["prompt"] + " " + " ".join(str(o.get("label", "")) for o in question.get("options", []))
-        values = {o.get("value") for o in question.get("options", [])}
-        assert "unknown" not in values
-        assert "不清楚" not in visible
-        assert "未知" not in visible
+        assert len(question["options"]) == 4
+        assert question["options"][3] == {"value": "unknown", "label": "未知"}
+
+
+def test_genetic_gate_question_keeps_yes_no_only() -> None:
+    question = _question("q_has_genetic_mutation")
+    assert question["options"] == [
+        {"value": "yes", "label": "有基因突变"},
+        {"value": "no", "label": "无"},
+    ]
 
 
 def test_alcohol_question_uses_daily_gram_threshold_and_two_options() -> None:

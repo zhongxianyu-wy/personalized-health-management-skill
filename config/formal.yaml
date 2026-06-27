@@ -116,29 +116,32 @@ interactive:
           - {value: "yes", label: "有基因突变"}
           - {value: "no",  label: "无"}
       - question_id: q_genetic_mutations_brca
-        prompt: "BRCA 相关突变（可多选；均无则选「无」）？"
+        prompt: "BRCA 相关突变（可多选；均无则选「无」，无法确认则选「未知」）？"
         type: multi_select
         conditional_on: {question_id: q_has_genetic_mutation, value: "yes"}
         options:
           - {value: brca1, label: "BRCA1 突变", factor_id: brca1_mutation_carrier, factor_level: present, exists: true}
           - {value: brca2, label: "BRCA2 突变", factor_id: brca2_mutation_carrier, factor_level: present, exists: true}
           - {value: none,  label: "无"}
+          - {value: unknown, label: "未知"}
       - question_id: q_genetic_mutations_lynch_mlh1_msh2
-        prompt: "Lynch 综合征突变（MLH1/MSH2，可多选；无则选「无」）？"
+        prompt: "Lynch 综合征突变（MLH1/MSH2，可多选；无则选「无」，无法确认则选「未知」）？"
         type: multi_select
         conditional_on: {question_id: q_has_genetic_mutation, value: "yes"}
         options:
           - {value: mlh1, label: "MLH1 突变", factor_id: lynch_syndrome_mlh1, factor_level: present, exists: true}
           - {value: msh2, label: "MSH2 突变", factor_id: lynch_syndrome_msh2, factor_level: present, exists: true}
           - {value: none,  label: "无"}
+          - {value: unknown, label: "未知"}
       - question_id: q_genetic_mutations_lynch_msh6_pms2
-        prompt: "Lynch 综合征突变（MSH6/PMS2，可多选；无则选「无」）？"
+        prompt: "Lynch 综合征突变（MSH6/PMS2，可多选；无则选「无」，无法确认则选「未知」）？"
         type: multi_select
         conditional_on: {question_id: q_has_genetic_mutation, value: "yes"}
         options:
           - {value: msh6, label: "MSH6 突变", factor_id: lynch_syndrome_msh6, factor_level: present, exists: true}
           - {value: pms2, label: "PMS2 突变", factor_id: lynch_syndrome_pms2, factor_level: present, exists: true}
           - {value: none,  label: "无"}
+          - {value: unknown, label: "未知"}
       # text_fill: shown only when q_family_history_cancer=yes; placement=last
       # ensures it follows all single-choice questions regardless of yaml order.
       - question_id: q_family_history_detail
