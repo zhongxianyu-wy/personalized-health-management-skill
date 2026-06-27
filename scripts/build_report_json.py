@@ -164,10 +164,39 @@ _TAG_SORT_RANK = {
     "info": 2,
 }
 
+_TAG_LABEL_HINTS = (
+    ("danger", ("高风险", "极高", "很高", "严重", "重度", "🔴")),
+    ("warning", ("中等风险", "中风险", "中度", "较高", "潜在", "🟠", "🟡")),
+    ("info", ("低风险", "轻度", "常规", "正常", "🟢")),
+)
 
-def _normalize_risk_tag(tag: Any) -> str:
-    """把 LLM 产的各种 risk_level_tag 值映射到模板 CSS 认的 danger/warning/info。"""
-    return _TAG_NORMALIZE.get(str(tag or "").strip().lower(), "info")
+_INTERNAL_TIMELINE_TOKENS = (
+    "moderate_workup",
+    "high_workup",
+    "urgent_workup",
+    "very_high",
+    "mild_abnormal",
+)
+
+
+def _infer_risk_tag_from_label(label: Any) -> str | None:
+    """当 LLM 只填中文 risk_level_label 时，从展示标签反推 CSS 风险等级。"""
+    text = str(label or "").strip()
+    if not text:
+        return None
+    for tag, hints in _TAG_LABEL_HINTS:
+        if any(hint in text for hint in hints):
+            return tag
+    return None
+
+
+def _normalize_risk_tag(tag: Any, label: Any = None) -> str:
+    """把 LLM 产的各种 risk_level_tag/中文 label 值映射到模板 CSS 认的 danger/warning/info。"""
+    tag_text = str(tag or "").strip().lower()
+    if tag_text in _TAG_NORMALIZE:
+        return _TAG_NORMALIZE[tag_text]
+    inferred = _infer_risk_tag_from_label(label)
+    return inferred or "info"
 
 
 def _normalize_risk_label(label: Any, tag: str) -> str:
@@ -176,6 +205,49 @@ def _normalize_risk_label(label: Any, tag: str) -> str:
     if not text or re.search(r"[A-Za-z_]", text):
         return _TAG_LABEL_CN.get(tag, "低风险")
     return text
+
+
+def _sanitize_timeline_text(value: Any) -> Any:
+    """清除面向内部调度/风险分层的枚举字段，避免在用户报告时间轴泄露。"""
+    if not isinstance(value, str):
+        return value
+    text = value
+    token_pattern = "|".join(re.escape(token) for token in _INTERNAL_TIMELINE_TOKENS)
+    text = re.sub(
+        rf"\b(?:risk_tier|risk_level|risk_level_tag|tier)\s*[:=：]\s*(?:{token_pattern})\b",
+        "",
+        text,
+        flags=re.IGNORECASE,
+    )
+    text = re.sub(rf"\b(?:{token_pattern})\b", "", text, flags=re.IGNORECASE)
+    text = re.sub(r"[（(]\s*[，,、;；\s]*[)）]", "", text)
+    text = re.sub(r"\s+", " ", text)
+    text = re.sub(r"\s+([，,、;；。])", r"\1", text)
+    return text.strip(" ，,、;；")
+
+
+def _normalize_timeline_tiers(timeline_tiers: Any) -> dict[str, list[Any]]:
+    """时间轴渲染数据归一化：保留用户可读医学内容，剔除内部枚举。"""
+    if not isinstance(timeline_tiers, dict):
+        return {"priority": [], "important": [], "maintain": []}
+    normalized: dict[str, list[Any]] = {}
+    for tier in ("priority", "important", "maintain"):
+        rows = timeline_tiers.get(tier, [])
+        if not isinstance(rows, list):
+            normalized[tier] = []
+            continue
+        normalized_rows: list[Any] = []
+        for row in rows:
+            if isinstance(row, dict):
+                new_row = dict(row)
+                for field in ("item_name", "rationale", "interval"):
+                    if field in new_row:
+                        new_row[field] = _sanitize_timeline_text(new_row[field])
+                normalized_rows.append(new_row)
+            else:
+                normalized_rows.append(_sanitize_timeline_text(row))
+        normalized[tier] = normalized_rows
+    return normalized
 
 
 def _enrich_x_addons(x_addons: Any, snapshot: dict[str, Any]) -> list[Any]:
@@ -206,7 +278,7 @@ def _enrich_x_addons(x_addons: Any, snapshot: dict[str, Any]) -> list[Any]:
             continue
         source = str(x.get("risk_source", ""))
         # v2.0.3: normalize risk_level_tag to CSS-known values (danger/warning/info)
-        x["risk_level_tag"] = _normalize_risk_tag(x.get("risk_level_tag"))
+        x["risk_level_tag"] = _normalize_risk_tag(x.get("risk_level_tag"), x.get("risk_level_label"))
         x["risk_level_label"] = _normalize_risk_label(x.get("risk_level_label"), x["risk_level_tag"])
         # 候选 cancer_id：LLM 填的 cancer_id（若有）+ risk_source 关键词匹配
         candidates = []
@@ -370,7 +442,9 @@ def assemble_report_json(
         )
 
     now = datetime.now()
-    timeline_tiers = _read_json(artifacts / "timeline_tiers.json", {"priority": [], "important": [], "maintain": []})
+    timeline_tiers = _normalize_timeline_tiers(
+        _read_json(artifacts / "timeline_tiers.json", {"priority": [], "important": [], "maintain": []})
+    )
     report = {
         "schema_version": SCHEMA_VERSION,
         "run_id": run_id,

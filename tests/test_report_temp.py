@@ -167,6 +167,40 @@ def test_template_uses_chinese_labels_and_deep_tier_simple_addon(tmp_path):
     assert "全部检测项 + 吉早安®" not in html
 
 
+def test_risk_level_tags_render_expected_colors_from_chinese_labels(tmp_path):
+    """风险源等级仅有中文标签时，模板仍输出深红/橙/灰三档颜色。"""
+    x_addons = [
+        {"risk_source": "低风险来源", "risk_level_label": "低风险", "method": "常规复查"},
+        {"risk_source": "高风险来源", "risk_level_label": "高风险", "method": "优先检查"},
+        {"risk_source": "中等风险来源", "risk_level_label": "中等风险", "method": "重要检查"},
+    ]
+    _, html = _render(tmp_path, x_addons=x_addons)
+    assert ".tag-danger { background: #c53030; }" in html
+    assert ".tag-warning { background: #ed8936; }" in html
+    assert ".tag-info { background: #4a5568; }" in html
+    assert "tag-danger" in html and "高风险" in html
+    assert "tag-warning" in html and "中等风险" in html
+    assert "tag-info" in html and "低风险" in html
+
+
+def test_timeline_render_hides_internal_workup_tokens(tmp_path):
+    """核心建议时间轴不展示 moderate_workup 等内部风险枚举。"""
+    timeline = {
+        "priority": [
+            {
+                "item_name": "甲状腺超声 moderate_workup",
+                "rationale": "甲状腺结节异常，甲状腺癌后验概率 8.2%，risk_tier=moderate_workup，建议专科复查",
+            }
+        ],
+        "important": [],
+        "maintain": [],
+    }
+    _, html = _render(tmp_path, timeline=timeline, x_addons=[])
+    assert "moderate_workup" not in html
+    assert "risk_tier" not in html
+    assert "甲状腺癌后验概率 8.2%" in html
+
+
 def test_empty_artifacts_no_crash(tmp_path):
     """5 artifact 全空（最小边界）→ StrictUndefined 不崩，section 结构常驻。"""
     _, html = _render(tmp_path, brca=False, jizaoan="unknown",

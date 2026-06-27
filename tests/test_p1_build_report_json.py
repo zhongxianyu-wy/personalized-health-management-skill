@@ -236,6 +236,56 @@ def test_x_addons_sorted_high_medium_low_and_label_is_chinese(
     assert [x["risk_level_label"] for x in result["x_addons"]] == ["高风险", "中风险", "低风险"]
 
 
+def test_x_addons_infers_css_tag_from_chinese_risk_label(
+    artifacts: Path, answers_path: Path
+) -> None:
+    """LLM 只给中文风险等级时，也必须渲染为正确颜色 class，不能全部回落灰色。"""
+    _write(
+        artifacts / "timeline_tiers.json",
+        {"priority": [{"item_name": "肺CT", "rationale": "r"}], "important": [], "maintain": []},
+    )
+    _write(
+        artifacts / "x_addons.json",
+        [
+            {"risk_source": "低风险来源", "method": "常规复查", "risk_level_label": "低风险"},
+            {"risk_source": "高风险来源", "method": "优先检查", "risk_level_label": "高风险"},
+            {"risk_source": "中等风险来源", "method": "重要检查", "risk_level_label": "中等风险"},
+        ],
+    )
+    _write(artifacts / "package_tiers.json", [{"name": "档1", "includes": ["LDCT"], "recommended": True}])
+    _write(artifacts / "long_term_intervention.json", {"genetic_management": [], "lifestyle": ["戒烟"]})
+    result = _assemble(artifacts, answers_path)
+    assert [x["risk_source"] for x in result["x_addons"]] == ["高风险来源", "中等风险来源", "低风险来源"]
+    assert [x["risk_level_tag"] for x in result["x_addons"]] == ["danger", "warning", "info"]
+
+
+def test_timeline_tiers_strip_internal_workup_tokens(
+    artifacts: Path, answers_path: Path
+) -> None:
+    """核心建议时间轴面向用户，只保留中文异常指标+后验概率，不泄露 moderate_workup 等内部字段。"""
+    _write(
+        artifacts / "timeline_tiers.json",
+        {
+            "priority": [
+                {
+                    "item_name": "甲状腺超声 moderate_workup",
+                    "rationale": "甲状腺结节异常，甲状腺癌后验概率 8.2%，risk_tier=moderate_workup，建议专科复查",
+                }
+            ],
+            "important": [],
+            "maintain": [],
+        },
+    )
+    _write(artifacts / "x_addons.json", [{"risk_source": "甲状腺结节", "method": "甲状腺超声"}])
+    _write(artifacts / "package_tiers.json", [{"name": "档1", "includes": ["甲状腺超声"], "recommended": True}])
+    _write(artifacts / "long_term_intervention.json", {"genetic_management": [], "lifestyle": ["戒烟"]})
+    result = _assemble(artifacts, answers_path)
+    rendered_json = json.dumps(result["timeline_tiers"], ensure_ascii=False)
+    assert "moderate_workup" not in rendered_json
+    assert "risk_tier" not in rendered_json
+    assert "甲状腺癌后验概率 8.2%" in rendered_json
+
+
 # ---------------------------------------------------------------------------
 # Test 3 — tumor_markers.json preferred over candidate
 # ---------------------------------------------------------------------------
