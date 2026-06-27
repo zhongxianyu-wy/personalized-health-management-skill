@@ -124,7 +124,7 @@
 
 健康总结结构化输入：`health_summary_api_response.md` + `refined_content_bundle.md` + summary skeleton JSON。用 `scripts/finalize_structured_summary.py`，不手写 JSON。大 HTML 片段放文件，fills JSON 内用 `@path` 引用。保留 `raw_assessment_markdown` 原文。健康总结是 **display-only**——不掺 snapshot 概率 / ontology / OR/LR / 筛查推荐逻辑。
 
-健康总结结构化后先跑到 `screening-gap`。脚本会生成 `artifacts/cp5_context_pack.json`。agent 优先读取该 context pack，再按 `缺口筛查与交互确认.md` 产单一 `screening_recommendations.json`（A/B/C + `excluded_done_normal`，缺口问答内嵌）。不带 `--screening-gap-answers` 跑到 `report-artifacts`，CP5 校验、snapshot/归档自动完成。agent 再产 5 section artifact（`timeline_tiers.json` / `x_addons.json` / `package_tiers.json` / `liquid_biopsy_perf.json` / `long_term_intervention.json`）。
+健康总结结构化后先跑到 `screening-gap`。脚本会生成 `artifacts/cp5_context_pack.json`。agent 优先读取该 context pack，再按 `缺口筛查与交互确认.md` 产单一 `screening_recommendations.json`（A/B/C + `excluded_done_normal`，缺口问答内嵌）。不带 `--screening-gap-answers` 跑到 `report-artifacts`，CP5 校验、snapshot/归档自动完成。agent 再产 5 section artifact（`timeline_tiers.json` / `x_addons.json` / `package_tiers.json` / `liquid_biopsy_perf.json` / `long_term_intervention.json`）。患者可见字段必须使用中文自然语言；禁止直接输出数据库 key / 分类 key / 内部枚举（如 `cardiovascular`、`diabetes`、`risk_tier`、`moderate_workup`），这些值只能作为内部判断线索，需转写为“心血管风险、血脂异常、糖代谢异常、中等风险复查”等中文医学表达。
 
 ## 归档（自动，无确认步骤）
 

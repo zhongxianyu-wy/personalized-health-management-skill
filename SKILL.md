@@ -76,11 +76,13 @@ bash scripts/run.sh scripts/run_formal_analysis.py \
 8. **最终报告**：保留 `--answers`，不带 stop-after → exit 0 → `report.html` 就绪。
 
 ## 5 section artifact（LLM 产，落 `<out>/artifacts/`）
+**患者可见字段必须使用中文自然语言**：`timeline_tiers.item_name/rationale`、`x_addons.risk_source/method/clinical_value`、`package_tiers.includes/note` 会直接进入报告，禁止直接输出数据库 key、分类 key、JSON 字段名或内部枚举。看到 `cardiovascular`/`diabetes`/`lung_cancer`/`risk_tier`/`moderate_workup`/`high_workup` 等只可作为内部判断线索，必须转写成中文医学表达（如“心血管风险”“血脂异常”“肺癌风险”“中等风险复查”），不得原样出现在患者报告文本中。
+
 | artifact | schema | LLM 产（读知识库） | 留空（下游脚本算） |
 |---|---|---|---|
 | `timeline_tiers.json` | `{priority/important/maintain:[{dedup_key,item_name,interval,rationale}]}` | 读 CP5 final + 复查知识；**priority 排序规则**：BRCA/Lynch 遗传咨询 + 确诊癌随访 + 后验>1% + 健康总结高风险 → priority；未做高危筛查 + 后验0.5-1% + 异常复查 → important；周期常规 + 慢病 → maintain。**interval 须与分层时间窗一致**（「尽快」不能在 maintain）。A/B 分 priority/important，C → maintain | — |
 | `x_addons.json` | **`[{risk_source,risk_level_tag,risk_level_label,method,interval,price_range,clinical_value}]`（必须是 list-of-dict，非 `{recommended_addons:[...]}`）** | risk_source/method/interval/tag/clinical_value（任意异常含乳腺/妇科/心电）。**B/C 去重**：同一病灶已在 B 不再进 C（C 只保留周期节奏措辞） | posterior/cancer_name（`_enrich_x_addons` 权威回填 + tag 归一化） |
-| `package_tiers.json` | `[{name,price_range,includes[],note,recommended}]` 恒3档，仅1档 recommended=true | name/includes(**用 `08_pricing.json` 项目名或 key**)/note(患者面向)/recommended。**档1 必须覆盖 timeline priority 层全部检查项；档2 覆盖 priority+important** | price_range（`assemble_package` Σmid，含¥） |
+| `package_tiers.json` | `[{name,price_range,includes[],include_details[],note,recommended}]` 恒3档，仅1档 recommended=true | name/includes(**优先用 `08_pricing.json` 中文项目名；允许 key 仅供脚本匹配但不得进入报告**)/note(患者面向)/recommended。**档1 必须覆盖 timeline priority 层全部检查项；档2 覆盖 priority+important** | price_range + include_details（`assemble_package` Σmid 和逐项价格，含¥） |
 | `liquid_biopsy_perf.json` | `{sensitivity,specificity,market_price_range,clinical_hint,negative_risk_reduction}` | clinical_hint/阴性降风险文案 | sens/spec(81.9/99.0)/market_price |
 | `long_term_intervention.json` | `{genetic_management[](仅BRCA),lifestyle[](list-of-str)}` 仅2字段 | genetic+lifestyle（读 07预防MD） | — |
 

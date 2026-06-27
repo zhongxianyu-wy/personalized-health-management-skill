@@ -140,6 +140,51 @@ def test_deep_package_displays_comprehensive_plus_jizaoan(tmp_path):
     assert "全部检测项 + 吉早安®" not in html
 
 
+def test_package_template_displays_each_include_price(tmp_path):
+    """套餐推荐细节展示每个具体检测项目及其价格。"""
+    packages = [
+        {
+            "name": "核心风险筛查档",
+            "price_range": "¥620",
+            "includes": ["低剂量胸部CT", "甲状腺彩超"],
+            "include_details": [
+                {"name": "低剂量胸部CT", "price_range": "¥500"},
+                {"name": "甲状腺彩超", "price_range": "¥120"},
+            ],
+            "note": "核心",
+            "recommended": False,
+        },
+        {
+            "name": "全面覆盖档",
+            "price_range": "¥1500",
+            "includes": ["低剂量胸部CT", "无痛肠镜"],
+            "include_details": [
+                {"name": "低剂量胸部CT", "price_range": "¥500"},
+                {"name": "无痛肠镜", "price_range": "¥1000"},
+            ],
+            "note": "全面",
+            "recommended": True,
+        },
+        {
+            "name": "癌症深入筛查档",
+            "price_range": "¥3499",
+            "includes": ["低剂量胸部CT", "无痛肠镜", "吉早安"],
+            "include_details": [
+                {"name": "低剂量胸部CT", "price_range": "¥500"},
+                {"name": "无痛肠镜", "price_range": "¥1000"},
+                {"name": "吉早安", "price_range": "¥1999"},
+            ],
+            "note": "在全面覆盖档基础上增加吉早安检测（+1999元）",
+            "recommended": False,
+        },
+    ]
+    _, html = _render(tmp_path, packages=packages)
+    assert "低剂量胸部CT：¥500" in html
+    assert "甲状腺彩超：¥120" in html
+    assert "无痛肠镜：¥1000" in html
+    assert "吉早安：¥1999" in html
+
+
 def test_template_uses_chinese_labels_and_deep_tier_simple_addon(tmp_path):
     """模板输出使用中文风险级别；档3展示为全面覆盖基础上加吉早安，不再展示替代双价。"""
     packages = [

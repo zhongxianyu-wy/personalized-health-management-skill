@@ -45,6 +45,26 @@ def test_basic_mid_sum_overwrites_price(tmp_path: Path) -> None:
     assert out[0]["price_range"] == "¥620"  # 500 + 120
 
 
+def test_package_includes_have_item_price_details(tmp_path: Path) -> None:
+    """套餐不仅有总价，也产出每个推荐检测项目的展示名和单项价格。"""
+    p = _write_pkg(tmp_path, [
+        {"name": "档1", "includes": ["LDCT", "甲状腺彩超"], "recommended": False},
+        {"name": "档2", "includes": ["LDCT", "肠镜"], "recommended": True},
+        {"name": "档3", "includes": [], "recommended": False},
+    ])
+    assemble_package.assemble_package(p, PRICING)
+    out = json.loads(p.read_text(encoding="utf-8"))
+    assert out[0]["include_details"] == [
+        {"name": "低剂量胸部CT", "price_range": "¥500"},
+        {"name": "甲状腺彩超", "price_range": "¥120"},
+    ]
+    assert out[2]["include_details"] == [
+        {"name": "低剂量胸部CT", "price_range": "¥500"},
+        {"name": "无痛肠镜", "price_range": "¥1000"},
+        {"name": "吉早安", "price_range": "¥1999"},
+    ]
+
+
 def test_package_names_are_canonical(tmp_path: Path) -> None:
     """LLM 手写名称会被固定为报告设计三档名称。"""
     p = _write_pkg(tmp_path, [

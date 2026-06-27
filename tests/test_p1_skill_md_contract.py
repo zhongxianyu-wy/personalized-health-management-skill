@@ -66,3 +66,9 @@ def test_voi_removed_from_skill_contract():
     text = _text()
     assert "VoI" not in text
     assert "voi_ranking.json" not in text
+
+
+def test_patient_visible_report_fields_must_be_chinese_not_database_keys():
+    text = _text()
+    for required in ("患者可见字段", "中文自然语言", "禁止直接输出数据库 key", "cardiovascular", "risk_tier"):
+        assert required in text

@@ -1376,6 +1376,8 @@ def main():
             "(`references/database/screening_personalized/json/cancer_followup_rules.json` "
             "查癌种复查方法/周期) + `异常指标复查推荐.md`(异常→复查，覆盖乳腺/妇科/心电等任意异常) "
             "+ snapshot 后验 + health_summary 异常 + pricing，**LLM 提取异常+推荐筛查+写文案**；"
+            "患者可见字段必须写中文自然语言，禁止把数据库 key/分类 key/内部枚举（如 cardiovascular、"
+            "diabetes、risk_tier、moderate_workup）原样写入 item_name/rationale/risk_source/method；"
             "数值字段（sens/spec/price/posterior）留空由下游脚本兜底。然后不带 --stop-after 重跑渲染 report.html：\n"
             "  timeline_tiers.json / x_addons.json / package_tiers.json / "
             "liquid_biopsy_perf.json / long_term_intervention.json\n"

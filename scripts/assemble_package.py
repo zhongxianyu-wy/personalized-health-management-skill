@@ -18,7 +18,8 @@
         --skill-root <skill_root>
 
 LLM 产 package_tiers.json 时只需写 includes 项目名（匹配 pricing aliases）+ note，
-price_range 留空或任意，本脚本确定性覆写为 Σmid。
+price_range 留空或任意，本脚本确定性覆写为 Σmid，并生成 include_details
+（逐项中文名+价格）供报告模板展示。
 """
 from __future__ import annotations
 
@@ -106,17 +107,20 @@ def assemble_package(package_path: Path, pricing: dict[str, Any]) -> list[dict]:
     pkg = json.loads(package_path.read_text(encoding="utf-8"))
     items = pricing.get("items", {})
 
-    def _sum_mid(item_list: list) -> tuple[int, list[str], list[str]]:
-        total, matched, unmatched = 0, [], []
+    def _sum_mid(item_list: list) -> tuple[int, list[str], list[str], list[dict[str, str]]]:
+        total, matched, unmatched, details = 0, [], [], []
         for inc in item_list:
             text = str(inc)
             key, item = match_item(text, items)
             if item:
                 total += item["mid"]
                 matched.append(f"{item['name']}({item['mid']})")
+                display_name = JIZAOAN_DISPLAY_NAME if key == JIZAOAN_KEY else str(item.get("name") or inc)
+                details.append({"name": display_name, "price_range": f"¥{item['mid']}"})
             else:
                 unmatched.append(text)
-        return total, matched, unmatched
+                details.append({"name": text, "price_range": "待确认"})
+        return total, matched, unmatched, details
 
     def _strip_jizaoan(item_list: list) -> list:
         out = []
@@ -159,8 +163,9 @@ def assemble_package(package_path: Path, pricing: dict[str, Any]) -> list[dict]:
             includes = []
         if idx < 2:
             includes = _strip_jizaoan(includes)
-        total_mid, matched, unmatched = _sum_mid(includes)
+        total_mid, matched, unmatched, include_details = _sum_mid(includes)
         tier["includes"] = _display_include_names(includes)
+        tier["include_details"] = include_details
 
         if total_mid > 0:
             tier["price_range"] = f"¥{total_mid}"
@@ -184,10 +189,18 @@ def assemble_package(package_path: Path, pricing: dict[str, Any]) -> list[dict]:
         if not isinstance(base_includes, list):
             base_includes = []
         deep_includes = _display_include_names(_strip_jizaoan(base_includes)) + [JIZAOAN_DISPLAY_NAME]
+        base_include_details = base_tier.get("include_details", [])
+        if not isinstance(base_include_details, list):
+            base_include_details = []
+        deep_include_details = [
+            d for d in base_include_details
+            if isinstance(d, dict) and d.get("name") != JIZAOAN_DISPLAY_NAME
+        ] + [{"name": JIZAOAN_DISPLAY_NAME, "price_range": f"¥{JIZAOAN_ADDON_PRICE}"}]
         base_price = _price_from_tier(base_tier)
         total_price = base_price + JIZAOAN_ADDON_PRICE
         deep_tier["name"] = CANONICAL_PACKAGE_NAMES[2]
         deep_tier["includes"] = deep_includes
+        deep_tier["include_details"] = deep_include_details
         deep_tier.pop("includes_all", None)
         deep_tier["price_range"] = f"¥{total_price}"
         deep_tier["note"] = "在全面覆盖档基础上增加吉早安检测（+1999元）"
